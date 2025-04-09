@@ -24,19 +24,5 @@ app.post("/comments/:postId", async (req, res) => { const { postId } = req.param
 
 app.get("/comments/:postId", async (req, res) => { const { postId } = req.params; const comments = await Comment.find({ postId }).sort({ createdAt: -1 }); res.json(comments); });
 
-require('dotenv').config();  
-
-const express = require('express'); 
-
-const app = express('Newsbuzz');
-
-const PORT = process.env.PORT || 3000;
-
-app.get('/', (req, res) => {
-  res.send('Hello from Render server!');
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 3000; app.listen(PORT, () => console.log(Server running on port ${PORT}));
 

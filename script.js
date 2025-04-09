@@ -1,4 +1,4 @@
-fetch('data.json')
+fetch('https://newsbuzz.onrender.com/articles')
   .then(response => response.json())
   .then(data => {
     const container = document.getElementById('news-container');
@@ -7,4 +7,5 @@ fetch('data.json')
       div.innerHTML = `<h3>${article.title}</h3><p>${article.content}</p>`;
       container.appendChild(div);
     });
-  });
+  })
+  .catch(error => console.error('Error loading articles:', error));

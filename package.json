@@ -1,5 +1,5 @@
 {
-  "name": "node-post-app",
+  "name": "newsbuzz",
   "version": "1.0.0",
   "description": "A simple app to post and view posts using Node.js",
   "main": "server.js",

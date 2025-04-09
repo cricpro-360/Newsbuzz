@@ -5,34 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NewsHub - Publish News</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
-    h1, h2 { color: #333; text-align: center; }
-    input, textarea, select {
-      width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;
-    }
-    button {
-      padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer;
-      border-radius: 5px;
-    }
-    .post-card {
-      background: #fff; border: 1px solid #ccc; padding: 15px;
-      margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-    .post-card img {
-      width: 100%; max-height: 200px; object-fit: cover; margin-bottom: 10px;
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    input, textarea, select { width: 100%; padding: 10px; margin: 10px 0; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+    .post-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+    .post-card img { width: 100%; max-height: 200px; object-fit: cover; }
     .filters { margin-bottom: 20px; }
-    #previewImg { max-height: 200px; margin-top: 10px; display: none; border-radius: 5px; }
+    #previewImg { max-height: 200px; margin-top: 10px; display: none; }
   </style>
 </head>
 <body>
   <h1>Publish a News Article</h1>
-
   <input type="text" id="title" placeholder="Title" />
   <textarea id="content" rows="5" placeholder="Write your article..."></textarea>
   <input type="file" id="imageFile" accept="image/*" />
   <img id="previewImg" />
-
   <select id="category">
     <option value="">Select Category</option>
     <option value="Politics">Politics</option>
@@ -42,7 +30,6 @@
   </select>
   <input type="text" id="location" placeholder="Enter Location" />
   <button onclick="publishPost()">Publish</button>
-
   <hr />
   <h2>All Articles</h2>
   <div class="filters">
@@ -56,11 +43,10 @@
       <option value="Local">Local</option>
     </select>
   </div>
-
   <div id="posts"></div>
-
   <script>
-    const API_BASE = "https://newsbuzz-backend-tdzp.onrender.com"; // LIVE API URL
+    const API_BASE = "https://newsbuzz-backend-tdzp.onrender.com";
+
     let uploadedImageUrl = "";
 
     document.getElementById("imageFile").addEventListener("change", async (e) => {
@@ -84,10 +70,10 @@
     });
 
     async function publishPost() {
-      const title = document.getElementById("title").value.trim();
-      const content = document.getElementById("content").value.trim();
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
       const category = document.getElementById("category").value;
-      const location = document.getElementById("location").value.trim();
+      const location = document.getElementById("location").value;
 
       if (!title || !content || !category || !location) {
         alert("Please fill all fields.");
@@ -141,7 +127,7 @@
       filtered.forEach(post => {
         container.innerHTML += `
           <div class="post-card">
-            ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" />` : ""}
+            ${post.imageUrl ? `<img src="${post.imageUrl}" alt="" />` : ""}
             <h3>${post.title}</h3>
             <p><strong>Category:</strong> ${post.category} | <strong>Location:</strong> ${post.location}</p>
             <p>${post.content.slice(0, 150)}...</p>
@@ -149,10 +135,6 @@
           </div>
         `;
       });
-    }
-
-    function renderPosts() {
-      loadPosts();
     }
 
     loadPosts();

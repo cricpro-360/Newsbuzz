@@ -1,7 +1,8 @@
-// Importing required modules
+// Import required modules
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+require('dotenv').config();  // Load environment variables from .env file
 
 // Create an instance of Express app
 const app = express();
@@ -9,15 +10,17 @@ const app = express();
 // Use body-parser middleware to parse incoming JSON requests
 app.use(bodyParser.json());
 
-// MongoDB connection (using MongoDB Atlas or local MongoDB)
-mongoose.connect('mongodb://localhost:27017/postsDB', { useNewUrlParser: true, useUnifiedTopology: true })
+// Connect to MongoDB Atlas using the DB URI from environment variables
+const dbURI = process.env.DB_URI;
+
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Define the schema for posts (title, content, and date)
 const postSchema = new mongoose.Schema({
-  title: String,
-  content: String,
+  title: { type: String, required: true },
+  content: { type: String, required: true },
   date: { type: Date, default: Date.now }
 });
 

@@ -2,10 +2,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NewsHub - Publish News</title>
+  <title>NewsHub - Firebase Edition</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    h1 { color: #333; }
     input, textarea, select { width: 100%; padding: 10px; margin: 10px 0; }
     button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
     .post-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
@@ -18,7 +20,7 @@
   <h1>Publish a News Article</h1>
   <input type="text" id="title" placeholder="Title" />
   <textarea id="content" rows="5" placeholder="Write your article..."></textarea>
-  <input type="file" id="imageFile" accept="image/*" onchange="previewImage()" />
+  <input type="file" id="imageFile" accept="image/*" />
   <img id="previewImg" />
   <select id="category">
     <option value="">Select Category</option>
@@ -40,84 +42,105 @@
       <option value="Local">Local</option>
     </select>
   </div>  <div id="posts"></div>  <script>
-    const getPosts = () => JSON.parse(localStorage.getItem("posts") || "[]");
+    const firebaseConfig = {
+      apiKey: "AIzaSyCZC-qeXpS2O5WZ7USiwJolpWEb1USWyUo",
+      authDomain: "news-demo-app.firebaseapp.com",
+      databaseURL: "https://news-demo-app-default-rtdb.firebaseio.com",
+      projectId: "news-demo-app",
+      storageBucket: "news-demo-app.appspot.com",
+      messagingSenderId: "332638324062",
+      appId: "1:332638324062:web:fb7e29c7c78c2a56cda520"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const storage = firebase.storage();
 
-    let uploadedImage = "";
-
-    function previewImage() {
-      const file = document.getElementById("imageFile").files[0];
+    document.getElementById("imageFile").addEventListener("change", function () {
       const reader = new FileReader();
       reader.onload = function (e) {
-        uploadedImage = e.target.result;
-        const preview = document.getElementById("previewImg");
-        preview.src = uploadedImage;
-        preview.style.display = "block";
+        const img = document.getElementById("previewImg");
+        img.src = e.target.result;
+        img.style.display = "block";
       };
-      if (file) reader.readAsDataURL(file);
-    }
+      reader.readAsDataURL(this.files[0]);
+    });
 
     function publishPost() {
       const title = document.getElementById("title").value;
       const content = document.getElementById("content").value;
       const category = document.getElementById("category").value;
       const location = document.getElementById("location").value;
+      const file = document.getElementById("imageFile").files[0];
 
-      if (!title || !content || !category || !location) {
-        alert("Please fill all fields.");
+      if (!title || !content || !category || !location || !file) {
+        alert("Please fill all fields and select an image.");
         return;
       }
 
-      const posts = getPosts();
-      posts.unshift({ title, content, imageUrl: uploadedImage, category, location, date: new Date().toISOString() });
-      localStorage.setItem("posts", JSON.stringify(posts));
-
-      document.getElementById("title").value = "";
-      document.getElementById("content").value = "";
-      document.getElementById("imageFile").value = null;
-      document.getElementById("previewImg").src = "";
-      document.getElementById("previewImg").style.display = "none";
-      uploadedImage = "";
-      document.getElementById("category").value = "";
-      document.getElementById("location").value = "";
-
-      renderPosts();
+      const imageRef = storage.ref("images/" + Date.now() + "_" + file.name);
+      imageRef.put(file).then(snapshot => {
+        snapshot.ref.getDownloadURL().then(url => {
+          const postData = {
+            title,
+            content,
+            imageUrl: url,
+            category,
+            location,
+            date: new Date().toISOString()
+          };
+          db.ref("posts").push(postData);
+          alert("Post published successfully!");
+          document.getElementById("title").value = "";
+          document.getElementById("content").value = "";
+          document.getElementById("imageFile").value = null;
+          document.getElementById("previewImg").style.display = "none";
+          document.getElementById("category").value = "";
+          document.getElementById("location").value = "";
+        });
+      });
     }
 
     function renderPosts() {
-      const posts = getPosts();
-      const search = document.getElementById("search").value.toLowerCase();
-      const filterLocation = document.getElementById("filterLocation").value.toLowerCase();
-      const filterCategory = document.getElementById("filterCategory").value;
+      db.ref("posts").once("value", snapshot => {
+        const data = snapshot.val() || {};
+        const posts = Object.values(data);
 
-      const filtered = posts.filter(post => {
-        return (
-          (!search || post.title.toLowerCase().includes(search) || post.content.toLowerCase().includes(search)) &&
-          (!filterLocation || post.location.toLowerCase().includes(filterLocation)) &&
-          (!filterCategory || post.category === filterCategory)
-        );
-      });
+        const search = document.getElementById("search").value.toLowerCase();
+        const filterLocation = document.getElementById("filterLocation").value.toLowerCase();
+        const filterCategory = document.getElementById("filterCategory").value;
 
-      const container = document.getElementById("posts");
-      container.innerHTML = "";
+        const filtered = posts.filter(post => {
+          return (
+            (!search || post.title.toLowerCase().includes(search) || post.content.toLowerCase().includes(search)) &&
+            (!filterLocation || post.location.toLowerCase().includes(filterLocation)) &&
+            (!filterCategory || post.category === filterCategory)
+          );
+        });
 
-      if (filtered.length === 0) {
-        container.innerHTML = "<p>No articles found.</p>";
-        return;
-      }
+        const container = document.getElementById("posts");
+        container.innerHTML = "";
 
-      filtered.forEach(post => {
-        container.innerHTML += `
-          <div class="post-card">
-            ${post.imageUrl ? `<img src="${post.imageUrl}" alt="" />` : ""}
-            <h3>${post.title}</h3>
-            <p><strong>Category:</strong> ${post.category} | <strong>Location:</strong> ${post.location}</p>
-            <p>${post.content.slice(0, 150)}...</p>
-            <small>Published on: ${new Date(post.date).toLocaleString()}</small>
-          </div>
-        `;
+        if (filtered.length === 0) {
+          container.innerHTML = "<p>No articles found.</p>";
+          return;
+        }
+
+        filtered.reverse().forEach(post => {
+          container.innerHTML += `
+            <div class="post-card">
+              ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" />` : ""}
+              <h3>${post.title}</h3>
+              <p><strong>Category:</strong> ${post.category} | <strong>Location:</strong> ${post.location}</p>
+              <p>${post.content.slice(0, 150)}...</p>
+              <small>Published on: ${new Date(post.date).toLocaleString()}</small>
+            </div>
+          `;
+        });
       });
     }
 
+    // Auto-refresh posts every 10 seconds
     renderPosts();
+    setInterval(renderPosts, 10000);
   </script></body>
 </html>

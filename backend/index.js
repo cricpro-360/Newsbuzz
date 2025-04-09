@@ -28,9 +28,7 @@ require('dotenv').config();
 
 const express = require('express'); 
 
-const app = express();
-// just use 'app' later without re-declaring
-app.use(...);
+const app = express('Newsbuzz');
 
 const PORT = process.env.PORT || 3000;
 

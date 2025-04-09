@@ -28,7 +28,9 @@ require('dotenv').config();
 
 const express = require('express'); 
 
-let app = express();
+const app = express();
+// just use 'app' later without re-declaring
+app.use(...);
 
 const PORT = process.env.PORT || 3000;
 

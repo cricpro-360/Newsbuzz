@@ -24,5 +24,5 @@ app.post("/comments/:postId", async (req, res) => { const { postId } = req.param
 
 app.get("/comments/:postId", async (req, res) => { const { postId } = req.params; const comments = await Comment.find({ postId }).sort({ createdAt: -1 }); res.json(comments); });
 
-const PORT = process.env.PORT || 3000; app.listen(PORT, () => console.log(Server running on port ${PORT}));
+const PORT = process.env.PORT || 3000; app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 

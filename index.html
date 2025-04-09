@@ -2,26 +2,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NewsHub - Firebase Edition</title>
+  <title>NewsBuzz - Firebase News App</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    input, textarea, select { width: 100%; padding: 10px; margin: 10px 0; }
-    button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
-    .post-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
-    .post-card img { width: 100%; max-height: 200px; object-fit: cover; }
-    .filters { margin-bottom: 20px; }
-    #previewImg { max-height: 200px; margin-top: 10px; display: none; }
+    body { font-family: Arial; margin: 20px; }
+    input, textarea, select, button { width: 100%; padding: 10px; margin: 10px 0; }
+    .post { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+    .post img { max-width: 100%; height: auto; border-radius: 4px; margin-bottom: 10px; }
   </style>
 </head>
 <body>
-  <h1>Publish a News Article</h1>
+  <h2>Post News Article</h2>
   <input type="text" id="title" placeholder="Title" />
-  <textarea id="content" rows="5" placeholder="Write your article..."></textarea>
-  <input type="file" id="imageFile" accept="image/*" />
-  <img id="previewImg" />
+  <textarea id="content" rows="4" placeholder="Write your article..."></textarea>
+  <input type="file" id="image" accept="image/*" />
   <select id="category">
     <option value="">Select Category</option>
     <option value="Politics">Politics</option>
@@ -30,117 +26,81 @@
     <option value="Local">Local</option>
   </select>
   <input type="text" id="location" placeholder="Enter Location" />
-  <button onclick="publishPost()">Publish</button>  <hr />  <h2>All Articles</h2>
-  <div class="filters">
-    <input type="text" id="search" placeholder="Search by title or content" oninput="renderPosts()" />
-    <input type="text" id="filterLocation" placeholder="Filter by Location" oninput="renderPosts()" />
-    <select id="filterCategory" onchange="renderPosts()">
-      <option value="">All Categories</option>
-      <option value="Politics">Politics</option>
-      <option value="Cricket">Cricket</option>
-      <option value="Education">Education</option>
-      <option value="Local">Local</option>
-    </select>
-  </div>  <div id="posts"></div>  <script>
+  <button onclick="publishArticle()">Publish</button>  <hr />
+  <h2>All Articles</h2>
+  <div id="posts"></div>  <script>
+    // Firebase config
     const firebaseConfig = {
-      apiKey: "AIzaSyCZC-qeXpS2O5WZ7USiwJolpWEb1USWyUo",
-      authDomain: "news-demo-app.firebaseapp.com",
-      databaseURL: "https://news-demo-app-default-rtdb.firebaseio.com",
-      projectId: "news-demo-app",
-      storageBucket: "news-demo-app.appspot.com",
-      messagingSenderId: "332638324062",
-      appId: "1:332638324062:web:fb7e29c7c78c2a56cda520"
+      apiKey: "AIzaSyAOKId3KoyBb1DWPy1AkK2P2XVTv60DY6s",
+      authDomain: "newsbuzz-62b2b.firebaseapp.com",
+      projectId: "newsbuzz-62b2b",
+      storageBucket: "newsbuzz-62b2b.appspot.com",
+      messagingSenderId: "1049493752379",
+      appId: "1:1049493752379:web:41b3bbde3b807a443a2a1e",
+      databaseURL: "https://newsbuzz-62b2b-default-rtdb.firebaseio.com"
     };
+
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const storage = firebase.storage();
 
-    document.getElementById("imageFile").addEventListener("change", function () {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = document.getElementById("previewImg");
-        img.src = e.target.result;
-        img.style.display = "block";
-      };
-      reader.readAsDataURL(this.files[0]);
-    });
-
-    function publishPost() {
+    function publishArticle() {
       const title = document.getElementById("title").value;
       const content = document.getElementById("content").value;
       const category = document.getElementById("category").value;
       const location = document.getElementById("location").value;
-      const file = document.getElementById("imageFile").files[0];
+      const imageFile = document.getElementById("image").files[0];
 
-      if (!title || !content || !category || !location || !file) {
+      if (!title || !content || !category || !location || !imageFile) {
         alert("Please fill all fields and select an image.");
         return;
       }
 
-      const imageRef = storage.ref("images/" + Date.now() + "_" + file.name);
-      imageRef.put(file).then(snapshot => {
-        snapshot.ref.getDownloadURL().then(url => {
+      const postId = db.ref().child("posts").push().key;
+      const imageRef = storage.ref().child(`images/${postId}_${imageFile.name}`);
+
+      imageRef.put(imageFile).then(snapshot => {
+        snapshot.ref.getDownloadURL().then(imageUrl => {
           const postData = {
             title,
             content,
-            imageUrl: url,
             category,
             location,
+            imageUrl,
             date: new Date().toISOString()
           };
-          db.ref("posts").push(postData);
-          alert("Post published successfully!");
+          db.ref("posts/" + postId).set(postData);
+          alert("Article published!");
           document.getElementById("title").value = "";
           document.getElementById("content").value = "";
-          document.getElementById("imageFile").value = null;
-          document.getElementById("previewImg").style.display = "none";
           document.getElementById("category").value = "";
           document.getElementById("location").value = "";
+          document.getElementById("image").value = null;
         });
       });
     }
 
-    function renderPosts() {
-      db.ref("posts").once("value", snapshot => {
-        const data = snapshot.val() || {};
-        const posts = Object.values(data);
-
-        const search = document.getElementById("search").value.toLowerCase();
-        const filterLocation = document.getElementById("filterLocation").value.toLowerCase();
-        const filterCategory = document.getElementById("filterCategory").value;
-
-        const filtered = posts.filter(post => {
-          return (
-            (!search || post.title.toLowerCase().includes(search) || post.content.toLowerCase().includes(search)) &&
-            (!filterLocation || post.location.toLowerCase().includes(filterLocation)) &&
-            (!filterCategory || post.category === filterCategory)
-          );
-        });
-
-        const container = document.getElementById("posts");
-        container.innerHTML = "";
-
-        if (filtered.length === 0) {
-          container.innerHTML = "<p>No articles found.</p>";
-          return;
-        }
-
-        filtered.reverse().forEach(post => {
-          container.innerHTML += `
-            <div class="post-card">
-              ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" />` : ""}
+    function loadArticles() {
+      db.ref("posts").on("value", snapshot => {
+        const posts = snapshot.val();
+        const postContainer = document.getElementById("posts");
+        postContainer.innerHTML = "";
+        for (let id in posts) {
+          const post = posts[id];
+          postContainer.innerHTML += `
+            <div class="post">
+              <img src="${post.imageUrl}" alt="image" />
               <h3>${post.title}</h3>
               <p><strong>Category:</strong> ${post.category} | <strong>Location:</strong> ${post.location}</p>
-              <p>${post.content.slice(0, 150)}...</p>
-              <small>Published on: ${new Date(post.date).toLocaleString()}</small>
+              <p>${post.content}</p>
+              <small>Posted on ${new Date(post.date).toLocaleString()}</small>
             </div>
           `;
-        });
+        }
       });
     }
 
-    // Auto-refresh posts every 10 seconds
-    renderPosts();
-    setInterval(renderPosts, 10000);
+    loadArticles();
   </script></body>
 </html>

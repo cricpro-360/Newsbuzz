@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Posts</title>
+</head>
+<body>
+  <h1>All Posts</h1>
+  <a href="create.html">Create Post</a>
+  <ul id="postList"></ul>
+
+  <script>
+    fetch('/api/posts')
+      .then(res => res.json())
+      .then(posts => {
+        const list = document.getElementById('postList');
+        posts.reverse().forEach(post => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <h2>${post.title}</h2>
+            <p>${post.content}</p>
+            <small>By: <b>${post.username}</b></small>
+          `;
+          list.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>

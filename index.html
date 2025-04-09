@@ -1,5 +1,141 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NewsHub - Publish News</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    input, textarea, select { width: 100%; padding: 10px; margin: 10px 0; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+    .post-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+    .post-card img { width: 100%; max-height: 200px; object-fit: cover; }
+    .filters { margin-bottom: 20px; }
+    #previewImg { max-height: 200px; margin-top: 10px; display: none; }
+  </style>
+</head>
+<body>
+  <h1>Publish a News Article</h1>
+  <input type="text" id="title" placeholder="Title" />
+  <textarea id="content" rows="5" placeholder="Write your article..."></textarea>
+  <input type="file" id="imageFile" accept="image/*" />
+  <img id="previewImg" />
+  <select id="category">
+    <option value="">Select Category</option>
+    <option value="Politics">Politics</option>
+    <option value="Cricket">Cricket</option>
+    <option value="Education">Education</option>
+    <option value="Local">Local</option>
+  </select>
+  <input type="text" id="location" placeholder="Enter Location" />
+  <button onclick="publishPost()">Publish</button>  <hr />  <h2>All Articles</h2>
+  <div class="filters">
+    <input type="text" id="search" placeholder="Search by title or content" oninput="renderPosts()" />
+    <input type="text" id="filterLocation" placeholder="Filter by Location" oninput="renderPosts()" />
+    <select id="filterCategory" onchange="renderPosts()">
+      <option value="">All Categories</option>
+      <option value="Politics">Politics</option>
+      <option value="Cricket">Cricket</option>
+      <option value="Education">Education</option>
+      <option value="Local">Local</option>
+    </select>
+  </div>  <div id="posts"></div>  <script>
+    const API_BASE = "http://localhost:5000"; // change to your live backend if deployed
+
+    let uploadedImageUrl = "";
+
+    document.getElementById("imageFile").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch(`${API_BASE}/upload-image`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      uploadedImageUrl = API_BASE + data.imageUrl;
+
+      const preview = document.getElementById("previewImg");
+      preview.src = uploadedImageUrl;
+      preview.style.display = "block";
+    });
+
+    async function publishPost() {
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
+      const category = document.getElementById("category").value;
+      const location = document.getElementById("location").value;
+
+      if (!title || !content || !category || !location) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const newPost = { title, content, category, location, imageUrl: uploadedImageUrl };
+
+      await fetch(`${API_BASE}/posts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newPost),
+      });
+
+      document.getElementById("title").value = "";
+      document.getElementById("content").value = "";
+      document.getElementById("imageFile").value = null;
+      document.getElementById("previewImg").src = "";
+      document.getElementById("previewImg").style.display = "none";
+      uploadedImageUrl = "";
+      document.getElementById("category").value = "";
+      document.getElementById("location").value = "";
+
+      loadPosts();
+    }
+
+    async function loadPosts() {
+      const res = await fetch(`${API_BASE}/posts`);
+      const posts = await res.json();
+
+      const search = document.getElementById("search").value.toLowerCase();
+      const filterLocation = document.getElementById("filterLocation").value.toLowerCase();
+      const filterCategory = document.getElementById("filterCategory").value;
+
+      const filtered = posts.filter(post => {
+        return (
+          (!search || post.title.toLowerCase().includes(search) || post.content.toLowerCase().includes(search)) &&
+          (!filterLocation || post.location.toLowerCase().includes(filterLocation)) &&
+          (!filterCategory || post.category === filterCategory)
+        );
+      });
+
+      const container = document.getElementById("posts");
+      container.innerHTML = "";
+
+      if (filtered.length === 0) {
+        container.innerHTML = "<p>No articles found.</p>";
+        return;
+      }
+
+      filtered.forEach(post => {
+        container.innerHTML += `
+          <div class="post-card">
+            ${post.imageUrl ? `<img src="${post.imageUrl}" alt="" />` : ""}
+            <h3>${post.title}</h3>
+            <p><strong>Category:</strong> ${post.category} | <strong>Location:</strong> ${post.location}</p>
+            <p>${post.content.slice(0, 150)}...</p>
+            <small>Published on: ${new Date(post.createdAt).toLocaleString()}</small>
+          </div>
+        `;
+      });
+    }
+
+    loadPosts();
+  </script></body>
+</html>
+tml>
 <head>
   <title>All Posts</title>
 </head>

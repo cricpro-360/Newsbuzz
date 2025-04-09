@@ -24,5 +24,16 @@ app.post("/comments/:postId", async (req, res) => { const { postId } = req.param
 
 app.get("/comments/:postId", async (req, res) => { const { postId } = req.params; const comments = await Comment.find({ postId }).sort({ createdAt: -1 }); res.json(comments); });
 
-const PORT = process.env.PORT || 3000; app.listen(PORT, () => console.log(Server running on port ${PORT}));
+// index.js ಅಥವಾ backend/index.js
+
+require('dotenv').config(); // .env file ನಲ್ಲಿನ values ಲೋಡ್ ಮಾಡಲು
+
+const express = require('express');
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 

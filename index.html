@@ -11,13 +11,15 @@
     .post-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
     .post-card img { width: 100%; max-height: 200px; object-fit: cover; }
     .filters { margin-bottom: 20px; }
+    #previewImg { max-height: 200px; margin-top: 10px; display: none; }
   </style>
 </head>
 <body>
   <h1>Publish a News Article</h1>
   <input type="text" id="title" placeholder="Title" />
   <textarea id="content" rows="5" placeholder="Write your article..."></textarea>
-  <input type="text" id="imageUrl" placeholder="Image URL" />
+  <input type="file" id="imageFile" accept="image/*" onchange="previewImage()" />
+  <img id="previewImg" />
   <select id="category">
     <option value="">Select Category</option>
     <option value="Politics">Politics</option>
@@ -40,25 +42,41 @@
   </div>  <div id="posts"></div>  <script>
     const getPosts = () => JSON.parse(localStorage.getItem("posts") || "[]");
 
+    let uploadedImage = "";
+
+    function previewImage() {
+      const file = document.getElementById("imageFile").files[0];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        uploadedImage = e.target.result;
+        const preview = document.getElementById("previewImg");
+        preview.src = uploadedImage;
+        preview.style.display = "block";
+      };
+      if (file) reader.readAsDataURL(file);
+    }
+
     function publishPost() {
       const title = document.getElementById("title").value;
       const content = document.getElementById("content").value;
-      const imageUrl = document.getElementById("imageUrl").value;
       const category = document.getElementById("category").value;
       const location = document.getElementById("location").value;
 
       if (!title || !content || !category || !location) {
-        alert("Please fill all fields except image (optional).");
+        alert("Please fill all fields.");
         return;
       }
 
       const posts = getPosts();
-      posts.unshift({ title, content, imageUrl, category, location, date: new Date().toISOString() });
+      posts.unshift({ title, content, imageUrl: uploadedImage, category, location, date: new Date().toISOString() });
       localStorage.setItem("posts", JSON.stringify(posts));
 
       document.getElementById("title").value = "";
       document.getElementById("content").value = "";
-      document.getElementById("imageUrl").value = "";
+      document.getElementById("imageFile").value = null;
+      document.getElementById("previewImg").src = "";
+      document.getElementById("previewImg").style.display = "none";
+      uploadedImage = "";
       document.getElementById("category").value = "";
       document.getElementById("location").value = "";
 

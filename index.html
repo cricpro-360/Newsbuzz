@@ -14,6 +14,7 @@
 
   <input type="text" id="title" placeholder="Enter post title">
   <textarea id="content" placeholder="Enter post content" rows="4"></textarea>
+  <input type="file" id="image" accept="image/*" />
   <button onclick="createPost()">Submit Post</button>
 
   <h2>All Posts</h2>
@@ -33,34 +34,40 @@
     }
 
     function createPost() {
-      const title = document.getElementById('title').value.trim();
-      const content = document.getElementById('content').value.trim();
+  const title = document.getElementById('title').value.trim();
+  const content = document.getElementById('content').value.trim();
+  const imageFile = document.getElementById('image').files[0];
 
-      if (!title || !content) {
-        showMessage("Please fill in both fields.", "error");
-        return;
-      }
+  if (!title || !content) {
+    showMessage("Please fill in both fields.", "error");
+    return;
+  }
 
-      fetch(`${API_URL}/posts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content })
-      })
-      .then(res => {
-        if (!res.ok) throw new Error("Server error");
-        return res.json();
-      })
-      .then(() => {
-        showMessage("Post created successfully!", "success");
-        document.getElementById('title').value = '';
-        document.getElementById('content').value = '';
-        loadPosts();
-      })
-      .catch(err => {
-        console.error("Error:", err);
-        showMessage("Error creating post. Please try again later.", "error");
-      });
-    }
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('content', content);
+  if (imageFile) {
+    formData.append('image', imageFile);
+  }
+
+  fetch(`${API_URL}/posts`, {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(() => {
+    showMessage("Post created successfully!", "success");
+    document.getElementById('title').value = '';
+    document.getElementById('content').value = '';
+    document.getElementById('image').value = '';
+    loadPosts();
+  })
+  .catch(err => {
+    console.error("Error:", err);
+    showMessage("Error creating post. Please try again later.", "error");
+  });
+}
+
 
     function loadPosts() {
       fetch(`${API_URL}/posts`)

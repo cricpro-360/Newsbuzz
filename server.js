@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -9,9 +12,23 @@ const PORT = process.env.PORT || 3000;
 // Mongoose deprecation fix
 mongoose.set('strictQuery', true);
 
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+  destination: 'uploads/',
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage });
+
 // Middlewares
 app.use(require('cors')());
 app.use(bodyParser.json());
+app.use('/uploads', express.static('uploads'));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
@@ -24,7 +41,8 @@ mongoose.connect(process.env.MONGODB_URI, {
 // Mongoose model
 const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
-  content: String
+  content: String,
+  imageUrl: String
 }, { timestamps: true }));
 
 // Routes
@@ -37,11 +55,12 @@ app.get('/posts', async (req, res) => {
   }
 });
 
-app.post('/posts', async (req, res) => {
+app.post('/posts', upload.single('image'), async (req, res) => {
   try {
     const post = new Post({
       title: req.body.title,
-      content: req.body.content
+      content: req.body.content,
+      imageUrl: req.file ? `/uploads/${req.file.filename}` : null
     });
     await post.save();
     res.status(201).json(post);

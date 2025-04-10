@@ -1,19 +1,3 @@
-const multer = require('multer');
-const path = require('path');
-
-// File storage config
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
-
-const upload = multer({ storage });
-
-// Static file serving
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -37,10 +21,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('MongoDB Connected'))
 .catch((err) => console.error('MongoDB Connection Error:', err));
 
+// Mongoose model
 const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
-  content: String,
-  imageUrl: String
+  content: String
 }, { timestamps: true }));
 
 // Routes

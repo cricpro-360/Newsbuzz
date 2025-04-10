@@ -8,6 +8,10 @@
 </head>
 <body>
   <h1>Create Post</h1>
+
+  <!-- Message Box -->
+  <div id="message" class="message"></div>
+
   <input type="text" id="title" placeholder="Enter post title">
   <textarea id="content" placeholder="Enter post content" rows="4"></textarea>
   <button onclick="createPost()">Submit Post</button>
@@ -18,12 +22,23 @@
   <script>
     const API_URL = 'https://newsbuzz-1.onrender.com';
 
+    function showMessage(text, type) {
+      const msgDiv = document.getElementById('message');
+      msgDiv.textContent = text;
+      msgDiv.className = `message ${type}`;
+      msgDiv.style.display = 'block';
+
+      setTimeout(() => {
+        msgDiv.style.display = 'none';
+      }, 4000);
+    }
+
     function createPost() {
       const title = document.getElementById('title').value.trim();
       const content = document.getElementById('content').value.trim();
 
       if (!title || !content) {
-        alert("Please fill in both fields.");
+        showMessage("Please fill in both fields.", "error");
         return;
       }
 
@@ -41,14 +56,14 @@
         return res.json();
       })
       .then(() => {
-        alert("Post created!");
+        showMessage("Post created successfully!", "success");
         document.getElementById('title').value = '';
         document.getElementById('content').value = '';
         loadPosts();
       })
       .catch(err => {
         console.error("Error:", err);
-        alert("Error creating post. Please try again later.");
+        showMessage("Error creating post. Please try again later.", "error");
       });
     }
 

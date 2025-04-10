@@ -73,15 +73,26 @@
         .then(posts => {
           const postDiv = document.getElementById('posts');
           postDiv.innerHTML = '';
+
+          if (posts.length === 0) {
+            postDiv.innerHTML = "<p>No posts found.</p>";
+            return;
+          }
+
           posts.forEach(post => {
+            const date = new Date(post.createdAt).toLocaleString();
             postDiv.innerHTML += `
               <div class="post">
                 <h3>${post.title}</h3>
                 <p>${post.content}</p>
-                <hr>
+                <small>Posted on ${date}</small>
               </div>
             `;
           });
+        })
+        .catch(err => {
+          console.error("Failed to load posts:", err);
+          document.getElementById('posts').innerHTML = "<p style='color:red;'>Failed to load posts.</p>";
         });
     }
 

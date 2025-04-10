@@ -1,26 +1,27 @@
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 require('dotenv').config();
-
-// Fix deprecation warning
-mongoose.set('strictQuery', true);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
+// Mongoose deprecation fix
+mongoose.set('strictQuery', true);
 
-// Connect to MongoDB
+// Middlewares
+app.use(require('cors')());
+app.use(bodyParser.json());
+
+// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
 .then(() => console.log('MongoDB Connected'))
-.catch(err => console.log('MongoDB Error:', err));
+.catch((err) => console.error('MongoDB Connection Error:', err));
 
-// Schema
+// Mongoose model
 const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
   content: String
@@ -38,7 +39,10 @@ app.get('/posts', async (req, res) => {
 
 app.post('/posts', async (req, res) => {
   try {
-    const post = new Post(req.body);
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content
+    });
     await post.save();
     res.status(201).json(post);
   } catch (err) {
@@ -47,6 +51,7 @@ app.post('/posts', async (req, res) => {
   }
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

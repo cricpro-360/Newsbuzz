@@ -69,17 +69,24 @@
 }
 
 
-    function loadPosts() {
-      fetch(`${API_URL}/posts`)
-        .then(res => res.json())
-        .then(posts => {
-          const postDiv = document.getElementById('posts');
-          postDiv.innerHTML = '';
-
-          if (!posts || posts.length === 0) {
-            postDiv.innerHTML = "<p class='no-posts'>No posts found. Be the first to create one!</p>";
-            return;
-          }
+    function loadPosts if (post.imageUrl) {
+  postDiv.innerHTML += `
+    <div class="post">
+      <h3>${post.title}</h3>
+      <img src="${API_URL}${post.imageUrl}" style="max-width:100%;border-radius:8px;">
+      <p>${post.content}</p>
+      <small>Posted on ${date}</small>
+    </div>
+  `;
+} else {
+  postDiv.innerHTML += `
+    <div class="post">
+      <h3>${post.title}</h3>
+      <p>${post.content}</p>
+      <small>Posted on ${date}</small>
+    </div>
+  `;
+    }
 
           posts.forEach(post => {
             const date = new Date(post.createdAt).toLocaleString();

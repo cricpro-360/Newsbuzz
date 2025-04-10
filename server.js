@@ -1,65 +1,47 @@
-// Import required modules
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-require('dotenv').config();  // Load environment variables from .env file
+require('dotenv').config();
 
-// Create an instance of Express app
+mongoose.set('strictQuery', true); // Suppress Mongoose 7 warning
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Use body-parser middleware to parse incoming JSON requests
-app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
 
-// Connect to MongoDB Atlas using the DB URI from environment variables
-const dbURI = process.env.DB_URI;
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.log('MongoDB Error:', err));
 
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// Schema
+const Post = mongoose.model('Post', new mongoose.Schema({
+  title: String,
+  content: String
+}, { timestamps: true }));
 
-// Define the schema for posts (title, content, and date)
-const postSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  date: { type: Date, default: Date.now }
-});
-
-// Create a model based on the schema
-const Post = mongoose.model('Post', postSchema);
-
-// Route to get all posts (GET /posts)
+// Routes
 app.get('/posts', async (req, res) => {
-  try {
-    const posts = await Post.find();  // Fetch all posts from the database
-    res.json(posts);  // Send the posts as JSON
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching posts' });
-  }
+  const posts = await Post.find().sort({ createdAt: -1 });
+  res.json(posts);
 });
 
-// Route to create a new post (POST /posts)
 app.post('/posts', async (req, res) => {
-  const { title, content } = req.body;
-
-  // Check if title and content are provided
-  if (!title || !content) {
-    return res.status(400).json({ message: "Title and content are required" });
-  }
-
-  const newPost = new Post({ title, content });
-
   try {
-    await newPost.save();  // Save the post to the database
-    res.status(201).json(newPost);  // Send the created post as response
+    const post = new Post(req.body);
+    await post.save();
+    res.status(201).json(post);
   } catch (err) {
+    console.error('POST error:', err);
     res.status(500).json({ message: 'Error creating post' });
   }
 });
 
-// Port to listen on (default: 3000)
-const PORT = process.env.PORT || 3000;
-
-// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

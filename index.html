@@ -19,8 +19,8 @@
     const API_URL = 'https://newsbuzz-1.onrender.com';
 
     function createPost() {
-      const title = document.getElementById('title').value;
-      const content = document.getElementById('content').value;
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
 
       if (!title || !content) {
         alert("Please fill in both fields.");
@@ -34,7 +34,12 @@
         },
         body: JSON.stringify({ title, content })
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error("Server error");
+        }
+        return res.json();
+      })
       .then(() => {
         alert("Post created!");
         document.getElementById('title').value = '';
@@ -42,8 +47,8 @@
         loadPosts();
       })
       .catch(err => {
-        console.error(err);
-        alert("Error creating post");
+        console.error("Error:", err);
+        alert("Error creating post. Please try again later.");
       });
     }
 

@@ -1,3 +1,5 @@
+const multer = require('multer');
+const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -13,6 +15,14 @@ mongoose.set('strictQuery', true);
 app.use(require('cors')());
 app.use(bodyParser.json());
 
+const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+const upload = multer({ storage });
+
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -24,7 +34,8 @@ mongoose.connect(process.env.MONGODB_URI, {
 // Mongoose model
 const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
-  content: String
+  content: String,
+  imageUrl: String
 }, { timestamps: true }));
 
 // Routes
@@ -37,11 +48,13 @@ app.get('/posts', async (req, res) => {
   }
 });
 
-app.post('/posts', async (req, res) => {
+app.post('/posts', upload.single('image'), async (req, res) => {
   try {
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
     const post = new Post({
       title: req.body.title,
-      content: req.body.content
+      content: req.body.content,
+      imageUrl
     });
     await post.save();
     res.status(201).json(post);
@@ -50,6 +63,12 @@ app.post('/posts', async (req, res) => {
     res.status(500).json({ message: 'Error creating post' });
   }
 });
+
+app.use(require('cors')());
+app.use(bodyParser.json());
+
+// Serve uploaded images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Start server
 app.listen(PORT, () => {

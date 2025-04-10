@@ -1,28 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Posts</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NewsBuzz - Local News App</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <h1>Create Post</h1>
+  <input type="text" id="title" placeholder="Enter post title">
+  <textarea id="content" placeholder="Enter post content" rows="4"></textarea>
+  <button onclick="createPost()">Submit Post</button>
 
-  <div class="container">
-    <h1>Post Your Content</h1>
-    
-    <!-- Form to submit a post -->
-    <form id="postForm">
-      <input type="text" id="postTitle" placeholder="Title" required><br><br>
-      <textarea id="postContent" placeholder="Write your post..." required></textarea><br><br>
-      <button type="submit">Publish Post</button>
-    </form>
+  <h2>All Posts</h2>
+  <div id="posts"></div>
 
-    <h2>All Posts</h2>
-    <!-- List of posts -->
-    <div id="postsList"></div>
-  </div>
+  <script>
+    const API_URL = 'https://newsbuzz-1.onrender.com';
 
-  <script src="server.js"></script>
+    function createPost() {
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+
+      if (!title || !content) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      fetch(`${API_URL}/posts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title, content })
+      })
+      .then(res => res.json())
+      .then(() => {
+        alert("Post created!");
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+        loadPosts();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error creating post");
+      });
+    }
+
+    function loadPosts() {
+      fetch(`${API_URL}/posts`)
+        .then(res => res.json())
+        .then(posts => {
+          const postDiv = document.getElementById('posts');
+          postDiv.innerHTML = '';
+          posts.forEach(post => {
+            postDiv.innerHTML += `
+              <div class="post">
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <hr>
+              </div>
+            `;
+          });
+        });
+    }
+
+    window.onload = loadPosts;
+  </script>
 </body>
 </html>

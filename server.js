@@ -3,7 +3,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-mongoose.set('strictQuery', true); // Suppress Mongoose 7 warning
+// Fix deprecation warning
+mongoose.set('strictQuery', true);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,8 +28,12 @@ const Post = mongoose.model('Post', new mongoose.Schema({
 
 // Routes
 app.get('/posts', async (req, res) => {
-  const posts = await Post.find().sort({ createdAt: -1 });
-  res.json(posts);
+  try {
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch posts' });
+  }
 });
 
 app.post('/posts', async (req, res) => {

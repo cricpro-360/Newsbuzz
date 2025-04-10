@@ -23,89 +23,82 @@
   </div>
 
   <script>
-    const API_URL = 'https://newsbuzz-1.onrender.com';
+  const API_URL = 'https://newsbuzz-1.onrender.com';
 
-    function showMessage(text, type) {
-      const msgDiv = document.getElementById('message');
-      msgDiv.textContent = text;
-      msgDiv.className = `message ${type}`;
-      msgDiv.style.display = 'block';
-      setTimeout(() => msgDiv.style.display = 'none', 4000);
-    }
-
-    function createPost() {
-  const title = document.getElementById('title').value.trim();
-  const content = document.getElementById('content').value.trim();
-  const imageFile = document.getElementById('image').files[0];
-
-  if (!title || !content) {
-    showMessage("Please fill in both fields.", "error");
-    return;
+  function showMessage(text, type) {
+    const msgDiv = document.getElementById('message');
+    msgDiv.textContent = text;
+    msgDiv.className = `message ${type}`;
+    msgDiv.style.display = 'block';
+    setTimeout(() => msgDiv.style.display = 'none', 4000);
   }
 
-  const formData = new FormData();
-  formData.append('title', title);
-  formData.append('content', content);
-  if (imageFile) {
-    formData.append('image', imageFile);
-  }
+  function createPost() {
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
+    const imageFile = document.getElementById('image').files[0];
 
-  fetch(`${API_URL}/posts`, {
-    method: 'POST',
-    body: formData
-  })
-  .then(res => res.json())
-  .then(() => {
-    showMessage("Post created successfully!", "success");
-    document.getElementById('title').value = '';
-    document.getElementById('content').value = '';
-    document.getElementById('image').value = '';
-    loadPosts();
-  })
-  .catch(err => {
-    console.error("Error:", err);
-    showMessage("Error creating post. Please try again later.", "error");
-  });
-}
-
-
-    function loadPosts if (post.imageUrl) {
-  postDiv.innerHTML += `
-    <div class="post">
-      <h3>${post.title}</h3>
-      <img src="${API_URL}${post.imageUrl}" style="max-width:100%;border-radius:8px;">
-      <p>${post.content}</p>
-      <small>Posted on ${date}</small>
-    </div>
-  `;
-} else {
-  postDiv.innerHTML += `
-    <div class="post">
-      <h3>${post.title}</h3>
-      <p>${post.content}</p>
-      <small>Posted on ${date}</small>
-    </div>
-  `;
+    if (!title || !content) {
+      showMessage("Please fill in both fields.", "error");
+      return;
     }
 
-          posts.forEach(post => {
-            const date = new Date(post.createdAt).toLocaleString();
-            postDiv.innerHTML += `
-              <div class="post">
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <small>Posted on ${date}</small>
-              </div>
-            `;
-          });
-        })
-        .catch(err => {
-          console.error("Failed to load posts:", err);
-          document.getElementById('posts').innerHTML = "<p class='error-text'>Failed to load posts.</p>";
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+
+    fetch(`${API_URL}/posts`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(() => {
+      showMessage("Post created successfully!", "success");
+      document.getElementById('title').value = '';
+      document.getElementById('content').value = '';
+      document.getElementById('image').value = '';
+      loadPosts();
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      showMessage("Error creating post. Please try again later.", "error");
+    });
+  }
+
+  function loadPosts() {
+    fetch(`${API_URL}/posts`)
+      .then(res => res.json())
+      .then(posts => {
+        const postDiv = document.getElementById('posts');
+        postDiv.innerHTML = '';
+
+        if (!posts || posts.length === 0) {
+          postDiv.innerHTML = "<p class='no-posts'>No posts found. Be the first to create one!</p>";
+          return;
+        }
+
+        posts.forEach(post => {
+          const date = new Date(post.createdAt).toLocaleString();
+          postDiv.innerHTML += `
+            <div class="post">
+              <h3>${post.title}</h3>
+              ${post.imageUrl ? `<img src="${API_URL}${post.imageUrl}" style="max-width:100%;border-radius:8px;">` : ''}
+              <p>${post.content}</p>
+              <small>Posted on ${date}</small>
+            </div>
+          `;
         });
-    }
+      })
+      .catch(err => {
+        console.error("Failed to load posts:", err);
+        document.getElementById('posts').innerHTML = "<p class='error-text'>Failed to load posts.</p>";
+      });
+  }
 
-    window.onload = loadPosts;
+  window.onload = loadPosts;
   </script>
 </body>
 </html>

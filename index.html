@@ -17,7 +17,9 @@
   <button onclick="createPost()">Submit Post</button>
 
   <h2>All Posts</h2>
-  <div id="posts"></div>
+  <div id="posts" class="post-container">
+    <p class="no-posts">Loading posts...</p>
+  </div>
 
   <script>
     const API_URL = 'https://newsbuzz-1.onrender.com';
@@ -27,10 +29,7 @@
       msgDiv.textContent = text;
       msgDiv.className = `message ${type}`;
       msgDiv.style.display = 'block';
-
-      setTimeout(() => {
-        msgDiv.style.display = 'none';
-      }, 4000);
+      setTimeout(() => msgDiv.style.display = 'none', 4000);
     }
 
     function createPost() {
@@ -44,15 +43,11 @@
 
       fetch(`${API_URL}/posts`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, content })
       })
       .then(res => {
-        if (!res.ok) {
-          throw new Error("Server error");
-        }
+        if (!res.ok) throw new Error("Server error");
         return res.json();
       })
       .then(() => {
@@ -74,8 +69,8 @@
           const postDiv = document.getElementById('posts');
           postDiv.innerHTML = '';
 
-          if (posts.length === 0) {
-            postDiv.innerHTML = "<p>No posts found.</p>";
+          if (!posts || posts.length === 0) {
+            postDiv.innerHTML = "<p class='no-posts'>No posts found. Be the first to create one!</p>";
             return;
           }
 
@@ -92,7 +87,7 @@
         })
         .catch(err => {
           console.error("Failed to load posts:", err);
-          document.getElementById('posts').innerHTML = "<p style='color:red;'>Failed to load posts.</p>";
+          document.getElementById('posts').innerHTML = "<p class='error-text'>Failed to load posts.</p>";
         });
     }
 

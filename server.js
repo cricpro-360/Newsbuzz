@@ -37,10 +37,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('MongoDB Connected'))
 .catch((err) => console.error('MongoDB Connection Error:', err));
 
-// Mongoose model
 const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
-  content: String
+  content: String,
+  imageUrl: String
 }, { timestamps: true }));
 
 // Routes

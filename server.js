@@ -2,34 +2,41 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const path = require('path');
 const cors = require('cors');
-const dotenv = require('dotenv');
+require('dotenv').config();
+
+// Cloudinary setup
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-dotenv.config();
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_URL.split('@')[1],
+  api_key: process.env.CLOUDINARY_URL.split('//')[1].split(':')[0],
+  api_secret: process.env.CLOUDINARY_URL.split(':')[2].split('@')[0]
+});
+
+// Multer storage with Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'newsbuzz',
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+    transformation: [{ width: 800, height: 600, crop: 'limit' }]
+  }
+});
+
+const upload = multer({ storage });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Cloudinary auto-config from CLOUDINARY_URL
-cloudinary.config();
-
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'newsbuzz_uploads',
-    allowed_formats: ['jpg', 'jpeg', 'png'],
-  },
-});
-
-const upload = multer({ storage });
+mongoose.set('strictQuery', true);
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection
-mongoose.set('strictQuery', true);
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true

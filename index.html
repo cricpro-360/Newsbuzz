@@ -1,28 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="kn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NewsBuzz - Local News App</title>
+  <title>NewsBuzz - ಸ್ಥಳೀಯ ಸುದ್ದಿ ಅಪ್ಲಿಕೇಶನ್</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Create Post</h1>
+  <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>  <!-- Message Box -->  <div id="message" class="message"></div>  <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
+  <textarea id="content" placeholder="ವಿಷಯ ನಮೂದಿಸಿ" rows="4"></textarea>
+  <input type="file" id="image" accept="image/*">  <select id="location">
+    <option value="">ಲೊಕೇಶನ್ ಆಯ್ಕೆಮಾಡಿ</option>
+    <option value="ಬೆಂಗಳೂರು">ಬೆಂಗಳೂರು</option>
+    <option value="ಮೈಸೂರು">ಮೈಸೂರು</option>
+    <option value="ಹುಬ್ಬಳ್ಳಿ">ಹುಬ್ಬಳ್ಳಿ</option>
+    <option value="ಮಂಗಳೂರು">ಮಂಗಳೂರು</option>
+  </select><button onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
 
-  <!-- Message Box -->
-  <div id="message" class="message"></div>
-
-  <input type="text" id="title" placeholder="Enter post title">
-  <textarea id="content" placeholder="Enter post content" rows="4"></textarea>
-  <input type="file" id="image" accept="image/*">
-  <button onclick="createPost()">Submit Post</button>
-
-  <h2>All Posts</h2>
-  <div id="posts" class="post-container">
-    <p class="no-posts">Loading posts...</p>
-  </div>
-
-  <script>
+  <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>  <select id="filter-location" onchange="loadPosts()">
+    <option value="">ಎಲ್ಲಾ ಲೊಕೇಶನ್‌ಗಳು</option>
+    <option value="ಬೆಂಗಳೂರು">ಬೆಂಗಳೂರು</option>
+    <option value="ಮೈಸೂರು">ಮೈಸೂರು</option>
+    <option value="ಹುಬ್ಬಳ್ಳಿ">ಹುಬ್ಬಳ್ಳಿ</option>
+    <option value="ಮಂಗಳೂರು">ಮಂಗಳೂರು</option>
+  </select>  <div id="posts" class="post-container">
+    <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
+  </div>  <script>
     const API_URL = 'https://newsbuzz-1.onrender.com';
 
     function showMessage(text, type) {
@@ -34,72 +36,81 @@
     }
 
     function createPost() {
-  const title = document.getElementById('title').value.trim();
-  const content = document.getElementById('content').value.trim();
-  const imageFile = document.getElementById('image').files[0];
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      const location = document.getElementById('location').value.trim();
+      const imageFile = document.getElementById('image').files[0];
 
-  if (!title || !content) {
-    showMessage("Please fill in both fields.", "error");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('title', title);
-  formData.append('content', content);
-  if (imageFile) formData.append('image', imageFile);
-
-  fetch(`${API_URL}/posts`, {
-    method: 'POST',
-    body: formData
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Server error");
-    return res.json();
-  })
-  .then(() => {
-    showMessage("Post created successfully!", "success");
-    document.getElementById('title').value = '';
-    document.getElementById('content').value = '';
-    document.getElementById('image').value = '';
-    loadPosts();
-  })
-  .catch(err => {
-    console.error("Error:", err);
-    showMessage("Error creating post. Please try again later.", "error");
-  });
-    }
-
-    function loadPosts() {
-  fetch(`${API_URL}/posts`)
-    .then(res => res.json())
-    .then(posts => {
-      const postDiv = document.getElementById('posts');
-      postDiv.innerHTML = '';
-
-      if (!posts || posts.length === 0) {
-        postDiv.innerHTML = "<p class='no-posts'>No posts found. Be the first to create one!</p>";
+      if (!title || !content || !location) {
+        showMessage("ದಯವಿಟ್ಟು ಶೀರ್ಷಿಕೆ, ವಿಷಯ ಮತ್ತು ಲೊಕೇಶನ್ ಆಯ್ಕೆಮಾಡಿ.", "error");
         return;
       }
 
-      posts.forEach(post => {
-        const date = new Date(post.createdAt).toLocaleString();
-        postDiv.innerHTML += `
-          <div class="post">
-            <h3>${post.title}</h3>
-            <p>${post.content}</p>
-            ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" class="post-image" onerror="this.style.display='none'">` : ''}
-            <small>Posted on ${date}</small>
-          </div>
-        `;
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      formData.append('location', location);
+      if (imageFile) formData.append('image', imageFile);
+
+      fetch(`${API_URL}/posts`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Server error");
+        return res.json();
+      })
+      .then(() => {
+        showMessage("ಪೋಸ್ಟ್ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!", "success");
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+        document.getElementById('location').value = '';
+        document.getElementById('image').value = '';
+        loadPosts();
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        showMessage("ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸುವಲ್ಲಿ ದೋಷ ಸಂಭವಿಸಿದೆ. ದಯವಿಟ್ಟು ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.", "error");
       });
-    })
-    .catch(err => {
-      console.error("Failed to load posts:", err);
-      document.getElementById('posts').innerHTML = "<p class='error-text'>Failed to load posts.</p>";
-    });
+    }
+
+    function loadPosts() {
+      const selectedLocation = document.getElementById('filter-location').value;
+      let url = `${API_URL}/posts`;
+      if (selectedLocation) {
+        url += `?location=${encodeURIComponent(selectedLocation)}`;
+      }
+
+      fetch(url)
+        .then(res => res.json())
+        .then(posts => {
+          const postDiv = document.getElementById('posts');
+          postDiv.innerHTML = '';
+
+          if (!posts || posts.length === 0) {
+            postDiv.innerHTML = "<p class='no-posts'>ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ. ಮೊದಲು ನೀವು ರಚಿಸಿ!</p>";
+            return;
+          }
+
+          posts.forEach(post => {
+            const date = new Date(post.createdAt).toLocaleString();
+            postDiv.innerHTML += `
+              <div class="post">
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <p><strong>ಲೊಕೇಶನ್:</strong> ${post.location || 'ಅಪರಿಚಿತ'}</p>
+                ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" class="post-image" onerror="this.style.display='none'">` : ''}
+                <small>Posted on ${date}</small>
+              </div>
+            `;
+          });
+        })
+        .catch(err => {
+          console.error("Failed to load posts:", err);
+          document.getElementById('posts').innerHTML = "<p class='error-text'>ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>";
+        });
     }
 
     window.onload = loadPosts;
-  </script>
-</body>
+  </script></body>
 </html>

@@ -87,7 +87,8 @@
           <div class="post">
             <h3>${post.title}</h3>
             <p>${post.content}</p>
-            ${post.imageUrl ? `<img src="${API_URL}${post.imageUrl}" alt="Post Image" class="post-image">` : ''}
+            ${post.imageUrl ? `<img src="${API_URL}${post.imageUrl.startsWith('/') ? post.imageUrl : '/' + post.imageUrl}" alt="Post Image" class="post-image">` : ''}
+ : ''}
             <small>Posted on ${date}</small>
           </div>
         `;

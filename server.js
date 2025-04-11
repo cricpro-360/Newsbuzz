@@ -11,7 +11,7 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 cloudinary.config({
-  cloud_name: 'Newsbuzz',
+  cloud_name: 'dods2fuur',
   api_key: '974131963864589',
   api_secret: 'f5HXawyekgvI2QSECiB7jSHwY2A'
 });

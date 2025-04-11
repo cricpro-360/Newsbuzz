@@ -58,7 +58,7 @@ app.get('/posts', async (req, res) => {
   try {
     const { location } = req.query;
     const query = location? { location } : {};
-    const posts = await Post.find().sort({ createdAt: -1 });
+    const posts = await Post.find(query).sort({ createdAt: -1 });
     res.json(posts);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch posts' });

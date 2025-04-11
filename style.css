@@ -93,6 +93,7 @@ h1, h2 {
    margin: 10px 0;
    border-radius: 10px;
    object-fit: cover;
+   text-align: center;
   }
 
   

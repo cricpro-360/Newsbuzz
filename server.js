@@ -71,7 +71,7 @@ app.post('/posts', upload.single('image'), async (req, res) => {
       title: req.body.title,
       content: req.body.content,
       imageUrl: req.file ? req.file.path : null
-      location: req. body.location
+      location: req.body.location
     });
     await post.save();
     res.status(201).json(post);

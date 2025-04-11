@@ -86,9 +86,8 @@
         postDiv.innerHTML += `
           <div class="post">
             <h3>${post.title}</h3>
-            <p id="${postId}" class="post-content collapsed">${post.content}</p>
+            <p>${post.content}</p>
             ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" class="post-image" onerror="this.style.display='none'">` : ''}
-            <button onclick="toggleContent('${postId}')">Read More</button>
             <small>Posted on ${date}</small>
           </div>
         `;
@@ -98,11 +97,6 @@
       console.error("Failed to load posts:", err);
       document.getElementById('posts').innerHTML = "<p class='error-text'>Failed to load posts.</p>";
     });
-        }
-    
-    function toggleContent(id) {
-  const content = document.getElementById(id);
-  content.classList.toggle('collapsed');
     }
 
     window.onload = loadPosts;

@@ -49,11 +49,15 @@ const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
   content: String,
   imageUrl: String
-}, { timestamps: true }));
+  location: String
+}, { timestamps: true null
+  
 
 // Routes
 app.get('/posts', async (req, res) => {
   try {
+    const { location } = req.query;
+    const query = location? { location } : {};
     const posts = await Post.find().sort({ createdAt: -1 });
     res.json(posts);
   } catch (err) {
@@ -67,6 +71,7 @@ app.post('/posts', upload.single('image'), async (req, res) => {
       title: req.body.title,
       content: req.body.content,
       imageUrl: req.file ? req.file.path : null
+      location: req. body.location
     });
     await post.save();
     res.status(201).json(post);

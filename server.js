@@ -48,9 +48,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
   content: String,
-  imageUrl: String
+  imageUrl: String,
   location: String
-}, { timestamps: true null
+}, { timestamps: true null}));
   
 
 // Routes

@@ -50,7 +50,7 @@ const Post = mongoose.model('Post', new mongoose.Schema({
   content: String,
   imageUrl: String,
   location: String
-}, { timestamps: true null}));
+}, { timestamps: true }));
   
 
 // Routes

@@ -92,6 +92,7 @@ h1, h2 {
   margin-top: 10px;
   border-radius: 10px;
   object-fit: cover;
+  max-height: 250px;
 }
 
   

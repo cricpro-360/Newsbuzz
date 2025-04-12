@@ -1,12 +1,11 @@
 const express = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 
-// Cloudinary setup
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
@@ -16,7 +15,6 @@ cloudinary.config({
   api_secret: 'f5HXawyekgvI2QSECiB7jSHwY2A'
 });
 
-// Multer storage with Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
@@ -32,11 +30,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 mongoose.set('strictQuery', true);
-
 app.use(cors());
 app.use(bodyParser.json());
 
-// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -44,20 +40,24 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('MongoDB Connected'))
 .catch((err) => console.error('MongoDB Connection Error:', err));
 
-// Mongoose model
+// Schema with full location
 const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
   content: String,
   imageUrl: String,
-  location: String
+  state: String,
+  district: String,
+  taluk: String
 }, { timestamps: true }));
-  
 
-// Routes
+// GET: Filter by state/district/taluk
 app.get('/posts', async (req, res) => {
   try {
-    const { location } = req.query;
-    const query = location? { location } : {};
+    const { state, district, taluk } = req.query;
+    const query = {};
+    if (state) query.state = state;
+    if (district) query.district = district;
+    if (taluk) query.taluk = taluk;
     const posts = await Post.find(query).sort({ createdAt: -1 });
     res.json(posts);
   } catch (err) {
@@ -65,13 +65,16 @@ app.get('/posts', async (req, res) => {
   }
 });
 
+// POST: Create post with location
 app.post('/posts', upload.single('image'), async (req, res) => {
   try {
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
       imageUrl: req.file ? req.file.path : null,
-      location: req.body.location
+      state: req.body.state,
+      district: req.body.district,
+      taluk: req.body.taluk
     });
     await post.save();
     res.status(201).json(post);

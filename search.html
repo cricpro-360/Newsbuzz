@@ -86,6 +86,50 @@
     .label {
       font-size: 14px;
     }
+
+    /* Small devices (phones) */
+@media (max-width: 480px) {
+  .label {
+    font-size: 12px;
+  }
+  .category-card {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .label {
+    font-size: 14px;
+  }
+  .category-card {
+    padding: 10px 14px;
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 769px) {
+  .label {
+    font-size: 16px;
+  }
+  .category-card {
+    padding: 12px 16px;
+  }
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+    
   </style>
 </head>
 <body>

@@ -83,6 +83,17 @@ app.post('/posts', upload.single('image'), async (req, res) => {
   }
 });
 
+// Get single post by ID
+app.get('/posts/:id', async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: 'Error retrieving post' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

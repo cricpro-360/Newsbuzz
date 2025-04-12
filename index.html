@@ -6,28 +6,107 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>  <!-- Message Box -->  <div id="message" class="message"></div>  <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
+  <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>
+  <div id="message" class="message"></div>  <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
   <textarea id="content" placeholder="ವಿಷಯ ನಮೂದಿಸಿ" rows="4"></textarea>
-  <input type="file" id="image" accept="image/*">  <select id="location">
-    <option value="">ಲೊಕೇಶನ್ ಆಯ್ಕೆಮಾಡಿ</option>
-    <option value="ಬೆಂಗಳೂರು">ಬೆಂಗಳೂರು</option>
-    <option value="ಮೈಸೂರು">ಮೈಸೂರು</option>
-    <option value="ಹುಬ್ಬಳ್ಳಿ">ಹುಬ್ಬಳ್ಳಿ</option>
-    <option value="ಮಂಗಳೂರು">ಮಂಗಳೂರು</option>
-    <option value="ಮೈಸೂರು ನಗರ">ಮೈಸೂರು ನಗರ</option>
+  <input type="file" id="image" accept="image/*">  <select id="state">
+    <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+    <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+  </select>
+  <select id="district">
+    <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+  </select>
+  <select id="taluk">
+    <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
   </select><button onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
 
-  <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>  <select id="filter-location" onchange="loadPosts()">
-    <option value="">ಎಲ್ಲಾ ಲೊಕೇಶನ್‌ಗಳು</option>
-    <option value="ಬೆಂಗಳೂರು">ಬೆಂಗಳೂರು</option>
-    <option value="ಮೈಸೂರು">ಮೈಸೂರು</option>
-    <option value="ಹುಬ್ಬಳ್ಳಿ">ಹುಬ್ಬಳ್ಳಿ</option>
-    <option value="ಮಂಗಳೂರು">ಮಂಗಳೂರು</option>
-    <option value="ಮೈಸೂರು ನಗರ">ಮೈಸೂರು ನಗರ</option>
+  <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
+  <select id="state-filter" onchange="updateDistrictFilter(); loadPosts();">
+    <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+    <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+  </select>
+  <select id="district-filter" onchange="updateTalukFilter(); loadPosts();">
+    <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+  </select>
+  <select id="taluk-filter" onchange="loadPosts();">
+    <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
   </select>  <div id="posts" class="post-container">
     <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
   </div>  <script>
     const API_URL = 'https://newsbuzz-1.onrender.com';
+
+    const locationData = {
+      'ಕರ್ನಾಟಕ': {
+        'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
+        'ಹುಬ್ಬಳ್ಳಿ': ['ಹುಬ್ಬಳ್ಳಿ ಉತ್ತರ', 'ನವಲಗುಂದ']
+      }
+    };
+
+    function updateDistricts() {
+      const state = document.getElementById('state').value;
+      const districtSelect = document.getElementById('district');
+      const talukSelect = document.getElementById('taluk');
+      districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+      if (locationData[state]) {
+        Object.keys(locationData[state]).forEach(district => {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
+    }
+
+    function updateTaluks() {
+      const state = document.getElementById('state').value;
+      const district = document.getElementById('district').value;
+      const talukSelect = document.getElementById('taluk');
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+      if (locationData[state] && locationData[state][district]) {
+        locationData[state][district].forEach(taluk => {
+          const option = document.createElement('option');
+          option.value = taluk;
+          option.textContent = taluk;
+          talukSelect.appendChild(option);
+        });
+      }
+    }
+
+    function updateDistrictFilter() {
+      const state = document.getElementById('state-filter').value;
+      const districtSelect = document.getElementById('district-filter');
+      const talukSelect = document.getElementById('taluk-filter');
+      districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+      if (locationData[state]) {
+        Object.keys(locationData[state]).forEach(district => {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
+    }
+
+    function updateTalukFilter() {
+      const state = document.getElementById('state-filter').value;
+      const district = document.getElementById('district-filter').value;
+      const talukSelect = document.getElementById('taluk-filter');
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+      if (locationData[state] && locationData[state][district]) {
+        locationData[state][district].forEach(taluk => {
+          const option = document.createElement('option');
+          option.value = taluk;
+          option.textContent = taluk;
+          talukSelect.appendChild(option);
+        });
+      }
+    }
 
     function showMessage(text, type) {
       const msgDiv = document.getElementById('message');
@@ -40,18 +119,22 @@
     function createPost() {
       const title = document.getElementById('title').value.trim();
       const content = document.getElementById('content').value.trim();
-      const location = document.getElementById('location').value.trim();
+      const state = document.getElementById('state').value.trim();
+      const district = document.getElementById('district').value.trim();
+      const taluk = document.getElementById('taluk').value.trim();
       const imageFile = document.getElementById('image').files[0];
 
-      if (!title || !content || !location) {
-        showMessage("ದಯವಿಟ್ಟು ಶೀರ್ಷಿಕೆ, ವಿಷಯ ಮತ್ತು ಲೊಕೇಶನ್ ಆಯ್ಕೆಮಾಡಿ.", "error");
+      if (!title || !content || !state || !district || !taluk) {
+        showMessage("ದಯವಿಟ್ಟು ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ.", "error");
         return;
       }
 
       const formData = new FormData();
       formData.append('title', title);
       formData.append('content', content);
-      formData.append('location', location);
+      formData.append('state', state);
+      formData.append('district', district);
+      formData.append('taluk', taluk);
       if (imageFile) formData.append('image', imageFile);
 
       fetch(`${API_URL}/posts`, {
@@ -66,21 +149,32 @@
         showMessage("ಪೋಸ್ಟ್ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!", "success");
         document.getElementById('title').value = '';
         document.getElementById('content').value = '';
-        document.getElementById('location').value = '';
+        document.getElementById('state').value = '';
+        document.getElementById('district').value = '';
+        document.getElementById('taluk').value = '';
         document.getElementById('image').value = '';
         loadPosts();
       })
       .catch(err => {
         console.error("Error:", err);
-        showMessage("ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸುವಲ್ಲಿ ದೋಷ ಸಂಭವಿಸಿದೆ. ದಯವಿಟ್ಟು ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.", "error");
+        showMessage("ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸುವಲ್ಲಿ ದೋಷ ಸಂಭವಿಸಿದೆ.", "error");
       });
     }
 
     function loadPosts() {
-      const selectedLocation = document.getElementById('filter-location').value;
+      const state = document.getElementById('state-filter').value;
+      const district = document.getElementById('district-filter').value;
+      const taluk = document.getElementById('taluk-filter').value;
+
       let url = `${API_URL}/posts`;
-      if (selectedLocation) {
-        url += `?location=${encodeURIComponent(selectedLocation)}`;
+      const params = [];
+
+      if (state) params.push(`state=${encodeURIComponent(state)}`);
+      if (district) params.push(`district=${encodeURIComponent(district)}`);
+      if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
+
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
       }
 
       fetch(url)
@@ -90,7 +184,7 @@
           postDiv.innerHTML = '';
 
           if (!posts || posts.length === 0) {
-            postDiv.innerHTML = "<p class='no-posts'>ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ. ಮೊದಲು ನೀವು ರಚಿಸಿ!</p>";
+            postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
             return;
           }
 
@@ -100,7 +194,7 @@
               <div class="post">
                 <h3>${post.title}</h3>
                 <p>${post.content}</p>
-                <p><strong>ಲೊಕೇಶನ್:</strong> ${post.location || 'ಅಪರಿಚಿತ'}</p>
+                <p><strong>ರಾಜ್ಯ:</strong> ${post.state || '-'}, <strong>ಜಿಲ್ಲೆ:</strong> ${post.district || '-'}, <strong>ತಾಲೂಕು:</strong> ${post.taluk || '-'}</p>
                 ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" class="post-image" onerror="this.style.display='none'">` : ''}
                 <small>Posted on ${date}</small>
               </div>
@@ -109,10 +203,12 @@
         })
         .catch(err => {
           console.error("Failed to load posts:", err);
-          document.getElementById('posts').innerHTML = "<p class='error-text'>ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>";
+          document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
         });
     }
 
+    document.getElementById('state').addEventListener('change', updateDistricts);
+    document.getElementById('district').addEventListener('change', updateTaluks);
     window.onload = loadPosts;
   </script></body>
 </html>

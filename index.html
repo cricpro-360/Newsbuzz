@@ -124,8 +124,8 @@
       const taluk = document.getElementById('taluk').value.trim();
       const imageFile = document.getElementById('image').files[0];
 
-      if (!title || !content || !state || !district || !taluk) {
-        showMessage("ದಯವಿಟ್ಟು ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ.", "error");
+      if (!title || !content || !state || !district) {
+        showMessage("ದಯವಿಟ್ಟು ಶೀರ್ಷಿಕೆ ವಿವರಗಳನ್ನು ರಾಜ್ಯ ಮತ್ತು ಜಿಲ್ಲೆ ಭರ್ತಿ ಮಾಡಿ.", "error");
         return;
       }
 
@@ -135,6 +135,9 @@
       formData.append('state', state);
       formData.append('district', district);
       formData.append('taluk', taluk);
+      if (taluk) {
+    formData.append('taluk', taluk);
+      }
       if (imageFile) formData.append('image', imageFile);
 
       fetch(`${API_URL}/posts`, {

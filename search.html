@@ -55,7 +55,7 @@
       gap: 12px;
       padding-bottom: 10px;
       scrollbar-width: none; /* Firefox */
-      width: 300px;
+      width: 100%;
     }
 
     .scroll-container::-webkit-scrollbar {
@@ -90,7 +90,7 @@
     }
 
     /* Small devices (phones) */
-@media (min-width: 600px) {
+@media (max-width: 600px) {
       h2 {
         font-size: 20px;
       }
@@ -109,7 +109,19 @@
       }
     }
 
-    @media (min-width: 900px) {
+    @media (max-width: 500px){
+      .scroll-container{
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 400px){
+      .scroll-container{
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 900px) {
       .scroll-container {
         gap: 16px;
       }

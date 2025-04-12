@@ -134,7 +134,6 @@
       formData.append('content', content);
       formData.append('state', state);
       formData.append('district', district);
-      formData.append('taluk', taluk);
       if (taluk) {
     formData.append('taluk', taluk);
       }
@@ -165,7 +164,7 @@
     }
 
     function loadPosts() {
-      const state = document.getElementById('state-filter').value;
+      const state = documet.getElementById('state-filter').value;
       const district = document.getElementById('district-filter').value;
       const taluk = document.getElementById('taluk-filter').value;
 

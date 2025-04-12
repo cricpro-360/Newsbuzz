@@ -96,7 +96,7 @@ h1, h2 {
 .posts-images {
   width: 100%;
   height: auto;
-  max-width: 600px; /* Optional: limit max size on large screens */
+  width: 1000px; /* Optional: limit max size on large screens */
   display: block;
   object-fit: cover;
   border-radius: 10px; /* optional styling */

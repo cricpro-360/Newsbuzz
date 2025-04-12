@@ -94,6 +94,24 @@ app.get('/posts/:id', async (req, res) => {
   }
 });
 
+// Get User by ID
+app.get('/users/:id', async (req, res) => {
+  const user = await User.findById(req.params.id);
+  res.json(user);
+});
+
+// Update User
+app.put('/users/:id', async (req, res) => {
+  const updated = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  res.json(updated);
+});
+
+// Get Posts by User ID
+app.get('/posts/user/:userId', async (req, res) => {
+  const posts = await Post.find({ userId: req.params.userId });
+  res.json(posts);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

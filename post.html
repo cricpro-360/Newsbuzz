@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <title>ಪೂರ್ಣ ಪೋಸ್ಟ್</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    img { max-width: 100%; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div id="post-container">ಪೋಸ್ಟ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</div>
+
+  <script>
+    const API_URL = 'https://newsbuzz-1.onrender.com';
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+
+    fetch(`${API_URL}/posts/${postId}`)
+      .then(res => res.json())
+      .then(post => {
+        const container = document.getElementById('post-container');
+        container.innerHTML = `
+          <h1>${post.title}</h1>
+          <p>${post.content}</p>
+          ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image">` : ''}
+          <p><strong>ರಾಜ್ಯ:</strong> ${post.state}, <strong>ಜಿಲ್ಲೆ:</strong> ${post.district}, <strong>ತಾಲೂಕು:</strong> ${post.taluk}</p>
+        `;
+      })
+      .catch(() => {
+        document.getElementById('post-container').innerHTML = '<p>ಪೋಸ್ಟ್ ಲಭ್ಯವಿಲ್ಲ.</p>';
+      });
+  </script>
+</body>
+</html>

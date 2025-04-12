@@ -5,8 +5,13 @@
   <title>NewsBuzz - ಸ್ಥಳೀಯ ಸುದ್ದಿ ಅಪ್ಲಿಕೇಶನ್</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-      .post { cursor: pointer; }
-      .full-content { display: none; }
+  .preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   </style>
 </head>
 <body>
@@ -168,19 +173,6 @@
     }
 
 
-    function togglePost(element) {
-  const short = element.querySelector('.post-content');
-  const full = element.querySelector('.full-content');
-
-  if (full.style.display === 'none') {
-    short.style.display = 'none';
-    full.style.display = 'block';
-  } else {
-    full.style.display = 'none';
-    short.style.display = 'block';
-  }
-    }
-
     function loadPosts() {
       const state = document.getElementById('state-filter').value;
       const district = document.getElementById('district-filter').value;
@@ -209,19 +201,19 @@
           }
 
           posts.forEach(post => {
-          const date = new Date(post.createdAt).toLocaleString();
-          const shortContent = post.content.split('')[0];
+  const date = new Date(post.createdAt).toLocaleString();
+  const firstWord = post.content.split(' ')[0];
 
-          postDiv.innerHTML += `
-            <div class="post" onclick="togglePost(this)">  
-              <h3>${post.title}</h3>  
-              <p class="post-content">${shortContent}...</p>
-              <p class="full-content">${post.content}</p>
-              ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" class="post-image" onerror="this.style.display='none'">` : ''}  
-              <small>Posted on ${date}</small>  
-            </div>  
-          `;
-        });
+  postDiv.innerHTML += `
+    <div class="post">
+      <h3>${post.title}</h3>
+      <p class="preview">${post.content}</p>
+      <a href="post.html?id=${post._id}" target="_blank">ಮತ್ತಷ್ಟು ಓದಿ</a>
+      ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image">` : ''}
+      <small>Posted on ${date}</small>
+    </div>
+  `;
+});
       })
         .catch(err => {
           console.error("Failed to load posts:", err);

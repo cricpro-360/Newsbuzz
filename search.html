@@ -88,17 +88,31 @@
     }
 
     /* Small devices (phones) */
-@media (max-width: 480px) {
-  .label {
-    font-size: 12px;
+@media only screen and (max-width: 480px) {
+  body {
+    padding: 10px;
   }
+
+  .scroll-container {
+    gap: 8px;
+  }
+
   .category-card {
     padding: 8px 10px;
-    gap: 6px;
+    border-radius: 8px;
   }
+
   .icon {
     width: 18px;
     height: 18px;
+  }
+
+  .label {
+    font-size: 13px;
+  }
+
+  h2 {
+    font-size: 18px;
   }
 }
 

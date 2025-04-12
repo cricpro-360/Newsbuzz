@@ -210,7 +210,7 @@
 
           posts.forEach(post => {
           const date = new Date(post.createdAt).toLocaleString();
-          const shortContent = post.content.slice(0, 100);
+          const shortContent = post.content.slice('')[0];
 
           postDiv.innerHTML += `
             <div class="post" onclick="togglePost(this)">  

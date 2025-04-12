@@ -28,7 +28,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       cursor: pointer;
       transition: 0.3s ease;
-      width: 300px;
+    
     }
     .category-item:hover {
       background: #eef;
@@ -89,64 +89,39 @@
     }
 
     /* Small devices (phones) */
-@media only screen and (max-width: 480px) {
-  body {
-    padding: 10px;
-  }
+@media (min-width: 600px) {
+      h2 {
+        font-size: 20px;
+      }
 
-  .scroll-container {
-    gap: 8px;
-  }
+      .label {
+        font-size: 16px;
+      }
 
-  .category-card {
-    padding: 8px 10px;
-    border-radius: 8px;
-  }
+      .icon {
+        width: 24px;
+        height: 24px;
+      }
 
-  .icon {
-    width: 18px;
-    height: 18px;
-  }
+      .category-card, .category-item {
+        padding: 14px 18px;
+      }
+    }
 
-  .label {
-    font-size: 13px;
-  }
+    @media (min-width: 900px) {
+      .scroll-container {
+        gap: 16px;
+      }
 
-  h2 {
-    font-size: 18px;
-  }
-  category-item {
-    width:300px;
-  }
-}
+      .category-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
 
-/* Medium devices (tablets) */
-@media (min-width: 481px) and (max-width: 768px) {
-  .label {
-    font-size: 14px;
-  }
-  .category-card {
-    padding: 10px 14px;
-  }
-  .icon {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-/* Large devices (desktops) */
-@media (min-width: 769px) {
-  .label {
-    font-size: 16px;
-  }
-  .category-card {
-    padding: 12px 16px;
-  }
-  .icon {
-    width: 24px;
-    height: 24px;
-  }
-}
+      .category-item {
+        flex: 0 0 30%;
+      }
     
   </style>
 </head>

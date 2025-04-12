@@ -51,5 +51,33 @@
       window.location.href = "login.html";
     }
   </script>
+    <div class="posts-container">
+    <h2>Your Posts</h2>
+    <div id="postsList"></div>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem("userId");
+
+    fetch(`https://newsbuzz-1.onrender.com/posts/user/${userId}`)
+      .then(res => res.json())
+      .then(posts => {
+        const container = document.getElementById("postsList");
+        if (posts.length === 0) {
+          container.innerHTML = "<p>No posts yet.</p>";
+        } else {
+          posts.forEach(post => {
+            const div = document.createElement("div");
+            div.className = "post";
+            div.innerHTML = `
+              <h3>${post.title}</h3>
+              <p>${post.content}</p>
+              <small>${post.category} | ${post.location}</small>
+            `;
+            container.appendChild(div);
+          });
+        }
+      });
+  </script>
 </body>
 </html>

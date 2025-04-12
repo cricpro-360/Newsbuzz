@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <title>Categories</title>
+  <style>
+    body {
+      font-family: 'Noto Sans Kannada', sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    h2 {
+      color: #222;
+    }
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .category-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    .category-item:hover {
+      background: #eef;
+    }
+    .icon {
+      width: 24px;
+      height: 24px;
+    }
+    .label {
+      font-size: 16px;
+      color: #333;
+    }
+
+
+
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .scroll-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 12px;
+      padding-bottom: 10px;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+
+    .category-card {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .category-card:hover {
+      background: #eef;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .label {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+   
+    <h2>ಎಲ್ಲಾದಿಯ ಸುದ್ದಿ</h2>
+
+  <div class="scroll-container">
+    <div class="category-card">
+      <img src="https://img.icons8.com/color/48/cricket.png" class="icon" alt="icon">
+      <span class="label">ಕ್ರಿಕೆಟ್</span>
+    </div>
+    <div class="category-card">
+      <img src="https://img.icons8.com/color/48/whatsapp.png" class="icon" alt="icon">
+      <span class="label">ವಾಟ್ಸಾಪ್ ಸ್ಟೇಟಸ್</span>
+    </div>
+    <div class="category-card">
+      <img src="https://img.icons8.com/color/48/church.png" class="icon" alt="icon">
+      <span class="label">ಜೀವನ ಶೈಲಿ</span>
+    </div>
+    <div class="category-card">
+      <img src="https://img.icons8.com/color/48/government.png" class="icon" alt="icon">
+      <span class="label">ಸರ್ಕಾರಿ ಯೋಜನೆ</span>
+    </div>
+    <div class="category-card">
+      <img src="https://img.icons8.com/color/48/politics.png" class="icon" alt="icon">
+      <span class="label">ರಾಜಕೀಯ</span>
+    </div>
+    <div class="category-card">
+      <img src="https://img.icons8.com/color/48/microscope.png" class="icon" alt="icon">
+      <span class="label">ವೈಜ್ಞಾನಿಕ</span>
+    </div>
+    <div class="category-card">
+      <img src="https://img.icons8.com/color/48/microphone.png" class="icon" alt="icon">
+      <span class="label">ಕ್ರೀಡಾ ನ್ಯೂಸ್</span>
+    </div>
+  </div>
+
+  
+
+  <h2>ನಿಮ್ಮ ಪ್ರದೇಶದಿಂದ</h2>
+
+  <div class="category-list">
+    <div class="category-item">
+      <img src="https://img.icons8.com/color/48/news.png" class="icon" alt="icon">
+      <span class="label">ಚಟುವಟಿಕೆ ಸುದ್ದಿ</span>
+    </div>
+    <div class="category-item">
+      <img src="https://img.icons8.com/color/48/city.png" class="icon" alt="icon">
+      <span class="label">ಜಿಲ್ಲಾ ಸುದ್ದಿ</span>
+    </div>
+    <div class="category-item">
+      <img src="https://img.icons8.com/color/48/briefcase.png" class="icon" alt="icon">
+      <span class="label">ಉದ್ಯೋಗ</span>
+    </div>
+    <div class="category-item">
+      <img src="https://img.icons8.com/color/48/wedding.png" class="icon" alt="icon">
+      <span class="label">ವಧು-ವರರ ವೇದಿಕೆ</span>
+    </div>
+    <div class="category-item">
+      <img src="https://img.icons8.com/color/48/real-estate.png" class="icon" alt="icon">
+      <span class="label">ರಿಯಲ್ ಎಸ್ಟೇಟ್</span>
+    </div>
+    <div class="category-item">
+      <img src="https://img.icons8.com/color/48/shopping-cart.png" class="icon" alt="icon">
+      <span class="label">ಖರೀದಿ-ಮಾರಾಟ</span>
+    </div>
+    <div class="category-item">
+      <img src="https://img.icons8.com/color/48/gift.png" class="icon" alt="icon">
+      <span class="label">ಶುಭಾಶಯಗಳು</span>
+    </div>
+    <div class="category-item">
+      <img src="https://img.icons8.com/color/48/shop.png" class="icon" alt="icon">
+      <span class="label">ಲೋಕಲ್ ಮಾರ್ಕೆಟ್</span>
+    </div>
+  </div>
+
+</body>
+</html>

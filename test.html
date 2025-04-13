@@ -1,0 +1,9 @@
+
+<script>
+  const userPosts = await fetch(`https://newsbuzz-1.onrender.com/posts?userId=${userId}`);
+const posts = await userPosts.json();
+posts.forEach(p => {
+  display.innerHTML += `<hr><strong>Post:</strong> ${p.title}<br>${p.content}<br>`;
+});
+</script>
+

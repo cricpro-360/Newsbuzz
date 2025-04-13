@@ -1,0 +1,50 @@
+ <style>
+    body {
+      font-family: 'Noto Sans Kannada', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    #post-container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 15px;
+      color: #222;
+    }
+
+    img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      line-height: 1.6;
+      font-size: 1em;
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 1.4em;
+      }
+
+      p {
+        font-size: 0.95em;
+      }
+    }
+  </style>

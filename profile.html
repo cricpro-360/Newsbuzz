@@ -24,55 +24,70 @@
   <h3>Profile Info</h3>
   <div id="profileDisplay"></div>
 
-  <script>
-    const form = document.getElementById('profileForm');
-    const display = document.getElementById('profileDisplay');
+<script>
+  const form = document.getElementById('profileForm');
+  const display = document.getElementById('profileDisplay');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
+  // Submit or update profile
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
 
-      const response = await fetch('https://newsbuzz-1.onrender.com/profile', {
-        method: 'POST',
-        body: formData
-      });
-
-      const user = await response.json();
-      showProfile(user);
+    const response = await fetch('https://newsbuzz-1.onrender.com/profile', {
+      method: 'POST',
+      body: formData
     });
 
-    form.phone.addEventListener('blur', async () => {
-      const phone = form.phone.value;
-      if (!phone) return;
+    const user = await response.json();
 
-      const res = await fetch(`https://newsbuzz-1.onrender.com/profile/${phone}`);
-      if (!res.ok) return;
+    // Save user ID for future auto loading
+    localStorage.setItem('userId', user._id);
 
-      const user = await res.json();
-      form.username.value = user.username || '';
-      form.password.value = user.password || '';
-      showProfile(user);
-    });
+    showProfile(user);
+  });
 
-    function showProfile(user) {
-      display.innerHTML = `
-        <strong>Username:</strong> ${user.username}<br>
-        <strong>Phone:</strong> ${user.phone}<br>
-        ${user.profilePic ? `<img src="${user.profilePic}" alt="Profile Pic">` : ''}
-      `;
-    }
-    window.addEventListener('DOMContentLoaded', async () => {
-  const userId = localStorage.getItem('userId');
-  if (!userId) return;
+  // Load profile by phone number (optional search)
+  form.phone.addEventListener('blur', async () => {
+    const phone = form.phone.value;
+    if (!phone) return;
 
-  const res = await fetch(`https://newsbuzz-1.onrender.com/profile/id/${userId}`);
-  if (!res.ok) return;
+    const res = await fetch(`https://newsbuzz-1.onrender.com/profile/${phone}`);
+    if (!res.ok) return;
 
-  const user = await res.json();
-  showProfile(user);
-});
-    
-  </script>
+    const user = await res.json();
+
+    // Optional: store userId when loading by phone
+    localStorage.setItem('userId', user._id);
+
+    form.username.value = user.username || '';
+    form.password.value = user.password || '';
+    showProfile(user);
+  });
+
+  // Auto-load profile using stored userId
+  window.addEventListener('DOMContentLoaded', async () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+
+    const res = await fetch(`https://newsbuzz-1.onrender.com/profile/id/${userId}`);
+    if (!res.ok) return;
+
+    const user = await res.json();
+    form.phone.value = user.phone || '';
+    form.username.value = user.username || '';
+    form.password.value = user.password || '';
+    showProfile(user);
+  });
+
+  // Display user profile in UI
+  function showProfile(user) {
+    display.innerHTML = `
+      <strong>Username:</strong> ${user.username}<br>
+      <strong>Phone:</strong> ${user.phone}<br>
+      ${user.profilePic ? `<img src="${user.profilePic}" alt="Profile Pic">` : ''}
+    `;
+  }
+</script>
 
 </body>
 </html>

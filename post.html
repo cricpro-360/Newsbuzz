@@ -3,8 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>ಪೂರ್ಣ ಪೋಸ್ಟ್</title>
-   <link rel="stylesheet" href="post.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="" id="og-title">
+  <meta property="og:description" content="" id="og-description">
+  <meta property="og:image" content="" id="og-image">
+  <meta property="og:url" content="" id="og-url">
+  <meta property="og:type" content="article">
+
+  <link rel="stylesheet" href="post.css" />
+   
 </head>
 <body>
   <div id="post-container">ಪೋಸ್ಟ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</div>
@@ -13,7 +22,6 @@
   const API_URL = 'https://newsbuzz-1.onrender.com';
   const urlParams = new URLSearchParams(window.location.search);
   const postId = urlParams.get('id');
-
   const container = document.getElementById('post-container');
 
   if (!postId) {
@@ -21,13 +29,18 @@
   } else {
     fetch(`${API_URL}/posts/${postId}`)
       .then(res => {
-        if (!res.ok) {
-          throw new Error(`Server responded with ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
         return res.json();
       })
       .then(post => {
         const postUrl = window.location.href;
+
+        // Update Open Graph meta tags
+        document.getElementById('og-title').setAttribute('content', post.title);
+        document.getElementById('og-description').setAttribute('content', post.content.slice(0, 150));
+        document.getElementById('og-image').setAttribute('content', post.imageUrl || '');
+        document.getElementById('og-url').setAttribute('content', postUrl);
+
         container.innerHTML = `
           <a href="index.html" class="back-button">ಹಿಂದೆ ಹೋಗಿ</a>
           <h1>${post.title}</h1>
@@ -36,9 +49,9 @@
           <p>${post.content}</p>
 
           <div class="share-buttons">
-            <span><strong>ಹಂಚಿಕೊಳ್ಳಿ:</strong></span><br><br>
-            <a class="whatsapp" href="https://wa.me/?text=${encodeURIComponent(post.title)}%0A${encodeURIComponent(postUrl)}" target="_blank">WhatsApp</a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}" target="_blank">Facebook</a>
+            <strong>ಹಂಚಿಕೊs</strong><br><br>
+            <a class="whatsapp" href="https://wa.me/?text=${encodeURIComponent(post.title + '\n' + postUrl)}" target="_blank">WhatsApp</a>
+            <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}" target="_blank">Facebook</a>
             <a class="twitter" href="https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(post.title)}" target="_blank">Twitter</a>
           </div>
 

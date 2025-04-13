@@ -97,6 +97,9 @@ app.get('/posts/:id', async (req, res) => {
 const commentRoutes = require('./routes/comments');
 app.use('/comments', commentRoutes);
 
+const authRoutes = require('./routes/auth');
+app.use('/auth', authRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

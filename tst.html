@@ -33,5 +33,76 @@
     <p>ಪೋಸ್ಟ್ ಇಲ್ಲ</p>
   </div>
 
+  <div id="post-container">ಪೋಸ್ಟ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</div>
+
+<script>
+  const API_URL = 'https://newsbuzz-1.onrender.com';
+  const urlParams = new URLSearchParams(window.location.search);
+  const postId = urlParams.get('id');
+
+  fetch(`${API_URL}/posts/${postId}`)
+    .then(res => res.json())
+    .then(post => {
+      const container = document.getElementById('post-container');
+      const postUrl = window.location.href;
+      
+      container.innerHTML = `
+        <h1>${post.title}</h1>
+        ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image">` : ''}
+        <p class="meta"><strong>ರಾಜ್ಯ:</strong> ${post.state}, <strong>ಜಿಲ್ಲೆ:</strong> ${post.district}, <strong>ತಾಲೂಕು:</strong> ${post.taluk}</p>
+        <p>${post.content}</p>
+
+        <div class="share-buttons">
+          <span><strong>ಹಂಚಿಕೊಳ್ಳಿ:</strong></span><br><br>
+          <a class="whatsapp" href="https://wa.me/?text=${encodeURIComponent(post.title)}%0A${encodeURIComponent(postUrl)}" target="_blank">WhatsApp</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}" target="_blank">Facebook</a>
+          <a class="twitter" href="https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(post.title)}" target="_blank">Twitter</a>
+        </div>
+
+        <div id="comments">
+          <h3>ಕಾಮೆಂಟ್ ಹಾಕಿ</h3>
+          <textarea id="commentInput" rows="3" placeholder="ನಿಮ್ಮ ಕಾಮೆಂಟ್ ಇಲ್ಲಿ ಬರೆಹಿಸಿ..."></textarea>
+          <button onclick="addComment()">ಕಳುಹಿಸಿ</button>
+          <div id="comment-list">ಕಾಮೆಂಟ್‌ಗಳು ಲೋಡ್ ಆಗುತ್ತಿದೆ...</div>
+        </div>
+      `;
+
+      loadComments();
+    });
+
+  function loadComments() {
+    fetch(`${API_URL}/comments/${postId}`)
+      .then(res => res.json())
+      .then(comments => {
+        const list = document.getElementById('comment-list');
+        if (comments.length === 0) {
+          list.innerHTML = '<p>ಈ ಪೋಸ್ಟ್‌ಗೆ ಯಾವುದೇ ಕಾಮೆಂಟ್ ಇಲ್ಲ.</p>';
+          return;
+        }
+        list.innerHTML = comments.map(c => `<div class="comment">${c.text}</div>`).join('');
+      });
+  }
+
+  function addComment() {
+    const input = document.getElementById('commentInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    fetch(`${API_URL}/comments/${postId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    })
+    .then(res => res.json())
+    .then(() => {
+      input.value = '';
+      loadComments();
+    });
+  }
+  
+  
+
+    </script>
+
 </body>
 </html>

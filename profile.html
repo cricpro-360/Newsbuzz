@@ -61,6 +61,17 @@
         ${user.profilePic ? `<img src="${user.profilePic}" alt="Profile Pic">` : ''}
       `;
     }
+    window.addEventListener('DOMContentLoaded', async () => {
+  const userId = localStorage.getItem('userId');
+  if (!userId) return;
+
+  const res = await fetch(`https://newsbuzz-1.onrender.com/profile/id/${userId}`);
+  if (!res.ok) return;
+
+  const user = await res.json();
+  showProfile(user);
+});
+    
   </script>
 
 </body>

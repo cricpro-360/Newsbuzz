@@ -9,50 +9,65 @@
 <body>
   <div id="post-container">ಪೋಸ್ಟ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</div>
 
-  <script>
-    const API_URL = 'https://newsbuzz-1.onrender.com';
-    const urlParams = new URLSearchParams(window.location.search);
-    const postId = urlParams.get('id');
+<script>
+  const API_URL = 'https://newsbuzz-1.onrender.com';
+  const urlParams = new URLSearchParams(window.location.search);
+  const postId = urlParams.get('id');
 
+  const container = document.getElementById('post-container');
+
+  if (!postId) {
+    container.innerHTML = '<p>ಪೋಸ್ಟ್ ಲಭ್ಯವಿಲ್ಲ (ID ಸಿಕ್ಕಿಲ್ಲ).</p>';
+  } else {
     fetch(`${API_URL}/posts/${postId}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Server responded with ${res.status}`);
+        }
+        return res.json();
+      })
       .then(post => {
-        const container = document.getElementById('post-container');
+        const postUrl = window.location.href;
         container.innerHTML = `
-         <a href="index.html" class="back-button">ಹಿಂದೆ ಹೋಗಿ</a>
-  <h1>${post.title}</h1>
-  ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image" class="">` : ''}
-  <p><strong>ರಾಜ್ಯ:</strong> ${post.state}, <strong>ಜಿಲ್ಲೆ:</strong> ${post.district}, <strong>ತಾಲೂಕು:</strong> ${post.taluk}</p>
-  <p>${post.content}</p>
-   <div class="share-buttons">
+          <a href="index.html" class="back-button">ಹಿಂದೆ ಹೋಗಿ</a>
+          <h1>${post.title}</h1>
+          ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image">` : ''}
+          <p><strong>ರಾಜ್ಯ:</strong> ${post.state}, <strong>ಜಿಲ್ಲೆ:</strong> ${post.district}, <strong>ತಾಲೂಕು:</strong> ${post.taluk}</p>
+          <p>${post.content}</p>
+
+          <div class="share-buttons">
             <span><strong>ಹಂಚಿಕೊಳ್ಳಿ:</strong></span><br><br>
             <a class="whatsapp" href="https://wa.me/?text=${encodeURIComponent(post.title)}%0A${encodeURIComponent(postUrl)}" target="_blank">WhatsApp</a>
             <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}" target="_blank">Facebook</a>
             <a class="twitter" href="https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(post.title)}" target="_blank">Twitter</a>
           </div>
-        <div id="comments">
+
+          <div id="comments">
             <h3>ಕಾಮೆಂಟ್ ಹಾಕಿ</h3>
             <textarea id="commentInput" rows="3" placeholder="ನಿಮ್ಮ ಕಾಮೆಂಟ್ ಇಲ್ಲಿ ಬರೆಹಿಸಿ..."></textarea>
             <button onclick="addComment()">ಕಳುಹಿಸಿ</button>
             <div id="comment-list"></div>
           </div>
-`;
+        `;
       })
-      .catch(() => {
-        document.getElementById('post-container').innerHTML = '<p>ಪೋಸ್ಟ್ ಲಭ್ಯವಿಲ್ಲ.</p>';
+      .catch(error => {
+        console.error('Error loading post:', error);
+        container.innerHTML = '<p>ಪೋಸ್ಟ್ ಲಭ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.</p>';
       });
-    function addComment() {
-      const input = document.getElementById('commentInput');
-      const commentText = input.value.trim();
-      if (commentText !== '') {
-        const commentList = document.getElementById('comment-list');
-        const newComment = document.createElement('div');
-        newComment.className = 'comment';
-        newComment.textContent = commentText;
-        commentList.prepend(newComment);
-        input.value = '';
-      }
+  }
+
+  function addComment() {
+    const input = document.getElementById('commentInput');
+    const commentText = input.value.trim();
+    if (commentText !== '') {
+      const commentList = document.getElementById('comment-list');
+      const newComment = document.createElement('div');
+      newComment.className = 'comment';
+      newComment.textContent = commentText;
+      commentList.prepend(newComment);
+      input.value = '';
     }
-  </script>
+  }
+</script>
 </body>
 </html>

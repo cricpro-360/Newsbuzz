@@ -20,7 +20,7 @@
   </form>
 
   <hr>
-
+<button onclick="logout()">Logout</button>
   <h3>Profile Info</h3>
   <div id="profileDisplay"></div>
 
@@ -40,52 +40,45 @@
 
     const user = await response.json();
 
-    // Save user ID for future auto loading
+    // Save user ID to localStorage
     localStorage.setItem('userId', user._id);
 
     showProfile(user);
   });
 
-  // Load profile by phone number (optional search)
-  form.phone.addEventListener('blur', async () => {
-    const phone = form.phone.value;
-    if (!phone) return;
-
-    const res = await fetch(`https://newsbuzz-1.onrender.com/profile/${phone}`);
-    if (!res.ok) return;
-
-    const user = await res.json();
-
-    // Optional: store userId when loading by phone
-    localStorage.setItem('userId', user._id);
-
-    form.username.value = user.username || '';
-    form.password.value = user.password || '';
-    showProfile(user);
-  });
-
-  // Auto-load profile using stored userId
+  // Auto-load profile on page load
   window.addEventListener('DOMContentLoaded', async () => {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
 
-    const res = await fetch(`https://newsbuzz-1.onrender.com/profile/id/${userId}`);
-    if (!res.ok) return;
+    try {
+      const res = await fetch(`https://newsbuzz-1.onrender.com/profile/id/${userId}`);
+      if (!res.ok) return;
 
-    const user = await res.json();
-    form.phone.value = user.phone || '';
-    form.username.value = user.username || '';
-    form.password.value = user.password || '';
-    showProfile(user);
+      const user = await res.json();
+      // Pre-fill the form
+      form.phone.value = user.phone || '';
+      form.username.value = user.username || '';
+      form.password.value = user.password || '';
+      showProfile(user);
+    } catch (err) {
+      console.error('Error loading profile:', err);
+    }
   });
 
-  // Display user profile in UI
+  // Show profile in the UI
   function showProfile(user) {
     display.innerHTML = `
       <strong>Username:</strong> ${user.username}<br>
       <strong>Phone:</strong> ${user.phone}<br>
       ${user.profilePic ? `<img src="${user.profilePic}" alt="Profile Pic">` : ''}
     `;
+  }
+
+  // Optional: Clear stored profile
+  function logout() {
+    localStorage.removeItem('userId');
+    location.reload();
   }
 </script>
 

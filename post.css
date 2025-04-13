@@ -1,4 +1,3 @@
- <style>
     body {
       font-family: 'Noto Sans Kannada', sans-serif;
       margin: 0;
@@ -38,6 +37,78 @@
       font-weight: bold;
     }
 
+    .meta {
+      margin-bottom: 20px;
+      font-size: 0.95em;
+    }
+
+    .back-button {
+      margin: 10px 0;
+      display: inline-block;
+      padding: 8px 15px;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    .share-buttons {
+      margin-top: 20px;
+    }
+
+    .share-buttons a {
+      margin-right: 10px;
+      text-decoration: none;
+      color: white;
+      background: #4267B2;
+      padding: 8px 12px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+
+    .share-buttons a.whatsapp {
+      background: #25D366;
+    }
+
+    .share-buttons a.twitter {
+      background: #1DA1F2;
+    }
+
+    #comments {
+      margin-top: 30px;
+    }
+
+    #comments h3 {
+      margin-bottom: 10px;
+    }
+
+    #comments textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    #comments button {
+      padding: 8px 15px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #comment-list {
+      margin-top: 15px;
+    }
+
+    .comment {
+      background: #f1f1f1;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
     @media screen and (max-width: 600px) {
       h1 {
         font-size: 1.4em;
@@ -47,4 +118,3 @@
         font-size: 0.95em;
       }
     }
-  </style>

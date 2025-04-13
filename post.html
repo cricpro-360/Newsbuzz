@@ -45,8 +45,9 @@
       const container = document.getElementById('post-container');
       const postUrl = window.location.href;
 
+      <a href="javascript:history.back()" class="back-button">&#8592;</a>
+     
       container.innerHTML = `
-        <a href="javascript:history.back()" class="back-button">&#8592;</a>
         <h1>${post.title}</h1>
         ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image">` : ''}
         <p class="meta"><strong>ರಾಜ್ಯ:</strong> ${post.state}, <strong>ಜಿಲ್ಲೆ:</strong> ${post.district}, <strong>ತಾಲೂಕು:</strong> ${post.taluk}</p>

@@ -13,7 +13,23 @@
   <meta property="og:type" content="article">
 
   <link rel="stylesheet" href="post.css" />
-   
+   <style>
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      text-decoration: none;
+    }
+   </style>
 </head>
 <body>
   <div id="post-container">ಪೋಸ್ಟ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</div>
@@ -30,7 +46,7 @@
       const postUrl = window.location.href;
 
       container.innerHTML = `
-        <button onclick="goBack()" class="back-button">ಹಿಂದೆ ಹೋಗಿ</button>
+        <a href="javascript:history.back()" class="back-button">&#8592;</a>
         <h1>${post.title}</h1>
         ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image">` : ''}
         <p class="meta"><strong>ರಾಜ್ಯ:</strong> ${post.state}, <strong>ಜಿಲ್ಲೆ:</strong> ${post.district}, <strong>ತಾಲೂಕು:</strong> ${post.taluk}</p>
@@ -84,9 +100,7 @@
     });
   }
   
-  function goBack() {
-    history.back();
-  }
+  
 
 </script>
 </body>

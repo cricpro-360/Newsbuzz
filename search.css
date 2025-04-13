@@ -1,4 +1,4 @@
-<style>
+
     body {
       font-family: 'Noto Sans Kannada', sans-serif;
       background: #f9f9f9;
@@ -84,57 +84,62 @@
       font-size: 14px;
     }
 
-    /* Small devices (phones) */
-@media (max-width: 600px) {
-      h2 {
-        font-size: 20px;
-      }
+    /* Default (Large screens) - No media query needed */
 
-      .label {
-        font-size: 16px;
-      }
-
-      .icon {
-        width: 24px;
-        height: 24px;
-      }
-
-      .category-card, .category-item {
-        padding: 14px 18px;
-      }
-
-      .scroll-container{
-        width: 600px;
-      }
+/* Medium devices (tablets, 768px and below) */
+@media (max-width: 768px) {
+  h2 {
+    font-size: 20px;
   }
-    
 
-    @media (max-width: 500px){
-      .scroll-container{
-        width: 500px;
-      }
-    }
+  .label {
+    font-size: 15px;
+  }
 
-    @media (max-width: 400px){
-      .scroll-container{
-        width: 400px;
-      }
-    }
-    
-    @media (max-width: 900px) {
-      .scroll-container {
-        gap: 16px;
-        width:300px;
-      }
+  .icon {
+    width: 22px;
+    height: 22px;
+  }
 
-      .category-list {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 16px;
-      }
+  .category-card, .category-item {
+    padding: 12px 16px;
+  }
 
-      .category-item {
-        flex: 0 0 30%;
-      }
-    }
-</style>
+  .category-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .category-item {
+    flex: 0 0 45%;
+  }
+}
+
+/* Small devices (phones, 480px and below) */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 18px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .category-card, .category-item {
+    padding: 10px 14px;
+  }
+
+  .category-item {
+    flex: 0 0 100%;
+  }
+
+  .scroll-container {
+    gap: 10px;
+  }
+}

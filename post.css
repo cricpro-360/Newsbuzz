@@ -42,15 +42,6 @@
       font-size: 0.95em;
     }
 
-    .back-button {
-      margin: 10px 0;
-      display: inline-block;
-      padding: 8px 15px;
-      background: #007bff;
-      color: white;
-      border-radius: 5px;
-      text-decoration: none;
-    }
 
     .share-buttons {
       margin-top: 20px;

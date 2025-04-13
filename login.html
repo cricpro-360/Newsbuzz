@@ -1,0 +1,38 @@
+<h2>Login with Phone</h2>
+<input type="text" id="phone" placeholder="Phone number">
+<button onclick="sendOTP()">Send OTP</button>
+
+<div id="otp-section" style="display:none;">
+  <input type="text" id="otp" placeholder="Enter OTP">
+  <button onclick="verifyOTP()">Verify OTP</button>
+</div>
+
+<script>
+const API_URL = 'https://newsbuzz-1.onrender.com';
+
+function sendOTP() {
+  const phone = document.getElementById('phone').value;
+  fetch(`${API_URL}/auth/send-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone })
+  }).then(() => {
+    document.getElementById('otp-section').style.display = 'block';
+  });
+}
+
+function verifyOTP() {
+  const phone = document.getElementById('phone').value;
+  const otp = document.getElementById('otp').value;
+
+  fetch(`${API_URL}/auth/verify-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone, otp })
+  }).then(res => res.json()).then(data => {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.user._id);
+    window.location.href = 'index.html';
+  });
+}
+</script>

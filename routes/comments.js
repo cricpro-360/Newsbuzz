@@ -10,7 +10,7 @@ module.exports = mongoose.model('Comment', commentSchema);
 
 const express = require('express');
 const router = express.Router();
-const Comment = require('../models/Comment');
+const Comment = require('../routes/Comments');
 
 // Get comments for a post
 router.get('/:postId', async (req, res) => {

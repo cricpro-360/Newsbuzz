@@ -4,78 +4,7 @@
   <meta charset="UTF-8">
   <title>ಪೂರ್ಣ ಪೋಸ್ಟ್</title>
    <link rel="stylesheet" href="style.css" />
-  <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: sans-serif;
-    background: #f2f2f2;
-    padding: 0;
-    margin: 0;
-  }
-
-  #post-container {
-    width: 100%;
-    padding: 12px;
-    background: #fff;
-    max-width: 900px;
-    margin: auto;
-    justify-content: center;
-    align-items: center;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-    text-align: center;
-    margin: 10px 0;
-  }
-
-  img.create-images {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin: 12px 0;
-    display: block;
-  }
-
-  p {
-    font-size: 1rem;
-    line-height: 1.5;
-    padding: 4px 0;
-  }
-
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 1.4rem;
-    }
-
-    p {
-      font-size: 0.95rem;
-    }
-
-    #post-container {
-      padding: 10px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    h1 {
-      font-size: 1.2rem;
-    }
-
-    p {
-      font-size: 0.9rem;
-    }
-
-    #post-container {
-      padding: 8px;
-    }
-  }
-  </style>
+  
 </head>
 <body>
   <div id="post-container">ಪೋಸ್ಟ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</div>
@@ -91,7 +20,7 @@
         const container = document.getElementById('post-container');
         container.innerHTML = `
   <h1>${post.title}</h1>
-  ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image" class="post-image">` : ''}
+  ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image" class="">` : ''}
   <p><strong>ರಾಜ್ಯ:</strong> ${post.state}, <strong>ಜಿಲ್ಲೆ:</strong> ${post.district}, <strong>ತಾಲೂಕು:</strong> ${post.taluk}</p>
   <p>${post.content}</p>
 `;

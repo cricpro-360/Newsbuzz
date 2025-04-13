@@ -15,31 +15,45 @@
   </style>
 </head>
 <body>
-  <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>
-  <div id="message" class="message"></div>  <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
-  <textarea id="content" placeholder="ವಿಷಯ ನಮೂದಿಸಿ" rows="4"></textarea>
-  <input type="file" id="image" accept="image/*">  <select id="state">
-    <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
-    <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
-  </select>
-  <select id="district">
-    <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
-  </select>
-  <select id="taluk">
-    <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
-  </select><button onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
+  <div class="container">
+    <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>
+    <div id="message" class="message"></div>
 
-  <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
-  <select id="state-filter" onchange="updateDistrictFilter(); loadPosts();">
-    <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
-    <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
-  </select>
-  <select id="district-filter" onchange="updateTalukFilter(); loadPosts();">
-    <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
-  </select>
-  <select id="taluk-filter" onchange="loadPosts();">
-    <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
-  </select>  <div id="posts" class="post-container">
+    <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
+    <textarea id="content" placeholder="ವಿಷಯ ನಮೂದಿಸಿ" rows="4"></textarea>
+    <input type="file" id="image" accept="image/*">
+
+    <select id="state">
+      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+    </select>
+
+    <select id="district">
+      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
+
+    <select id="taluk">
+      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
+
+    <button onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
+  </div>
+
+  <div class="container filters">
+    <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
+
+    <select id="state-filter" onchange="updateDistrictFilter(); loadPosts();">
+      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+    </select>
+
+    <select id="district-filter" onchange="updateTalukFilter(); loadPosts();">
+      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
+
+    <select id="taluk-filter" onchange="loadPosts();">
+      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>  <div id="posts" class="post-container">
     <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
   </div>  <script>
     const API_URL = 'https://newsbuzz-1.onrender.com';

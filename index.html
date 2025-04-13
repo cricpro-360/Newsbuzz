@@ -208,7 +208,7 @@
     <div class="post">
       <h3>${post.title}</h3>
       <p class="preview">${post.content}</p>
-      <a href="post.html?id=${post._id}" target="_blank">ಮತ್ತಷ್ಟು ಓದಿ</a>
+      <a href="post.html?id=${post._id}" target="_blank" class="post-link">ಮತ್ತಷ್ಟು ಓದಿ</a>
       ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image">` : ''}
       <small>Posted on ${date}</small>
     </div>
@@ -220,9 +220,17 @@
           document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
         });
     }
+    
+  document.querySelectorAll('.post-link').forEach(link => {
+    link.addEventListener('click', function() {
+      sessionStorage.setItem('scrollPos', window.scrollY);
+    });
+  });
+ 
 
     document.getElementById('state').addEventListener('change', updateDistricts);
     document.getElementById('district').addEventListener('change', updateTaluks);
     window.onload = loadPosts;
-  </script></body>
+  </script>
+</body>
 </html>

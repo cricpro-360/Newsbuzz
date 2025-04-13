@@ -46,27 +46,40 @@
     showProfile(user);
   });
 
+  // Optional: Load profile when user finishes typing phone number
+  form.phone.addEventListener('blur', async () => {
+    const phone = form.phone.value;
+    if (!phone) return;
+
+    const res = await fetch(`https://newsbuzz-1.onrender.com/profile/${phone}`);
+    if (!res.ok) return;
+
+    const user = await res.json();
+
+    // Save user ID when found
+    localStorage.setItem('userId', user._id);
+
+    form.username.value = user.username || '';
+    form.password.value = user.password || '';
+    showProfile(user);
+  });
+
   // Auto-load profile on page load
   window.addEventListener('DOMContentLoaded', async () => {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
 
-    try {
-      const res = await fetch(`https://newsbuzz-1.onrender.com/profile/id/${userId}`);
-      if (!res.ok) return;
+    const res = await fetch(`https://newsbuzz-1.onrender.com/profile/id/${userId}`);
+    if (!res.ok) return;
 
-      const user = await res.json();
-      // Pre-fill the form
-      form.phone.value = user.phone || '';
-      form.username.value = user.username || '';
-      form.password.value = user.password || '';
-      showProfile(user);
-    } catch (err) {
-      console.error('Error loading profile:', err);
-    }
+    const user = await res.json();
+    form.phone.value = user.phone || '';
+    form.username.value = user.username || '';
+    form.password.value = user.password || '';
+    showProfile(user);
   });
 
-  // Show profile in the UI
+  // Display profile in UI
   function showProfile(user) {
     display.innerHTML = `
       <strong>Username:</strong> ${user.username}<br>
@@ -75,12 +88,12 @@
     `;
   }
 
-  // Optional: Clear stored profile
+  // Optional logout function
   function logout() {
     localStorage.removeItem('userId');
     location.reload();
   }
-</script>
+      </script>
 
 </body>
 </html>

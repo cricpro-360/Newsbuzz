@@ -1,16 +1,6 @@
-const mongoose = require('mongoose');
-
-const commentSchema = new mongoose.Schema({
-  postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
-  text: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
-
-module.exports = mongoose.model('Comment', commentSchema);
-
 const express = require('express');
 const router = express.Router();
-const Comment = require('../routes/Comments');
+const Comment = require('../models/Comment');
 
 // Get comments for a post
 router.get('/:postId', async (req, res) => {

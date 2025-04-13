@@ -1,9 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile & Posts</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    img { width: 120px; border-radius: 50%; margin-top: 10px; }
+    .post { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+    .post img { width: 40px; border-radius: 50%; vertical-align: middle; }
+  </style>
+</head>
+<body>
+
+  <h2>Profile Form</h2>
+  <form id="profileForm" enctype="multipart/form-data">
+    <input type="text" name="phone" placeholder="Phone Number" required><br><br>
+    <input type="text" name="username" placeholder="Username" required><br><br>
+    <input type="password" name="password" placeholder="Password"><br><br>
+    <input type="file" name="profilePic" accept="image/*"><br><br>
+    <button type="submit">Save Profile</button>
+  </form>
+
+  <hr>
+  <button onclick="logout()">Logout</button>
+  <h3>Profile Info</h3>
+  <div id="profileDisplay"></div>
+
+  <hr>
+  <h2>Create a Post</h2>
+  <form id="postForm">
+    <input type="text" name="title" placeholder="Post Title" required><br><br>
+    <textarea name="content" placeholder="Post Content" required></textarea><br><br>
+    <button type="submit">Publish Post</button>
+  </form>
+
+  <h3>All Posts</h3>
+  <div id="postDisplay"></div>
 
 <script>
-  const userPosts = await fetch(`https://newsbuzz-1.onrender.com/posts?userId=${userId}`);
-const posts = await userPosts.json();
-posts.forEach(p => {
-  display.innerHTML += `<hr><strong>Post:</strong> ${p.title}<br>${p.content}<br>`;
-});
+  const form = document.getElementById('profileForm');
+  const display = document.getElementById('profileDisplay');
+
+  // Submit or update profile
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    const response = await fetch('https://newsbuzz-1.onrender.com/profile', {
+      method: 'POST',
+      body: formData
+    });
+
+    const user = await response.json();
+
+    localStorage.setItem('userId', user._id);
+    showProfile(user);
+  });
+
+  // Load profile by phone
+  form.phone.addEventListener('blur', async () => {
+    const phone = form.phone.value;
+    if (!phone) return;
+
+    const res = await fetch(`https://newsbuzz-1.onrender.com/profile/${phone}`);
+    if (!res.ok) return;
+
+    const user = await res.json();
+    localStorage.setItem('userId', user._id);
+
+    form.username.value = user.username || '';
+    form.password.value = user.password || '';
+    showProfile(user);
+  });
+
+  // Auto-load profile
+  window.addEventListener('DOMContentLoaded', async () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+
+    const res = await fetch(`https://newsbuzz-1.onrender.com/profile/id/${userId}`);
+    if (!res.ok) return;
+
+    const user = await res.json();
+    form.phone.value = user.phone || '';
+    form.username.value = user.username || '';
+    form.password.value = user.password || '';
+    showProfile(user);
+    loadPosts();
+  });
+
+  // Show profile in UI
+  function showProfile(user) {
+    display.innerHTML = `
+      <strong>Username:</strong> ${user.username}<br>
+      <strong>Phone:</strong> ${user.phone}<br>
+      ${user.profilePic ? `<img src="${user.profilePic}" alt="Profile Pic">` : ''}
+    `;
+  }
+
+  // Logout
+  function logout() {
+    localStorage.removeItem('userId');
+    location.reload();
+  }
+
+  // Post form
+  const postForm = document.getElementById('postForm');
+
+  postForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('Please login or create your profile first.');
+      return;
+    }
+
+    const postData = {
+      title: postForm.title.value,
+      content: postForm.content.value,
+      user: userId
+    };
+
+    const res = await fetch('https://newsbuzz-1.onrender.com/posts/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(postData)
+    });
+
+    if (res.ok) {
+      alert('Post created!');
+      postForm.reset();
+      loadPosts();
+    } else {
+      alert('Failed to create post.');
+    }
+  });
+
+  // Load and show posts
+  async function loadPosts() {
+    const res = await fetch('https://newsbuzz-1.onrender.com/posts/all');
+    const posts = await res.json();
+
+    const postsHtml = posts.map(post => `
+      <div class="post">
+        <div>
+          ${post.user?.profilePic ? `<img src="${post.user.profilePic}" alt="">` : ''}
+          <strong>${post.user?.username || 'Unknown'}</strong>
+        </div>
+        <h4>${post.title}</h4>
+        <p>${post.content}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('postDisplay').innerHTML = postsHtml;
+  }
 </script>
+
+</body>
+  </html>
 

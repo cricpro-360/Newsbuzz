@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="profile-container">
+    <div class="profile-header">
+      <img id="profilePic" src="default.jpg" alt="Profile Picture" class="profile-pic" />
+      <div class="profile-info">
+        <h2 id="username">Username</h2>
+        <p id="bio">User bio goes here...</p>
+        <div class="stats">
+          <span id="postCount">0 Posts</span>
+          <span id="followers">0 Followers</span>
+          <span id="following">0 Following</span>
+        </div>
+        <button id="followBtn">Follow</button>
+        <button id="editProfileBtn">Edit Profile</button>
+      </div>
+    </div>
+
+    <div class="posts-grid" id="postsGrid">
+      <!-- User posts will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Profile Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h3>Edit Profile</h3>
+      <form id="editProfileForm">
+        <input type="text" id="editUsername" placeholder="New Username" />
+        <input type="text" id="editBio" placeholder="New Bio" />
+        <input type="file" id="editProfilePic" accept="image/*" />
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const userId = "123456"; // Replace with real user ID or get from session
+    const apiUrl = "https://your-backend-url.com"; // Replace with your backend URL
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadUserProfile();
+
+      document.getElementById("editProfileBtn").addEventListener("click", () => {
+        document.getElementById("editModal").style.display = "block";
+      });
+
+      document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("editModal").style.display = "none";
+      });
+
+      document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById("editUsername").value;
+        const bio = document.getElementById("editBio").value;
+        const file = document.getElementById("editProfilePic").files[0];
+
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("bio", bio);
+        if (file) formData.append("profilePic", file);
+
+        const res = await fetch(`${apiUrl}/user/${userId}/edit`, {
+          method: "PUT",
+          body: formData
+        });
+
+        if (res.ok) {
+          alert("Profile updated!");
+          document.getElementById("editModal").style.display = "none";
+          loadUserProfile();
+        }
+      });
+
+      document.getElementById("followBtn").addEventListener("click", async () => {
+        const isFollowing = document.getElementById("followBtn").innerText === "Unfollow";
+        const endpoint = isFollowing ? "unfollow" : "follow";
+
+        const res = await fetch(`${apiUrl}/${endpoint}/${userId}`, {
+          method: "POST"
+        });
+
+        if (res.ok) {
+          loadUserProfile();
+        }
+      });
+    });
+
+    async function loadUserProfile() {
+      const res = await fetch(`${apiUrl}/user/${userId}`);
+      const data = await res.json();
+
+      document.getElementById("username").innerText = data.username;
+      document.getElementById("bio").innerText = data.bio;
+      document.getElementById("profilePic").src = data.profilePic;
+      document.getElementById("postCount").innerText = `${data.posts.length} Posts`;
+      document.getElementById("followers").innerText = `${data.followers.length} Followers`;
+      document.getElementById("following").innerText = `${data.following.length} Following`;
+      document.getElementById("followBtn").innerText = data.isFollowing ? "Unfollow" : "Follow";
+
+      const postsGrid = document.getElementById("postsGrid");
+      postsGrid.innerHTML = "";
+      data.posts.forEach(post => {
+        const img = document.createElement("img");
+        img.src = post.image;
+        postsGrid.appendChild(img);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -10,16 +10,16 @@
   <div class="container filters">
     <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
 
-    <select id="state-filter" onchange="updateDistrictFilter(); loadPosts();">
+    <select id="state-filter" onchange="handleStateChange();">
       <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
       <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
     </select>
 
-    <select id="district-filter" onchange="updateTalukFilter(); loadPosts();">
+    <select id="district-filter" onchange="handleDistrictChange();">
       <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
     </select>
 
-    <select id="taluk-filter" onchange="loadPosts();">
+    <select id="taluk-filter" onchange="handleTalukChange();">
       <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
     </select>
 
@@ -113,10 +113,57 @@
         });
     }
 
-    window.onload = () => {
+    // Store selections
+    function handleStateChange() {
+      const state = document.getElementById('state-filter').value;
+      localStorage.setItem('filterState', state);
       updateDistrictFilter();
-      setTimeout(updateTalukFilter, 100);
-      setTimeout(loadPosts, 200);
+      setTimeout(() => {
+        const savedDistrict = localStorage.getItem('filterDistrict');
+        if (savedDistrict) {
+          document.getElementById('district-filter').value = savedDistrict;
+          updateTalukFilter();
+          setTimeout(() => {
+            const savedTaluk = localStorage.getItem('filterTaluk');
+            if (savedTaluk) {
+              document.getElementById('taluk-filter').value = savedTaluk;
+            }
+            loadPosts();
+          }, 100);
+        } else {
+          loadPosts();
+        }
+      }, 100);
+    }
+
+    function handleDistrictChange() {
+      const district = document.getElementById('district-filter').value;
+      localStorage.setItem('filterDistrict', district);
+      updateTalukFilter();
+      setTimeout(() => {
+        const savedTaluk = localStorage.getItem('filterTaluk');
+        if (savedTaluk) {
+          document.getElementById('taluk-filter').value = savedTaluk;
+        }
+        loadPosts();
+      }, 100);
+    }
+
+    function handleTalukChange() {
+      const taluk = document.getElementById('taluk-filter').value;
+      localStorage.setItem('filterTaluk', taluk);
+      loadPosts();
+    }
+
+    // Load saved location on startup
+    window.onload = () => {
+      const savedState = localStorage.getItem('filterState');
+      if (savedState) {
+        document.getElementById('state-filter').value = savedState;
+        handleStateChange(); // includes loading posts
+      } else {
+        loadPosts(); // default load
+      }
     };
   </script>
 </body>

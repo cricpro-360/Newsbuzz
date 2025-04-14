@@ -18,6 +18,30 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
+app.post('/profile', async (req, res) => {
+  try {
+    const { username, bio, profilePic } = req.body;
+    
+    // Check if user exists
+    let user = await User.findOne({ username });
+    if (user) {
+      // Update existing user
+      user.bio = bio;
+      user.profilePic = profilePic;
+      await user.save();
+    } else {
+      // Create new user
+      user = new User({ username, bio, profilePic });
+      await user.save();
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Profile save failed' });
+  }
+});
+
 // GET profile by phone
 router.get('/:phone', async (req, res) => {
   try {

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</title>
+  <link rel="stylesheet" href="create-style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>
+    <div id="message" class="message"></div>
+
+    <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
+    <textarea id="content" placeholder="ವಿಷಯ ನಮೂದಿಸಿ" rows="4"></textarea>
+    <input type="file" id="image" accept="image/*">
+
+    <select id="state" onchange="updateDistricts()">
+      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+    </select>
+
+    <select id="district" onchange="updateTaluks()">
+      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
+
+    <select id="taluk">
+      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ(Optional)</option>
+    </select>
+
+    <button onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
+  </div>
+
+  <script>
+    const API_URL = 'https://newsbuzz-1.onrender.com';
+
+    const locationData = {
+      'ಕರ್ನಾಟಕ': {
+        'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
+        'ಹುಬ್ಬಳ್ಳಿ': ['ಹುಬ್ಬಳ್ಳಿ ಉತ್ತರ', 'ನವಲಗುಂದ']
+      }
+    };
+
+    function updateDistricts() {
+      const state = document.getElementById('state').value;
+      const districtSelect = document.getElementById('district');
+      const talukSelect = document.getElementById('taluk');
+      districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+      if (locationData[state]) {
+        Object.keys(locationData[state]).forEach(district => {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
+    }
+
+    function updateTaluks() {
+      const state = document.getElementById('state').value;
+      const district = document.getElementById('district').value;
+      const talukSelect = document.getElementById('taluk');
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+      if (locationData[state] && locationData[state][district]) {
+        locationData[state][district].forEach(taluk => {
+          const option = document.createElement('option');
+          option.value = taluk;
+          option.textContent = taluk;
+          talukSelect.appendChild(option);
+        });
+      }
+    }
+
+    function showMessage(text, type) {
+      const msgDiv = document.getElementById('message');
+      msgDiv.textContent = text;
+      msgDiv.className = `message ${type}`;
+      msgDiv.style.display = 'block';
+      setTimeout(() => msgDiv.style.display = 'none', 4000);
+    }
+
+    function createPost() {
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      const state = document.getElementById('state').value.trim();
+      const district = document.getElementById('district').value.trim();
+      const taluk = document.getElementById('taluk').value.trim();
+      const imageFile = document.getElementById('image').files[0];
+
+      if (!title || !content || !state || !district) {
+        showMessage("ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ.", "error");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      formData.append('state', state);
+      formData.append('district', district);
+      if (taluk) formData.append('taluk', taluk);
+      if (imageFile) formData.append('image', imageFile);
+
+      fetch(`${API_URL}/posts`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(() => {
+        showMessage("ಪೋಸ್ಟ್ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!", "success");
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+        document.getElementById('state').value = '';
+        document.getElementById('district').value = '';
+        document.getElementById('taluk').value = '';
+        document.getElementById('image').value = '';
+      })
+      .catch(() => showMessage("ಪೋಸ್ಟ್ ರಚನೆಯಲ್ಲಿ ದೋಷ.", "error"));
+    }
+  </script>
+</body>
+</html>

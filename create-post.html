@@ -103,6 +103,12 @@
       if (taluk) formData.append('taluk', taluk);
       if (imageFile) formData.append('image', imageFile);
 
+      const profile = JSON.parse(localStorage.getItem('userProfile'));
+if (profile) {
+  formData.append('username', profile.username);
+  formData.append('profilePic', profile.profilePic);
+}
+
       fetch(`${API_URL}/posts`, {
         method: 'POST',
         body: formData

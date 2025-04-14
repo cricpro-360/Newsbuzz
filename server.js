@@ -99,6 +99,68 @@ app.get('/posts/:id', async (req, res) => {
   }
 });
 
+app.get('/user/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate('posts followers following');
+    res.json(user);
+  } catch (err) {
+    console.log(err); // Debugging error
+    res.status(500).json({ message: 'Error loading user profile' });
+  }
+});
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),  // Save to the "uploads" directory
+  filename: (req, file, cb) => cb(null, Date.now() + file.originalname),  // Save with a unique name
+});
+
+const upload = multer({ storage });
+
+app.put('/user/:id/edit', upload.single('profilePic'), async (req, res) => {
+  try {
+    const { username, bio } = req.body;
+    const file = req.file;  // Handle file upload
+    
+    const updateData = { username, bio };
+    if (file) {
+      // Process the file (e.g., upload to Cloudinary if needed)
+      const uploadedPicUrl = await uploadToCloudinary(file);
+      updateData.profilePic = uploadedPicUrl;
+    }
+    
+    const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    res.json(user);
+  } catch (err) {
+    console.log(err); // Debugging error
+    res.status(500).json({ message: 'Error updating profile' });
+  }
+});
+
+app.post('/follow/:id', async (req, res) => {
+  try {
+    // Logic for following the user
+    const user = await User.findById(req.params.id);
+    // Add to following, add follower
+    res.json({ message: 'Followed successfully' });
+  } catch (err) {
+    console.log(err); // Debugging error
+    res.status(500).json({ message: 'Error following user' });
+  }
+});
+
+app.post('/unfollow/:id', async (req, res) => {
+  try {
+    // Logic for unfollowing the user
+    const user = await User.findById(req.params.id);
+    // Remove from following, remove follower
+    res.json({ message: 'Unfollowed successfully' });
+  } catch (err) {
+    console.log(err); // Debugging error
+    res.status(500).json({ message: 'Error unfollowing user' });
+  }
+});
+
 const commentRoutes = require('./routes/comments');
 app.use('/comments', commentRoutes);
 

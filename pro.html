@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,15 +20,11 @@
         <button id="followBtn">Follow</button>
         <button id="editProfileBtn">Edit Profile</button>
       </div>
-    </div>
+    </div><div class="posts-grid" id="postsGrid">
+  <!-- User posts will be loaded here -->
+</div>
 
-    <div class="posts-grid" id="postsGrid">
-      <!-- User posts will be loaded here -->
-    </div>
-  </div>
-
-  <!-- Profile Edit Modal -->
-  <div id="editModal" class="modal">
+  </div>  <!-- Profile Edit Modal -->  <div id="editModal" class="modal">
     <div class="modal-content">
       <span class="close" id="closeModal">&times;</span>
       <h3>Edit Profile</h3>
@@ -40,10 +35,8 @@
         <button type="submit">Save</button>
       </form>
     </div>
-  </div>
-
-  <script>
-    const userId = "65ff83cf2e364e176f5cda1f"; // Replace with real user ID or fetch from session
+  </div>  <script>
+    const userId = "65ff83cf2e364e176f5cda1f"; // Replace with dynamic userId
     const apiUrl = "https://newsbuzz-1.onrender.com";
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -60,30 +53,23 @@
       document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const username = document.getElementById("editUsername").value;
-        const bio = document.getElementById("editBio").value;
-        const file = document.getElementById("editProfilePic").files[0];
-
         const formData = new FormData();
-        formData.append("username", username);
-        formData.append("bio", bio);
+        formData.append("username", document.getElementById("editUsername").value);
+        formData.append("bio", document.getElementById("editBio").value);
+        const file = document.getElementById("editProfilePic").files[0];
         if (file) formData.append("profilePic", file);
 
-        try {
-          const res = await fetch(`${apiUrl}/user/${userId}/edit`, {
-            method: "PUT",
-            body: formData
-          });
+        const res = await fetch(`${apiUrl}/user/${userId}/edit`, {
+          method: "PUT",
+          body: formData
+        });
 
-          if (res.ok) {
-            alert("Profile updated!");
-            document.getElementById("editModal").style.display = "none";
-            loadUserProfile();
-          } else {
-            alert("Error updating profile.");
-          }
-        } catch (err) {
-          alert("Failed to connect to server.");
+        if (res.ok) {
+          alert("Profile updated!");
+          document.getElementById("editModal").style.display = "none";
+          loadUserProfile();
+        } else {
+          alert("Error updating profile.");
         }
       });
 
@@ -91,46 +77,68 @@
         const isFollowing = document.getElementById("followBtn").innerText === "Unfollow";
         const endpoint = isFollowing ? "unfollow" : "follow";
 
-        try {
-          const res = await fetch(`${apiUrl}/${endpoint}/${userId}`, {
-            method: "POST"
-          });
+        await fetch(`${apiUrl}/${endpoint}/${userId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ followerId: userId }) // Replace with logged-in user ID
+        });
 
-          if (res.ok) {
-            loadUserProfile();
-          } else {
-            alert("Error updating follow status.");
-          }
-        } catch (err) {
-          alert("Failed to connect to server.");
-        }
+        loadUserProfile();
       });
     });
 
     async function loadUserProfile() {
-      try {
-        const res = await fetch(`${apiUrl}/user/${userId}`);
-        if (!res.ok) throw new Error("Failed to load profile");
-        const data = await res.json();
+      const res = await fetch(`${apiUrl}/user/${userId}`);
+      const data = await res.json();
 
-        document.getElementById("username").innerText = data.username;
-        document.getElementById("bio").innerText = data.bio;
-        document.getElementById("profilePic").src = data.profilePic || "default.jpg";
-        document.getElementById("postCount").innerText = `${data.posts.length} Posts`;
-        document.getElementById("followers").innerText = `${data.followers.length} Followers`;
-        document.getElementById("following").innerText = `${data.following.length} Following`;
-        document.getElementById("followBtn").innerText = data.isFollowing ? "Unfollow" : "Follow";
+      document.getElementById("username").innerText = data.username;
+      document.getElementById("bio").innerText = data.bio || "";
+      document.getElementById("profilePic").src = data.profilePic || "default.jpg";
+      document.getElementById("postCount").innerText = `${data.posts.length} Posts`;
+      document.getElementById("followers").innerText = `${data.followers.length} Followers`;
+      document.getElementById("following").innerText = `${data.following.length} Following`;
 
-        const postsGrid = document.getElementById("postsGrid");
-        postsGrid.innerHTML = "";
-        data.posts.forEach(post => {
-          const img = document.createElement("img");
-          img.src = post.image;
-          postsGrid.appendChild(img);
-        });
-      } catch (error) {
-        alert("Could not load user data.");
-      }
+      const postsGrid = document.getElementById("postsGrid");
+      postsGrid.innerHTML = "";
+      data.posts.forEach(post => {
+        const postCard = document.createElement("div");
+        postCard.className = "post-card";
+
+        const img = document.createElement("img");
+        img.src = post.imageUrl;
+        postCard.appendChild(img);
+
+        const likeBtn = document.createElement("button");
+        likeBtn.innerText = `${post.likes.length} Likes`;
+        likeBtn.onclick = async () => {
+          await fetch(`${apiUrl}/posts/${post._id}/like`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId })
+          });
+          loadUserProfile();
+        };
+        postCard.appendChild(likeBtn);
+
+        const commentForm = document.createElement("form");
+        commentForm.innerHTML = `
+          <input type="text" placeholder="Add comment..." class="comment-input" />
+          <button type="submit">Post</button>
+        `;
+        commentForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const text = commentForm.querySelector("input").value;
+          await fetch(`${apiUrl}/posts/${post._id}/comment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, text })
+          });
+          loadUserProfile();
+        };
+        postCard.appendChild(commentForm);
+
+        postsGrid.appendChild(postCard);
+      });
     }
   </script>
 </body>

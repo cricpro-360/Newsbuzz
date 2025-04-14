@@ -48,7 +48,8 @@ const Post = mongoose.model('Post', new mongoose.Schema({
   district: String,
   taluk: String,
   username: String,
-  profilepic: String
+  profilepic: String,
+  bio: String
 }, { timestamps: true }));
 
 // GET: Filter by state/district/taluk

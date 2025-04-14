@@ -48,7 +48,7 @@ const Post = mongoose.model('Post', new mongoose.Schema({
   district: String,
   taluk: String,
   username: String,
-  profilepic: String,
+  profilePic: String,
   bio: String
 }, { timestamps: true }));
 

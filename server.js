@@ -39,7 +39,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('MongoDB Connected'))
 .catch((err) => console.error('MongoDB Connection Error:', err));
 
-// Schema with full location
+// Post Schema
 const Post = mongoose.model('Post', new mongoose.Schema({
   title: String,
   content: String,
@@ -51,6 +51,16 @@ const Post = mongoose.model('Post', new mongoose.Schema({
   profilePic: String,
   bio: String
 }, { timestamps: true }));
+
+// User Schema
+const User = mongoose.model('User', new mongoose.Schema({
+  username: String,
+  profilePic: String,
+  bio: String,
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
+}));
 
 // GET: Filter by state/district/taluk
 app.get('/posts', async (req, res) => {
@@ -78,9 +88,17 @@ app.post('/posts', upload.single('image'), async (req, res) => {
       district: req.body.district,
       taluk: req.body.taluk,
       username: req.body.username,
-      profilepic: req.body.profilepic
+      profilePic: req.body.profilePic
     });
     await post.save();
+
+    // Also push the post ID to the user's posts
+    const user = await User.findOne({ username: req.body.username });
+    if (user) {
+      user.posts.push(post._id);
+      await user.save();
+    }
+
     res.status(201).json(post);
   } catch (err) {
     console.error('POST error:', err);
@@ -99,64 +117,73 @@ app.get('/posts/:id', async (req, res) => {
   }
 });
 
+// Get user profile
 app.get('/user/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate('posts followers following');
+    const user = await User.findById(req.params.id).populate('posts').populate('followers').populate('following');
     res.json(user);
   } catch (err) {
-    console.log(err); // Debugging error
+    console.log(err);
     res.status(500).json({ message: 'Error loading user profile' });
   }
 });
 
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),  // Save to the "uploads" directory
-  filename: (req, file, cb) => cb(null, Date.now() + file.originalname),  // Save with a unique name
-});
-
-const upload = multer({ storage });
-
+// Update user profile
 app.put('/user/:id/edit', upload.single('profilePic'), async (req, res) => {
   try {
     const { username, bio } = req.body;
-    const file = req.file;  // Handle file upload
-    
     const updateData = { username, bio };
-    if (file) {
-      // Process the file (e.g., upload to Cloudinary if needed)
-      const uploadedPicUrl = await uploadToCloudinary(file);
-      updateData.profilePic = uploadedPicUrl;
+    if (req.file) {
+      updateData.profilePic = req.file.path;
     }
-    
+
     const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json(user);
   } catch (err) {
-    console.log(err); // Debugging error
+    console.log(err);
     res.status(500).json({ message: 'Error updating profile' });
   }
 });
 
+// Follow user
 app.post('/follow/:id', async (req, res) => {
   try {
-    // Logic for following the user
+    const followerId = req.body.followerId;
     const user = await User.findById(req.params.id);
-    // Add to following, add follower
+    const follower = await User.findById(followerId);
+
+    if (!user.followers.includes(followerId)) {
+      user.followers.push(followerId);
+      await user.save();
+    }
+    if (!follower.following.includes(user._id)) {
+      follower.following.push(user._id);
+      await follower.save();
+    }
+
     res.json({ message: 'Followed successfully' });
   } catch (err) {
-    console.log(err); // Debugging error
+    console.log(err);
     res.status(500).json({ message: 'Error following user' });
   }
 });
 
+// Unfollow user
 app.post('/unfollow/:id', async (req, res) => {
   try {
-    // Logic for unfollowing the user
+    const followerId = req.body.followerId;
     const user = await User.findById(req.params.id);
-    // Remove from following, remove follower
+    const follower = await User.findById(followerId);
+
+    user.followers = user.followers.filter(id => id.toString() !== followerId);
+    follower.following = follower.following.filter(id => id.toString() !== req.params.id);
+
+    await user.save();
+    await follower.save();
+
     res.json({ message: 'Unfollowed successfully' });
   } catch (err) {
-    console.log(err); // Debugging error
+    console.log(err);
     res.status(500).json({ message: 'Error unfollowing user' });
   }
 });

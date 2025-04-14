@@ -46,10 +46,7 @@ const Post = mongoose.model('Post', new mongoose.Schema({
   imageUrl: String,
   state: String,
   district: String,
-  taluk: String,
-  username: String,
-  profilePic: String,
-  bio: String
+  taluk: String
 }, { timestamps: true }));
 
 // GET: Filter by state/district/taluk
@@ -76,9 +73,7 @@ app.post('/posts', upload.single('image'), async (req, res) => {
       imageUrl: req.file ? req.file.path : null,
       state: req.body.state,
       district: req.body.district,
-      taluk: req.body.taluk,
-      username: req.body.username,
-      profilepic: req.body.profilepic
+      taluk: req.body.taluk
     });
     await post.save();
     res.status(201).json(post);

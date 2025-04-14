@@ -1,47 +1,64 @@
-<!DOCTYPE html>
-<html>
+<!-- profile.html --><!DOCTYPE html><html lang="kn">
 <head>
-  <title>Profile Settings</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ನನ್ನ ಪ್ರೊಫೈಲ್</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { margin: 10px 0; display: block; }
+    img { margin-top: 10px; border-radius: 8px; }
+  </style>
 </head>
 <body>
-  <h2>Create or Edit Profile</h2>
+  <h2>ನನ್ನ ಪ್ರೊಫೈಲ್</h2>
+  <input type="text" id="username" placeholder="ಹೆಸರು ನಮೂದಿಸಿ">
+  <input type="file" id="profileImageFile" accept="image/*">
+  <button onclick="uploadProfile()">ಸೇವ್</button>  <div id="profilePreview">
+    <h3>ಪ್ರಿವ್ಯೂ</h3>
+    <p id="previewName"></p>
+    <img id="previewImage" width="120" height="120">
+  </div>  <script>
+    const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dods2fuur/image/upload';
+    const CLOUDINARY_UPLOAD_PRESET = 'newsbuzz';
 
-  <input id="username" placeholder="Username"><br><br>
-  <input id="bio" placeholder="Bio"><br><br>
-  <input id="profilePic" placeholder="Profile Picture URL"><br><br>
+    function uploadProfile() {
+      const username = document.getElementById('username').value.trim();
+      const file = document.getElementById('profileImageFile').files[0];
 
-  <button onclick="saveProfile()">Save Profile</button>
+      if (!username || !file) {
+        alert('ದಯವಿಟ್ಟು ಹೆಸರು ಮÊ4್ತು ಇಮೇಜ್ ಆಯ್ಕೆಮಾಡಿ');
+        return;
+      }
 
-  <script>
-    const API = 'https://newsbuzz-1.onrender.com';
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-    function saveProfile() {
-      const profile = {
-        username: document.getElementById("username").value,
-        bio: document.getElementById("bio").value,
-        profilePic: document.getElementById("profilePic").value
-      };
-
-      fetch(`${API}/profile`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profile)
+      fetch(CLOUDINARY_URL, {
+        method: 'POST',
+        body: formData
       })
       .then(res => res.json())
       .then(data => {
-        localStorage.setItem("userProfile", JSON.stringify(data));
-        alert("Profile saved successfully!");
-      });
+        const profile = {
+          username,
+          profilePic: data.secure_url
+        };
+        localStorage.setItem('userProfile', JSON.stringify(profile));
+        loadProfile();
+      })
+      .catch(() => alert("ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ವಿಫಲವಾಗಿದೆ"));
     }
 
-    window.onload = () => {
-      const profile = JSON.parse(localStorage.getItem("userProfile"));
+    function loadProfile() {
+      const profile = JSON.parse(localStorage.getItem('userProfile'));
       if (profile) {
-        document.getElementById("username").value = profile.username;
-        document.getElementById("bio").value = profile.bio;
-        document.getElementById("profilePic").value = profile.profilePic;
+        document.getElementById('previewName').innerText = profile.username;
+        document.getElementById('previewImage').src = profile.profilePic;
+        document.getElementById('username').value = profile.username;
       }
-    };
-  </script>
-</body>
+    }
+
+    window.onload = loadProfile;
+  </script></body>
 </html>

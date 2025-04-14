@@ -30,45 +30,66 @@
     const CLOUDINARY_UPLOAD_PRESET = 'newsbuzz';
 
     function uploadProfile() {
-      const username = document.getElementById('username').value.trim();
-      const bio = document.getElementById('bio').value.trim();
-      const file = document.getElementById('profileImageFile').files[0];
+  const username = document.getElementById('username').value.trim();
+  const bio = document.getElementById('bio').value.trim();
+  const file = document.getElementById('profileImageFile').files[0];
 
-      if (!username || !file) {
-        alert('ದಯವಿಟ್ಟು ಹೆಸರು ಮತ್ತು ಇಮೇಜ್ ಆಯ್ಕೆಮಾಡಿ');
-        return;
+  if (!username || !file) {
+    alert('ದಯವಿಟ್ಟು ಹೆಸರು ಮತ್ತು ಇಮೇಜ್ ಆಯ್ಕೆಮಾಡಿ');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'newsbuzz');
+
+  fetch('https://api.cloudinary.com/v1_1/dods2fuur/image/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    const profile = {
+      username,
+      bio,
+      profilePic: data.secure_url
+    };
+
+    // Save to backend
+    return fetch('https://newsbuzz-1.onrender.com/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profile)
+    });
+  })
+  .then(res => res.json())
+  .then(savedProfile => {
+    localStorage.setItem('userProfile', JSON.stringify(savedProfile));
+    loadProfile();
+    alert('ಪ್ರೊಫೈಲ್ ಸೇವ್ ಆಗಿದೆ!');
+  })
+  .catch(err => {
+    console.error(err);
+    alert("ಪ್ರೊಫೈಲ್ ಸೇವ್ ವಿಫಲವಾಗಿದೆ");
+  });
       }
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-      fetch(CLOUDINARY_URL, {
-        method: 'POST',
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        const profile = {
-          username,
-          bio,
-          profilePic: data.secure_url
-        };
-        localStorage.setItem('userProfile', JSON.stringify(profile));
-        loadProfile();
-      })
-      .catch(() => alert("ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ವಿಫಲವಾಗಿದೆ"));
-    }
-
+    
     function loadProfile() {
-      const profile = JSON.parse(localStorage.getItem('userProfile'));
-      if (profile) {
-        document.getElementById('previewName').innerText = profile.username;
-        document.getElementById('previewBio').innerText = profile.bio || '';
-        document.getElementById('previewImage').src = profile.profilePic;
-        document.getElementById('username').value = profile.username;
-        document.getElementById('bio').value = profile.bio || '';
-      }
+  const saved = JSON.parse(localStorage.getItem('userProfile'));
+  if (!saved || !saved.username) return;
+
+  fetch(`https://newsbuzz-1.onrender.com/profile/${saved.username}`)
+    .then(res => res.json())
+    .then(profile => {
+      document.getElementById('previewName').innerText = profile.username;
+      document.getElementById('previewBio').innerText = profile.bio || '';
+      document.getElementById('previewImage').src = profile.profilePic;
+      document.getElementById('username').value = profile.username;
+      document.getElementById('bio').value = profile.bio || '';
+    })
+    .catch(() => {
+      alert("ಪ್ರೊಫೈಲ್ ಲೋಡ್ ವಿಫಲವಾಗಿದೆ");
+    });
     }
 
     window.onload = loadProfile;

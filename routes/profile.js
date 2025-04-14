@@ -1,82 +1,45 @@
+// routes/profile.js
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const User = require('../models/User');
+const mongoose = require('mongoose');
 
-// Use the same cloudinary storage from your main server
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('cloudinary').v2;
+const Profile = mongoose.model('Profile', new mongoose.Schema({
+  username: String,
+  bio: String,
+  profilePic: String
+}, { timestamps: true }));
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'profilePics',
-    allowed_formats: ['jpg', 'png', 'jpeg'],
-    transformation: [{ width: 400, height: 400, crop: 'limit' }]
-  }
-});
-
-const upload = multer({ storage });
-
-app.post('/profile', async (req, res) => {
+// Save or update profile
+router.post('/', async (req, res) => {
   try {
     const { username, bio, profilePic } = req.body;
-    
-    // Check if user exists
-    let user = await User.findOne({ username });
-    if (user) {
-      // Update existing user
-      user.bio = bio;
-      user.profilePic = profilePic;
-      await user.save();
+    const existing = await Profile.findOne({ username });
+
+    let profile;
+    if (existing) {
+      existing.bio = bio;
+      existing.profilePic = profilePic;
+      profile = await existing.save();
     } else {
-      // Create new user
-      user = new User({ username, bio, profilePic });
-      await user.save();
+      profile = new Profile({ username, bio, profilePic });
+      await profile.save();
     }
 
-    res.status(200).json(user);
+    res.json(profile);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Profile save failed' });
   }
 });
 
-// GET profile by phone
-router.get('/:phone', async (req, res) => {
+// Get profile by username
+router.get('/:username', async (req, res) => {
   try {
-    const user = await User.findOne({ phone: req.params.phone });
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json(user);
+    const profile = await Profile.findOne({ username: req.params.username });
+    if (!profile) return res.status(404).json({ message: 'Not found' });
+    res.json(profile);
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// POST/UPDATE profile
-router.post('/', upload.single('profilePic'), async (req, res) => {
-  try {
-    const { phone, username, password } = req.body;
-
-    const update = {
-      username,
-      password,
-    };
-
-    if (req.file) {
-      update.profilePic = req.file.path;
-    }
-
-    const user = await User.findOneAndUpdate(
-      { phone },
-      { $set: update },
-      { new: true, upsert: true }
-    );
-
-    res.json(user);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Fetch error' });
   }
 });
 

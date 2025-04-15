@@ -1,6 +1,5 @@
-<!-- profile.html -->
-<!DOCTYPE html>
-<html lang="kn">
+<!-- profile.html (updated with backend sync) -->
+<!DOCTYPE html><html lang="kn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,18 +15,15 @@
   <input type="text" id="username" placeholder="ಹೆಸರು ನಮೂದಿಸಿ">
   <textarea id="bio" placeholder="ಬಯೋ ನಮೂದಿಸಿ"></textarea>
   <input type="file" id="profileImageFile" accept="image/*">
-  <button onclick="uploadProfile()">ಸೇವ್</button>
-
-  <div id="profilePreview">
+  <button onclick="uploadProfile()">ಸೇವ್</button>  <div id="profilePreview">
     <h3>ಪ್ರಿವ್ಯೂ</h3>
     <p id="previewName"></p>
     <p id="previewBio"></p>
     <img id="previewImage" width="520" height="520">
-  </div>
-
-  <script>
+  </div>  <script>
     const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dods2fuur/image/upload';
     const CLOUDINARY_UPLOAD_PRESET = 'newsbuzz';
+    const API_URL = 'https://newsbuzz-1.onrender.com';
 
     function uploadProfile() {
       const username = document.getElementById('username').value.trim();
@@ -35,7 +31,7 @@
       const file = document.getElementById('profileImageFile').files[0];
 
       if (!username || !file) {
-        alert('ದಯವಿಟ್ಟು ಹೆಸರು ಮತ್ತು ಇಮೇಜ್ ಆಯ್ಕೆಮಾಡಿ');
+        alert('ದಯವಿತು ಹೆಸರು ಮÊ4್ತು ಇಮೇಜ್ ಆಯ್ಕೆಮಾಡಿ');
         return;
       }
 
@@ -47,21 +43,34 @@
         method: 'POST',
         body: formData
       })
+      .then(res => res.json())
       .then(data => {
-  const existing = JSON.parse(localStorage.getItem('userProfile')) || {};
-  const profile = {
-    userId: existing.userId || generateRandomId(),
-    username,
-    bio,
-    profilePic: data.secure_url
-  };
+        const existing = JSON.parse(localStorage.getItem('userProfile')) || {};
+        const profile = {
+          userId: existing.userId || generateRandomId(),
+          username,
+          bio,
+          profilePic: data.secure_url
+        };
         localStorage.setItem('userProfile', JSON.stringify(profile));
+
+        // Sync with backend
+        fetch(`${API_URL}/user/create-or-update`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profile)
+        })
+        .then(res => res.json())
+        .then(data => console.log("User stored:", data))
+        .catch(err => console.error("User creation failed:", err));
+
         loadProfile();
       })
       .catch(() => alert("ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ವಿಫಲವಾಗಿದೆ"));
     }
+
     function generateRandomId() {
-  return 'user_' + Math.random().toString(36).substr(2, 9);
+      return 'user_' + Math.random().toString(36).substr(2, 9);
     }
 
     function loadProfile() {
@@ -76,6 +85,5 @@
     }
 
     window.onload = loadProfile;
-  </script>
-</body>
+  </script></body>
 </html>

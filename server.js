@@ -20,25 +20,33 @@ const userSchema = new mongoose.Schema({ username: String, profilePic: String, b
 const postSchema = new mongoose.Schema({ title: String, content: String, imageUrl: String, state: String, district: String, taluk: String, username: String, profilePic: String, userId: String, user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], comments: [{ userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, text: String, createdAt: { type: Date, default: Date.now } }] }, { timestamps: true }); const Post = mongoose.model('Post', postSchema);
 
 // Create a post
-app.post('/posts', upload.single('image'), async (req, res) => { try { const user = await User.findById(req.body.userId); if (!user) return res.status(404).json({ message: 'User not found' });
+app.post('/posts', upload.single('image'), async (req, res) => {
+  try {
+    const user = await User.findById(req.body.userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-const post = new Post({
-  title: req.body.title,
-  content: req.body.content,
-  imageUrl: req.file ? req.file.path : null,
-  state: req.body.state,
-  district: req.body.district,
-  taluk: req.body.taluk,
-  user: user._id
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      imageUrl: req.file ? req.file.path : null,
+      state: req.body.state,
+      district: req.body.district,
+      taluk: req.body.taluk,
+      username: user.username, // ADD
+      profilePic: user.profilePic, // ADD
+      userId: user._id, // ADD
+      user: user._id
+    });
+
+    await post.save();
+    user.posts.push(post._id);
+    await user.save();
+
+    res.status(201).json(post);
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating post' });
+  }
 });
-
-await post.save();
-user.posts.push(post._id);
-await user.save();
-
-res.status(201).json(post);
-
-} catch (err) { res.status(500).json({ message: 'Error creating post' }); } });
 
 // Get posts with filtering 
 app.get('/posts', async (req, res) => { try { const { state, district, taluk } = req.query; const query = {}; if (state) query.state = state; if (district) query.district = district; if (taluk) query.taluk = taluk; const posts = await Post.find(query).populate('user', 'username profilePic').sort({ createdAt: -1 }); res.json(posts); } catch (err) { res.status(500).json({ message: 'Failed to fetch posts' }); } });

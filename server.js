@@ -57,6 +57,32 @@ const post = new Post({
   user: user._id
 });
 
+app.get('/posts', async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .sort({ createdAt: -1 })
+      .populate('user', 'username bio profilePic'); // Only get required user fields
+
+    const modifiedPosts = posts.map(post => ({
+      _id: post.user?.username || post._id, // Show username as _id if available
+      title: post.title,
+      content: post.content,
+      imageUrl: post.imageUrl,
+      state: post.state,
+      district: post.district,
+      taluk: post.taluk,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      profilePic: post.user?.profilePic || null,
+      bio: post.user?.bio || '',
+    }));
+
+    res.json(modifiedPosts);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching posts' });
+  }
+});
+                                                                      
 await post.save();
 user.posts.push(post._id);
 await user.save();

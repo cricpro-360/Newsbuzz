@@ -64,7 +64,8 @@ res.json({ message: 'Followed successfully' });
 
 } catch (err) { res.status(500).json({ message: 'Error following user' }); } });
 
-// Unfollow user app.post('/unfollow/:id', async (req, res) => { try { const followerId = req.body.followerId; const user = await User.findById(req.params.id); const follower = await User.findById(followerId);
+// Unfollow user
+app.post('/unfollow/:id', async (req, res) => { try { const followerId = req.body.followerId; const user = await User.findById(req.params.id); const follower = await User.findById(followerId);
 
 user.followers = user.followers.filter(id => id.toString() !== followerId);
 follower.following = follower.following.filter(id => id.toString() !== req.params.id);

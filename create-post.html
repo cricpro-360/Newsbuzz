@@ -107,6 +107,7 @@
 if (profile) {
   formData.append('username', profile.username);
   formData.append('profilePic', profile.profilePic);
+  formData.append('userId', profile.userId); // Add this if available
 }
 
       fetch(`${API_URL}/posts`, {

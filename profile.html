@@ -50,6 +50,7 @@
       .then(res => res.json())
       .then(data => {
         const profile = {
+          userId: existing.userId || generateRandomId(),
           username,
           bio,
           profilePic: data.secure_url
@@ -58,6 +59,9 @@
         loadProfile();
       })
       .catch(() => alert("ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ವಿಫಲವಾಗಿದೆ"));
+    }
+    function generateRandomId() {
+  return 'user_' + Math.random().toString(36).substr(2, 9);
     }
 
     function loadProfile() {

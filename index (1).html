@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar with Icons</title>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      padding-top: 60px;
+      padding-bottom: 60px;
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      background-color: #fff;
+      justify-content: space-between;
+      color: #1e1e1e;
+      padding: 15px 20px;
+      align-items : center;
+      font-size: 18px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+    }
+
+    .navbar-title {
+      font-weight: bold;
+    }
+
+    .navbar-menu {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Bottom Navbar */
+    .bottom-navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #fff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+    }
+
+    .bottom-navbar a {
+      color: #1e1e1e;
+      text-decoration: none;
+      text-align: center;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bottom-navbar a i {
+      font-size: 18px;
+      margin-bottom: 3px;
+    }
+
+    .bottom-navbar a:hover {
+      color: #fff;
+      background:#00aced;
+    }
+
+    /* Content Area */
+    .content {
+      padding: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .bottom-navbar a i {
+        font-size: 16px;
+      }
+
+      .bottom-navbar a {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <div class="top-navbar">
+    <div class="navbar-title">Local News App</div>
+    <div class="navbar-menu"><i class="fas fa-ellipsis"></i></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <h2>ಸ್ವಾಗತ!</h2>
+    <p>ನೀವು ಈಗ navbar icons ಜೊತೆಗೆ ನೋಡುತ್ತಿದ್ದೀರಿ. ಇದು responsive ಮತ್ತು fixed layout ಆಗಿದೆ.</p>
+  </div>
+
+  <!-- Bottom Navbar with Icons -->
+  <div class="bottom-navbar">
+    <a href="#"><i class="fas fa-home"></i>Home</a>
+    <a href="#"><i class="fas fa-search"></i>search</a>
+    <a href="#"><i class="fas fa-plus-circle"></i>Create</a>
+    <a href="#"><i class="fas fa-newspaper"></i>Posts</a>
+    <a href="#"><i class="fas fa-user"></i>Profile</a>
+  </div>
+
+</body>
+</html>

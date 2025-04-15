@@ -1,33 +1,68 @@
-<!-- profile.html -->
 <!DOCTYPE html>
 <html lang="kn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ನನ್ನ ಪ್ರೊಫೈಲ್</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
     input, textarea, button { margin: 10px 0; display: block; width: 100%; max-width: 400px; }
-    img { margin-top: 10px; border-radius: 8px; }
+    img { margin-top: 10px; border-radius: 8px; max-width: 100%; }
+    #userPosts > div { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .profile-link { cursor: pointer; display: flex; align-items: center; gap: 10px; margin: 5px 0; }
+    .profile-link img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
   </style>
 </head>
 <body>
-  <h2>ನನ್ನ ಪ್ರೊಫೈಲ್</h2>
-  <input type="text" id="username" placeholder="ಹೆಸರು ನಮೂದಿಸಿ">
-  <textarea id="bio" placeholder="ಬಯೋ ನಮೂದಿಸಿ"></textarea>
-  <input type="file" id="profileImageFile" accept="image/*">
-  <button onclick="uploadProfile()">ಸೇವ್</button>
+  <h2>ಪ್ರೊಫೈಲ್</h2>
+
+  <div id="editSection">
+    <input type="text" id="username" placeholder="ಹೆಸರು ನಮೂದಿಸಿ">
+    <textarea id="bio" placeholder="ಬಯೋ ನಮೂದಿಸಿ"></textarea>
+    <input type="file" id="profileImageFile" accept="image/*">
+    <button onclick="uploadProfile()">ಸೇವ್</button>
+  </div>
 
   <div id="profilePreview">
     <h3>ಪ್ರಿವ್ಯೂ</h3>
     <p id="previewName"></p>
     <p id="previewBio"></p>
-    <img id="previewImage" width="520" height="520">
+    <img id="previewImage" width="200" height="200">
+    <div id="followBtnContainer"></div>
   </div>
+
+  <div style="margin-top: 20px;">
+    <button onclick="showFollowers()">ಫಾಲೋವರ್ಸ್</button>
+    <button onclick="showFollowing()">ಫಾಲೋ ಮಾಡಿದವರು</button>
+  </div>
+  <div id="followerList"></div>
+  <div id="followingList"></div>
+
+  <h3>ಪೋಸ್ಟುಗಳು</h3>
+  <div id="userPosts"></div>
 
   <script>
     const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dods2fuur/image/upload';
     const CLOUDINARY_UPLOAD_PRESET = 'newsbuzz';
+    const backendURL = 'https://newsbuzz-1.onrender.com';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewingUserId = urlParams.get('id');
+    const currentUserId = localStorage.getItem('userId');
+
+    if (viewingUserId) {
+      loadUserProfile(viewingUserId);
+      document.getElementById('editSection').style.display = (viewingUserId === currentUserId) ? 'block' : 'none';
+    } else {
+      const storedProfile = JSON.parse(localStorage.getItem('userProfile'));
+      if (storedProfile) {
+        document.getElementById('username').value = storedProfile.username;
+        document.getElementById('bio').value = storedProfile.bio || '';
+        document.getElementById('previewName').innerText = storedProfile.username;
+        document.getElementById('previewBio').innerText = storedProfile.bio || '';
+        document.getElementById('previewImage').src = storedProfile.profilePic;
+      }
+    }
 
     function uploadProfile() {
       const username = document.getElementById('username').value.trim();
@@ -43,35 +78,97 @@
       formData.append('file', file);
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-      fetch(CLOUDINARY_URL, {
+      fetch(CLOUDINARY_URL, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+          const profile = { username, bio, profilePic: data.secure_url };
+          localStorage.setItem('userProfile', JSON.stringify(profile));
+          fetch(`${backendURL}/user/${currentUserId}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, bio, profilePic: data.secure_url })
+          })
+          .then(() => loadUserProfile(currentUserId));
+        })
+        .catch(() => alert("ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ವಿಫಲವಾಗಿದೆ"));
+    }
+
+    function loadUserProfile(id) {
+      fetch(`${backendURL}/user/${id}`)
+        .then(res => res.json())
+        .then(user => {
+          document.getElementById('previewName').innerText = user.username;
+          document.getElementById('previewBio').innerText = user.bio || '';
+          document.getElementById('previewImage').src = user.profilePic;
+
+          if (id !== currentUserId) {
+            fetch(`${backendURL}/user/${currentUserId}`)
+              .then(res => res.json())
+              .then(currentUser => {
+                const isFollowing = currentUser.following.includes(id);
+                document.getElementById('followBtnContainer').innerHTML = `
+                  <button onclick="${isFollowing ? 'unfollow' : 'follow'}User('${id}')">
+                    ${isFollowing ? 'ಅನ್‌ಫಾಲೋ' : 'ಫಾಲೋ ಮಾಡಿ'}
+                  </button>
+                `;
+              });
+          }
+
+          const postHtml = user.posts.map(post => `
+            <div>
+              <img src="${post.imageUrl}" alt="img" />
+              <h4>${post.title}</h4>
+              <p>${post.content}</p>
+              <small>${post.state}, ${post.district}, ${post.taluk}</small>
+            </div>
+          `).join('');
+          document.getElementById('userPosts').innerHTML = postHtml;
+        });
+    }
+
+    function followUser(id) {
+      fetch(`${backendURL}/follow/${id}`, {
         method: 'POST',
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        const profile = {
-          username,
-          bio,
-          profilePic: data.secure_url
-        };
-        localStorage.setItem('userProfile', JSON.stringify(profile));
-        loadProfile();
-      })
-      .catch(() => alert("ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ವಿಫಲವಾಗಿದೆ"));
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ followerId: currentUserId })
+      }).then(() => loadUserProfile(id));
     }
 
-    function loadProfile() {
-      const profile = JSON.parse(localStorage.getItem('userProfile'));
-      if (profile) {
-        document.getElementById('previewName').innerText = profile.username;
-        document.getElementById('previewBio').innerText = profile.bio || '';
-        document.getElementById('previewImage').src = profile.profilePic;
-        document.getElementById('username').value = profile.username;
-        document.getElementById('bio').value = profile.bio || '';
-      }
+    function unfollowUser(id) {
+      fetch(`${backendURL}/unfollow/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ followerId: currentUserId })
+      }).then(() => loadUserProfile(id));
     }
 
-    window.onload = loadProfile;
+    function showFollowers() {
+      fetch(`${backendURL}/user/${viewingUserId}`)
+        .then(res => res.json())
+        .then(data => {
+          const list = data.followers.map(f => `
+            <div class="profile-link" onclick="window.location.href='profile.html?id=${f._id}'">
+              <img src="${f.profilePic}" alt="pf"> <span>${f.username}</span>
+            </div>
+          `).join('');
+          document.getElementById('followerList').innerHTML = `<h4>ಫಾಲೋವರ್ಸ್:</h4>${list}`;
+          document.getElementById('followingList').innerHTML = '';
+        });
+    }
+
+    function showFollowing() {
+      fetch(`${backendURL}/user/${viewingUserId}`)
+        .then(res => res.json())
+        .then(data => {
+          const list = data.following.map(f => `
+            <div class="profile-link" onclick="window.location.href='profile.html?id=${f._id}'">
+              <img src="${f.profilePic}" alt="pf"> <span>${f.username}</span>
+            </div>
+          `).join('');
+          document.getElementById('followingList').innerHTML = `<h4>ಫಾಲೋ ಮಾಡಿದವರು:</h4>${list}`;
+          document.getElementById('followerList').innerHTML = '';
+        });
+    }
   </script>
 </body>
 </html>

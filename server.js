@@ -53,7 +53,7 @@ const post = new Post({
   taluk: req.body.taluk,
   username: user.username,
   profilePic: user.profilePic,
-  userId: user._id,
+  userId: user._id.toString(),
   user: user._id
 });
 

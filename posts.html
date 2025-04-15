@@ -1,0 +1,37 @@
+<!-- posts.html -->
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <title>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</title>
+  <style>
+    .post { border: 1px solid #ddd; margin: 10px; padding: 10px; border-radius: 10px; }
+    img { width: 100%; border-radius: 8px; }
+    .username { font-weight: bold; color: #007bff; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>ಪೋಸ್ಟ್‌ಗಳು</h2>
+  <div id="postContainer"></div>
+
+  <script>
+    fetch("https://newsbuzz-1.onrender.com/posts")
+    .then(res => res.json())
+    .then(posts => {
+      const container = document.getElementById("postContainer");
+      posts.reverse().forEach(post => {
+        container.innerHTML += `
+          <div class="post">
+            <div>
+              <img src="${post.profilePic}" width="40" height="40" style="border-radius:50%;" />
+              <span class="username" onclick="location.href='profile.html?user=${post.userId}'">@${post.username}</span>
+            </div>
+            <img src="${post.image}" alt="post">
+            <p>${post.content}</p>
+          </div>
+        `;
+      });
+    });
+  </script>
+</body>
+</html>

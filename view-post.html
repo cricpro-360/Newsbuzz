@@ -108,6 +108,10 @@
           posts.forEach(post => {
             const date = new Date(post.createdAt).toLocaleString();
             postDiv.innerHTML += `
+            <div class="user-info">
+  <img src="${post.profilePic}" width="40" height="40">
+  <a href="profile-view.html?user=${post.userId}">${post.username}</a>
+</div>
               <div class="post">
                 <h3>${post.title}</h3>
                 <p class="preview">${post.content}</p>

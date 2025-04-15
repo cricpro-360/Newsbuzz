@@ -15,8 +15,11 @@ mongoose.set('strictQuery', true); app.use(cors()); app.use(bodyParser.json());
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log('MongoDB Connected')) .catch((err) => console.error('MongoDB Connection Error:', err));
 
-const postRoutes = require('./models/Post');
-app.use('/Post', postRoutes);
+const postModels = require('./models/posts');
+app.use('/posts', postModels);
+
+const userModels = require('./models/users');
+app.use('/users', userModels);
 
 // Create or update a user app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
 

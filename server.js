@@ -1,4 +1,4 @@
-// server.js (updated with user create-or-update route) 
+// server.js (updated with user create-or-update route and post creation with user data) 
 const express = require('express'); const mongoose = require('mongoose'); const bodyParser = require('body-parser'); const multer = require('multer'); const cors = require('cors'); require('dotenv').config();
 
 const cloudinary = require('cloudinary').v2; const { CloudinaryStorage } = require('multer-storage-cloudinary');
@@ -19,8 +19,7 @@ const userSchema = new mongoose.Schema({ username: String, profilePic: String, b
 
 const postSchema = new mongoose.Schema({ title: String, content: String, imageUrl: String, state: String, district: String, taluk: String, username: String, profilePic: String, userId: String, user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], comments: [{ userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, text: String, createdAt: { type: Date, default: Date.now } }] }, { timestamps: true }); const Post = mongoose.model('Post', postSchema);
 
-// Create or update a user 
-app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
+// Create or update a user app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
 
 if (user) {
   user.username = username;
@@ -41,8 +40,7 @@ res.json(user);
 
 } catch (err) { res.status(500).json({ message: 'Error creating/updating user' }); } });
 
-// Create a post 
-app.post('/posts', upload.single('image'), async (req, res) => { try { const user = await User.findById(req.body.userId); if (!user) return res.status(404).json({ message: 'User not found' });
+// Create a post app.post('/posts', upload.single('image'), async (req, res) => { try { const user = await User.findById(req.body.userId); if (!user) return res.status(404).json({ message: 'User not found' });
 
 const post = new Post({
   title: req.body.title,
@@ -57,32 +55,6 @@ const post = new Post({
   user: user._id
 });
 
-app.get('/posts', async (req, res) => {
-  try {
-    const posts = await Post.find()
-      .sort({ createdAt: -1 })
-      .populate('user', 'username bio profilePic'); // Only get required user fields
-
-    const modifiedPosts = posts.map(post => ({
-      _id: post.user?.username || post._id, // Show username as _id if available
-      title: post.title,
-      content: post.content,
-      imageUrl: post.imageUrl,
-      state: post.state,
-      district: post.district,
-      taluk: post.taluk,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      profilePic: post.user?.profilePic || null,
-      bio: post.user?.bio || '',
-    }));
-
-    res.json(modifiedPosts);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching posts' });
-  }
-});
-                                                                      
 await post.save();
 user.posts.push(post._id);
 await user.save();
@@ -91,7 +63,27 @@ res.status(201).json(post);
 
 } catch (err) { res.status(500).json({ message: 'Error creating post' }); } });
 
-// Remaining routes (unchanged) here ...
+// Get posts 
+app.get('/posts', async (req, res) => { try { const posts = await Post.find() .sort({ createdAt: -1 }) .populate('user', 'username bio profilePic');
 
-app.listen(PORT, () => console.log(Server running on port ${PORT}));
+const modifiedPosts = posts.map(post => ({
+  _id: post._id,
+  title: post.title,
+  content: post.content,
+  imageUrl: post.imageUrl,
+  state: post.state,
+  district: post.district,
+  taluk: post.taluk,
+  createdAt: post.createdAt,
+  updatedAt: post.updatedAt,
+  username: post.user?.username || '',
+  profilePic: post.user?.profilePic || '',
+  bio: post.user?.bio || ''
+}));
+
+res.json(modifiedPosts);
+
+} catch (err) { res.status(500).json({ message: 'Error fetching posts' }); } });
+
+// Start server app.listen(PORT, () => console.log(Server running on port ${PORT}));
 

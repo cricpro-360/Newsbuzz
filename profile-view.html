@@ -1,0 +1,47 @@
+<!-- profile-view.html -->
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <title>ಬಳಕೆದಾರ ಪ್ರೊಫೈಲ್</title>
+  <style>
+    .post { margin: 10px 0; border: 1px solid #ddd; padding: 10px; border-radius: 10px; }
+    img { border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h2>ಬಳಕೆದಾರ ಪ್ರೊಫೈಲ್</h2>
+  <div id="profileInfo"></div>
+  <div id="userPosts"></div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get("user");
+
+    fetch("https://newsbuzz-1.onrender.com/posts")
+    .then(res => res.json())
+    .then(posts => {
+      const userPosts = posts.filter(p => p.userId === userId);
+      if (userPosts.length > 0) {
+        const user = userPosts[0];
+        document.getElementById("profileInfo").innerHTML = `
+          <img src="${user.profilePic}" width="100" height="100">
+          <h3>@${user.username}</h3>
+          <p>${user.bio}</p>
+          <hr>
+        `;
+        userPosts.forEach(post => {
+          document.getElementById("userPosts").innerHTML += `
+            <div class="post">
+              <img src="${post.image}" width="100%">
+              <p>${post.content}</p>
+            </div>
+          `;
+        });
+      } else {
+        document.getElementById("profileInfo").innerText = "ಬಳಕೆದಾರರನ್ನು ಕಂಡುಹಿಡಿಯಲಾಗಲಿಲ್ಲ.";
+      }
+    });
+  </script>
+</body>
+</html>

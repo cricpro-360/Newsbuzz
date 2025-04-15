@@ -47,14 +47,14 @@
         method: 'POST',
         body: formData
       })
-      .then(res => res.json())
       .then(data => {
-        const profile = {
-          userId: existing.userId || generateRandomId(),
-          username,
-          bio,
-          profilePic: data.secure_url
-        };
+  const existing = JSON.parse(localStorage.getItem('userProfile')) || {};
+  const profile = {
+    userId: existing.userId || generateRandomId(),
+    username,
+    bio,
+    profilePic: data.secure_url
+  };
         localStorage.setItem('userProfile', JSON.stringify(profile));
         loadProfile();
       })

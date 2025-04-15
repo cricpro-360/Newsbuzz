@@ -19,6 +19,13 @@ const postModels = require('./models/posts');
 
 const userModels = require('./models/users');
 
+const authRoutes = require('./authRoutes');
+app.use('/posts', authRoutes);
+
+const postRoutes = require('./postRoutes');
+app.use('/posts', postRoutes);
+
+
 // Create or update a user app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
 
 if (user) {

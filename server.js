@@ -19,7 +19,8 @@ const userSchema = new mongoose.Schema({ username: String, profilePic: String, b
 
 const postSchema = new mongoose.Schema({ title: String, content: String, imageUrl: String, state: String, district: String, taluk: String, user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], comments: [{ userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, text: String, createdAt: { type: Date, default: Date.now } }] }, { timestamps: true }); const Post = mongoose.model('Post', postSchema);
 
-// Create a post app.post('/posts', upload.single('image'), async (req, res) => { try { const user = await User.findById(req.body.userId); if (!user) return res.status(404).json({ message: 'User not found' });
+// Create a post
+app.post('/posts', upload.single('image'), async (req, res) => { try { const user = await User.findById(req.body.userId); if (!user) return res.status(404).json({ message: 'User not found' });
 
 const post = new Post({
   title: req.body.title,

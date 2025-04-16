@@ -45,6 +45,7 @@
       })
       .then(res => res.json())
       .then(data => {
+        const profilePic = data.secure_url;
         const existing = JSON.parse(localStorage.getItem('userProfile')) || {};
         const profile = {
           userId: existing.userId || generateRandomId(),

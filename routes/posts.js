@@ -11,3 +11,15 @@ app.get('/posts/user/:userId', async (req, res) => {
     res.status(500).json({ message: 'ಸರ್ವರ್ ದೋಷ.' });
   }
 });
+
+const router = require('express').Router();
+const Post = require('../models/Post');
+
+router.post('/', async (req, res) => {
+  const { title, content, state, district, taluk, imageUrl, userId, username, profilePic } = req.body;
+  const newPost = new Post({ title, content, state, district, taluk, imageUrl, userId, username, profilePic });
+  await newPost.save();
+  res.status(201).json(newPost);
+});
+
+module.exports = router;

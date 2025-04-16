@@ -4,7 +4,7 @@ const User = require('./models/User');
 const twilio = require('twilio');
 
 const router = express.Router();
-const JWT_SECRET = 'your_jwt_secret';
+const JWT_SECRET = 'myfirstsecretkey1817';
 
 // Twilio credentials
 const TWILIO_ACCOUNT_SID = 'your_twilio_account_sid';

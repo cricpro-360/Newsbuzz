@@ -50,7 +50,7 @@
           userId: existing.userId || generateRandomId(),
           username,
           bio,
-          profilePic: data.secure_url
+          profilePic
         };
         localStorage.setItem('userProfile', JSON.stringify(profile));
 

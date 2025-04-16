@@ -49,6 +49,14 @@
       .catch(() => showMessage('OTP ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ.', 'error'));
     }
 
+    // After successful OTP login & getting JWT + user profile
+localStorage.setItem("token", jwt); // optional, if you use it for protected routes
+localStorage.setItem("userProfile", JSON.stringify({
+  userId: user._id,
+  username: user.username,
+  profilePic: user.profilePic
+}));
+
     function verifyOTP() {
       const phone = document.getElementById('phone').value.trim();
       const otp = document.getElementById('otp').value.trim();

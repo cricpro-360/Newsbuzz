@@ -5,10 +5,12 @@ const User = require('./models/User');
 const twilio = require('twilio');
 
 const router = express.Router();
-TWILIO_ACCOUNT_SID=AC637e3f451c56f7525695952b9c9e0262
-TWILIO_AUTH_TOKEN=48402e9870554120df595d46d61131cb
-TWILIO_PHONE_NUMBER=+19713902384
-JWT_SECRET=myfirstsecretkey1817
+const JWT_SECRET = 'myfirstsecretkey1817';
+
+// Twilio credentials
+const TWILIO_ACCOUNT_SID = 'AC637e3f451c56f7525695952b9c9e0262';
+const TWILIO_AUTH_TOKEN = '48402e9870554120df595d46d61131cb';
+const TWILIO_PHONE_NUMBER = '+19713902384';
 
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 

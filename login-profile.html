@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ನನ್ನ ಪ್ರೊಫೈಲ್</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>ನನ್ನ ಪ್ರೊಫೈಲ್</h1>
+    <div id="user-info"></div>
+    <hr>
+    <h2>ನನ್ನ ಪೋಸ್ಟ್‌ಗಳು</h2>
+    <div id="user-posts"></div>
+  </div>
+
+  <script>
+    const API_URL = 'https://newsbuzz-1.onrender.com';
+
+    const profile = JSON.parse(localStorage.getItem('userProfile'));
+
+    if (!profile) {
+      document.getElementById('user-info').innerHTML = '<p>ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಆಗಿ.</p>';
+    } else {
+      // Show user profile info
+      const userDiv = document.getElementById('user-info');
+      userDiv.innerHTML = `
+        <img src="${profile.profilePic}" alt="Profile Pic" style="width:100px;height:100px;border-radius:50%;">
+        <h3>${profile.username}</h3>
+        <p>Phone: ${profile.phone}</p>
+      `;
+
+      // Fetch user's posts
+      fetch(`${API_URL}/posts/user/${profile.userId}`)
+        .then(res => res.json())
+        .then(posts => {
+          const postDiv = document.getElementById('user-posts');
+          if (posts.length === 0) {
+            postDiv.innerHTML = '<p>ಇನ್ನೂ ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಇಲ್ಲ.</p>';
+          } else {
+            posts.forEach(post => {
+              const el = document.createElement('div');
+              el.className = 'post';
+              el.innerHTML = `
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                ${post.imageUrl ? `<img src="${post.imageUrl}" style="width:100%;max-width:300px;">` : ''}
+                <p><strong>ಸ್ಥಳ:</strong> ${post.state}, ${post.district}, ${post.taluk || ''}</p>
+                <hr>
+              `;
+              postDiv.appendChild(el);
+            });
+          }
+        })
+        .catch(() => {
+          document.getElementById('user-posts').innerHTML = '<p>ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಿಲ್ಲ.</p>';
+        });
+    }
+  </script>
+</body>
+</html>

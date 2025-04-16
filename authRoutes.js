@@ -1,76 +1,56 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const User = require('./models/User');
-const twilio = require('twilio');
-
 const router = express.Router();
-const JWT_SECRET = 'your_jwt_secret';
+const axios = require('axios');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-// Twilio credentials
-const TWILIO_ACCOUNT_SID = 'your_twilio_account_sid';
-const TWILIO_AUTH_TOKEN = 'your_twilio_auth_token';
-const TWILIO_PHONE_NUMBER = 'your_twilio_phone_number';
+const OTP_STORE = {};
+const FAST2SMS_API_KEY = 'your_fast2sms_api_key';
 
-const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
-
-// Send OTP via SMS (using Twilio)
+// Send OTP
 router.post('/send-otp', async (req, res) => {
   const { phone } = req.body;
-  const otp = Math.floor(1000 + Math.random() * 9000).toString();
-
-  let user = await User.findOne({ phone });
-  if (!user) {
-    user = await User.create({ phone, otp });
-  } else {
-    user.otp = otp;
-    await user.save();
-  }
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  OTP_STORE[phone] = otp;
 
   try {
-    // Send OTP via Twilio SMS
-    await client.messages.create({
-      body: `Your OTP code is ${otp}`,
-      to: phone, // recipient's phone number
-      from: TWILIO_PHONE_NUMBER, // Twilio phone number
+    await axios.post('https://www.fast2sms.com/dev/bulkV2', {}, {
+      params: {
+        authorization: FAST2SMS_API_KEY,
+        variables_values: otp,
+        route: 'otp',
+        numbers: phone
+      }
     });
-
-    res.json({ success: true, message: 'OTP sent via SMS' });
-  } catch (error) {
-    console.error('Error sending SMS:', error);
-    res.status(500).json({ error: 'Failed to send OTP' });
+    res.json({ success: true, message: 'OTP sent' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to send OTP' });
   }
 });
 
-// Verify OTP and return JWT token + username
+// Verify OTP and login
 router.post('/verify-otp', async (req, res) => {
   const { phone, otp } = req.body;
+  if (OTP_STORE[phone] !== otp) {
+    return res.status(400).json({ success: false, message: 'Invalid OTP' });
+  }
 
-  const user = await User.findOne({ phone, otp });
-  if (!user) return res.status(400).json({ error: 'Invalid OTP' });
+  delete OTP_STORE[phone];
 
-  user.otp = null; // Reset OTP after verification
-  await user.save();
+  let user = await User.findOne({ phone });
+  if (!user) user = await User.create({ phone });
 
-  const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
+  const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '7d' });
 
-  // Send token and username back to frontend
-  res.json({ token, username: user.username });
+  res.json({
+    success: true,
+    token,
+    user: {
+      _id: user._id,
+      username: user.username,
+      profilePic: user.profilePic
+    }
+  });
 });
-
-// After OTP verification
-fetch('/verify-otp', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ phone: '9876543210', otp: '1234' })
-})
-  .then(res => res.json())
-  .then(data => {
-    const { token, username } = data;
-    localStorage.setItem('token', token); // Save token for future authenticated requests
-
-    // Show the username in your UI
-    document.getElementById('username').innerText = `Welcome, ${username}`;
-  })
-  .catch(error => console.error('Error:', error));
 
 module.exports = router;

@@ -57,4 +57,20 @@ router.post('/verify-otp', async (req, res) => {
   res.json({ token, username: user.username });
 });
 
+// After OTP verification
+fetch('/verify-otp', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ phone: '9876543210', otp: '1234' })
+})
+  .then(res => res.json())
+  .then(data => {
+    const { token, username } = data;
+    localStorage.setItem('token', token); // Save token for future authenticated requests
+
+    // Show the username in your UI
+    document.getElementById('username').innerText = `Welcome, ${username}`;
+  })
+  .catch(error => console.error('Error:', error));
+
 module.exports = router;

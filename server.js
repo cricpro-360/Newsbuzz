@@ -27,6 +27,9 @@ app.use('/posts', postRoutes);
 
 app.use('/posts', authMiddleware, postRoutes);
 
+const postRoutes = require('./routes/posts'); // or './routes/post'
+app.use('/posts', postRoutes);
+
 // Create or update a user app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
 
 if (user) {

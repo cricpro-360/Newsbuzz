@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
-
 const PostSchema = new mongoose.Schema({
   title: String,
   content: String,
-  imageUrl: String,
   state: String,
   district: String,
-  username: String, // directly store the author's username
-}, { timestamps: true });
-
+  taluk: String,
+  imageUrl: String,
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  username: String,
+  profilePic: String,
+  createdAt: { type: Date, default: Date.now }
+});
 module.exports = mongoose.model('Post', PostSchema);

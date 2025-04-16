@@ -20,7 +20,7 @@ const postModels = require('./models/Post');
 const userModels = require('./models/User');
 
 const authRoutes = require('./authRoutes');
-app.use('/posts', authRoutes);
+app.use('/auth', authRoutes);
 
 const postRoutes = require('./postRoutes');
 app.use('/posts', postRoutes);

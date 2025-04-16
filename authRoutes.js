@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const OTP_STORE = {};
-const FAST2SMS_API_KEY = 'your_fast2sms_api_key';
+const FAST2SMS_API_KEY = '4tdXGQKTpsJy0ONZY715vBDSHUMxIEmhewjoa6blV2fWnCAquc3PODyRZ26JVjbABKSICotNHdGsMpha';
 
 // Send OTP
 router.post('/send-otp', async (req, res) => {
@@ -40,7 +40,7 @@ router.post('/verify-otp', async (req, res) => {
   let user = await User.findOne({ phone });
   if (!user) user = await User.create({ phone });
 
-  const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '7d' });
+  const token = jwt.sign({ userId: user._id }, 'myfirstsecretkey1817', { expiresIn: '7d' });
 
   res.json({
     success: true,

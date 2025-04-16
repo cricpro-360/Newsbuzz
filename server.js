@@ -1,5 +1,5 @@
 // server.js (updated with user create-or-update route and post creation with user data) 
-require('dotenv').config();
+
 const express = require('express'); const mongoose = require('mongoose'); const bodyParser = require('body-parser'); const multer = require('multer'); const cors = require('cors'); require('dotenv').config();
 
 const cloudinary = require('cloudinary').v2; const { CloudinaryStorage } = require('multer-storage-cloudinary');

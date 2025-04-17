@@ -16,6 +16,12 @@ const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 // Send OTP via SMS (using Twilio)
 router.post('/send-otp', async (req, res) => {
   const { phone } = req.body;
+  
+  // Ensure phone number is in the correct international format (+91 for India)
+  if (!phone.startsWith('+')) {
+    return res.status(400).json({ error: 'Phone number must start with country code (e.g., +91)' });
+  }
+
   const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
   let user = await User.findOne({ phone });
@@ -28,16 +34,17 @@ router.post('/send-otp', async (req, res) => {
 
   try {
     // Send OTP via Twilio SMS
-    await client.messages.create({
+    const message = await client.messages.create({
       body: `Your OTP code is ${otp}`,
       to: phone, // recipient's phone number
       from: TWILIO_PHONE_NUMBER, // Twilio phone number
     });
 
+    console.log(`OTP sent to ${phone}: ${message.sid}`);
     res.json({ success: true, message: 'OTP sent via SMS' });
   } catch (error) {
-    console.error('Error sending SMS:', error);
-    res.status(500).json({ error: 'Failed to send OTP' });
+    console.error('Error sending SMS:', error.message, error.code);
+    res.status(500).json({ error: `Failed to send OTP: ${error.message}` });
   }
 });
 

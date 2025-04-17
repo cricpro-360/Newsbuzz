@@ -1,39 +1,23 @@
 <!DOCTYPE html>
 <html lang="kn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>One Page Scroll</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Horizontal Scroll App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     html, body {
       height: 100%;
       overflow: hidden;
       font-family: Arial, sans-serif;
     }
-    .container {
-      height: 100vh;
-      width: 100%;
-      overflow: hidden;
-      position: relative;
-    }
-    .section {
-      height: 100vh;
-      width: 100%;
-      scroll-snap-align: start;
-      padding: 80px 20px 80px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      transition: transform 0.6s ease-in-out;
-    }
 
-    /* Navbar Styles */
     .top-navbar, .bottom-navbar {
       position: fixed;
       left: 0;
@@ -65,11 +49,33 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: color 0.3s;
+    }
+
+    .bottom-navbar a.active {
+      color: #00aced;
+      font-weight: bold;
     }
 
     .bottom-navbar a i {
       font-size: 18px;
       margin-bottom: 3px;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      transition: transform 0.6s ease-in-out;
+      position: relative;
+    }
+
+    .section {
+      min-width: 100vw;
+      height: 100vh;
+      padding: 80px 20px 80px;
+      flex-shrink: 0;
+      overflow-y: auto;
     }
 
     .section h2 {
@@ -80,6 +86,7 @@
       .bottom-navbar a i {
         font-size: 16px;
       }
+
       .bottom-navbar a {
         font-size: 11px;
       }
@@ -88,28 +95,31 @@
 </head>
 <body>
 
+  <!-- Top Navbar -->
   <div class="top-navbar">
     <div class="navbar-title">Local News App</div>
     <div class="navbar-menu"><i class="fas fa-ellipsis"></i></div>
   </div>
 
+  <!-- Horizontal Scroll Container -->
   <div class="container" id="scrollContainer">
-    <div class="section" style="background-color:#f8f9fa;"> 
+    <div class="section" style="background-color: #f8f9fa;">
       <h2>ಸ್ವಾಗತ!</h2>
       <p>ಇದು ಪ್ರಥಮ ಪುಟ.</p>
     </div>
-    <div class="section" style="background-color:#d0f0fd; transform: translateY(100%);">
+    <div class="section" style="background-color: #d0f0fd;">
       <h2>Page 2</h2>
       <p>ಇದು ಎರಡನೇ ಪುಟ.</p>
     </div>
-    <div class="section" style="background-color:#ffe0b2; transform: translateY(200%);">
+    <div class="section" style="background-color: #ffe0b2;">
       <h2>Page 3</h2>
       <p>ಇದು ಮೂರನೇ ಪುಟ.</p>
     </div>
   </div>
 
-  <div class="bottom-navbar">
-    <a href="#"><i class="fas fa-home"></i>Home</a>
+  <!-- Bottom Navbar -->
+  <div class="bottom-navbar" id="bottomNavbar">
+    <a href="#" class="active"><i class="fas fa-home"></i>Home</a>
     <a href="#"><i class="fas fa-search"></i>Search</a>
     <a href="#"><i class="fas fa-plus-circle"></i>Create</a>
     <a href="#"><i class="fas fa-newspaper"></i>Posts</a>
@@ -117,49 +127,52 @@
   </div>
 
   <script>
+    const container = document.getElementById("scrollContainer");
+    const sections = document.querySelectorAll(".section");
+    const navLinks = document.querySelectorAll(".bottom-navbar a");
     let currentPage = 0;
-    const sections = document.querySelectorAll('.section');
-    const totalPages = sections.length;
     let scrolling = false;
 
-    function updateSectionPosition() {
-      sections.forEach((section, index) => {
-        section.style.transform = `translateY(${(index - currentPage) * 100}%)`;
+    function updateScrollPosition() {
+      container.style.transform = `translateX(-${currentPage * 100}vw)`;
+      navLinks.forEach((link, i) => {
+        link.classList.toggle("active", i === currentPage);
       });
     }
 
-    window.addEventListener('wheel', (e) => {
+    window.addEventListener("wheel", (e) => {
       if (scrolling) return;
       scrolling = true;
 
-      if (e.deltaY > 0 && currentPage < totalPages - 1) {
+      if (e.deltaY > 0 && currentPage < sections.length - 1) {
         currentPage++;
       } else if (e.deltaY < 0 && currentPage > 0) {
         currentPage--;
       }
 
-      updateSectionPosition();
+      updateScrollPosition();
 
-      setTimeout(() => {
-        scrolling = false;
-      }, 800);
+      setTimeout(() => scrolling = false, 800);
     });
 
-    // Optional: Swipe for mobile
-    let startY;
-    window.addEventListener('touchstart', e => startY = e.touches[0].clientY);
-    window.addEventListener('touchend', e => {
-      const endY = e.changedTouches[0].clientY;
+    // Swipe for mobile
+    let startX;
+    window.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+    window.addEventListener("touchend", e => {
+      const endX = e.changedTouches[0].clientX;
       if (scrolling) return;
-      if (startY - endY > 50 && currentPage < totalPages - 1) {
+
+      if (startX - endX > 50 && currentPage < sections.length - 1) {
         currentPage++;
-      } else if (endY - startY > 50 && currentPage > 0) {
+      } else if (endX - startX > 50 && currentPage > 0) {
         currentPage--;
       }
-      updateSectionPosition();
+
+      updateScrollPosition();
       scrolling = true;
       setTimeout(() => scrolling = false, 800);
     });
   </script>
+
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Horizontal Scroll Pages & Navbar</title>
+  <title>Full Page Horizontal Scroll</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
@@ -13,159 +13,138 @@
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
+      height: 100%;
+      overflow: hidden;
       font-family: Arial, sans-serif;
-      padding-top: 60px;
-      padding-bottom: 60px;
-      overflow-x: hidden;
     }
 
-    /* Top Navbar */
-    .top-navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      display: flex;
-      background-color: #fff;
-      justify-content: space-between;
-      color: #1e1e1e;
-      padding: 15px 20px;
-      align-items: center;
-      font-size: 18px;
-      z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    }
-
-    .navbar-title {
-      font-weight: bold;
-    }
-
-    .navbar-menu {
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    /* Scrollable Content Sections */
     .scroll-container {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
+      width: 100vw;
+      height: 100vh;
+      scroll-behavior: smooth;
     }
 
     .scroll-section {
       flex: 0 0 100%;
+      width: 100vw;
+      height: 100vh;
       scroll-snap-align: start;
-      padding: 20px;
-      min-height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: white;
     }
 
-    .scroll-section:nth-child(even) {
-      background-color: #f0f0f0;
+    .scroll-section:nth-child(1) {
+      background-color: #007acc;
     }
 
-    .scroll-section:nth-child(odd) {
-      background-color: #e0e0ff;
+    .scroll-section:nth-child(2) {
+      background-color: #28a745;
     }
 
-    .scroll-section h2 {
-      margin-bottom: 10px;
+    .scroll-section:nth-child(3) {
+      background-color: #e83e8c;
     }
 
-    /* Scrollbar styling */
-    .scroll-container::-webkit-scrollbar {
-      height: 8px;
+    .scroll-section:nth-child(4) {
+      background-color: #ffc107;
+      color: black;
     }
 
-    .scroll-container::-webkit-scrollbar-thumb {
-      background-color: #aaa;
-      border-radius: 4px;
+    .scroll-section:nth-child(5) {
+      background-color: #6f42c1;
     }
 
-    /* Bottom Scrollable Navbar */
+    /* Bottom Navbar */
     .bottom-navbar {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      background-color: #fff;
+      background: rgba(255, 255, 255, 0.9);
       overflow-x: auto;
       white-space: nowrap;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
       z-index: 1000;
+      display: flex;
+      justify-content: center;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
     }
 
     .bottom-navbar a {
       display: inline-block;
-      color: #1e1e1e;
-      text-decoration: none;
+      padding: 10px 15px;
       text-align: center;
+      text-decoration: none;
+      color: #333;
       font-size: 12px;
-      padding: 10px 14px;
     }
 
     .bottom-navbar a i {
       display: block;
       font-size: 18px;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
-    .bottom-navbar a:hover {
+    .bottom-navbar a.active {
       background-color: #00aced;
       color: white;
-    }
-
-    @media (max-width: 480px) {
-      .bottom-navbar a {
-        font-size: 11px;
-        padding: 8px 10px;
-      }
-
-      .bottom-navbar a i {
-        font-size: 16px;
-      }
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Navbar -->
-  <div class="top-navbar">
-    <div class="navbar-title">Local News App</div>
-    <div class="navbar-menu"><i class="fas fa-ellipsis"></i></div>
-  </div>
-
-  <!-- Scrollable Content Sections -->
-  <div class="scroll-container">
-    <div class="scroll-section">
-      <h2>ಸ್ವಾಗತ!</h2>
-      <p>ನೀವು ಈಗ navbar icons ಜೊತೆಗೆ ನೋಡುತ್ತಿದ್ದೀರಿ.</p>
-    </div>
-    <div class="scroll-section">
-      <h2>ವರ್ಗ 1</h2>
-      <p>ಇದು ಮೊದಲ ವಿಭಾಗ.</p>
-    </div>
-    <div class="scroll-section">
-      <h2>ವರ್ಗ 2</h2>
-      <p>ಇದು ಎರಡನೇ ವಿಭಾಗ.</p>
-    </div>
-    <div class="scroll-section">
-      <h2>ವರ್ಗ 3</h2>
-      <p>ಇದು ಮೂರನೇ ವಿಭಾಗ.</p>
-    </div>
+  <!-- Scrollable Full Page Sections -->
+  <div class="scroll-container" id="scrollContainer">
+    <div class="scroll-section" id="home">ಹೋಮ್</div>
+    <div class="scroll-section" id="search">ಹುಡುಕಿ</div>
+    <div class="scroll-section" id="create">ಸೃಷ್ಟಿ</div>
+    <div class="scroll-section" id="posts">ಪೋಸ್ಟ್‌ಗಳು</div>
+    <div class="scroll-section" id="profile">ಪ್ರೊಫೈಲ್</div>
   </div>
 
   <!-- Scrollable Bottom Navbar -->
-  <div class="bottom-navbar">
-    <a href="#"><i class="fas fa-home"></i>Home</a>
-    <a href="#"><i class="fas fa-search"></i>Search</a>
-    <a href="#"><i class="fas fa-plus-circle"></i>Create</a>
-    <a href="#"><i class="fas fa-newspaper"></i>Posts</a>
-    <a href="#"><i class="fas fa-user"></i>Profile</a>
-    <a href="#"><i class="fas fa-bell"></i>Alerts</a>
-    <a href="#"><i class="fas fa-cog"></i>Settings</a>
+  <div class="bottom-navbar" id="navbar">
+    <a href="#home" data-target="home" class="active"><i class="fas fa-home"></i>Home</a>
+    <a href="#search" data-target="search"><i class="fas fa-search"></i>Search</a>
+    <a href="#create" data-target="create"><i class="fas fa-plus-circle"></i>Create</a>
+    <a href="#posts" data-target="posts"><i class="fas fa-newspaper"></i>Posts</a>
+    <a href="#profile" data-target="profile"><i class="fas fa-user"></i>Profile</a>
   </div>
+
+  <script>
+    const container = document.getElementById('scrollContainer');
+    const navLinks = document.querySelectorAll('.bottom-navbar a');
+    const sections = document.querySelectorAll('.scroll-section');
+
+    container.addEventListener('scroll', () => {
+      let currentIndex = 0;
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.left >= 0 && rect.left < window.innerWidth) {
+          currentIndex = index;
+        }
+      });
+
+      navLinks.forEach(link => link.classList.remove('active'));
+      navLinks[currentIndex].classList.add('active');
+    });
+
+    // Smooth scroll on navbar click
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const id = link.getAttribute('data-target');
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
 
 </body>
 </html>

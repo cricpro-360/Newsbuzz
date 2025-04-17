@@ -3,61 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Navbar with Icons</title>
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
+  <title>One Page Scroll</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    body {
-      font-family: Arial, sans-serif;
-      padding-top: 60px;
-      padding-bottom: 60px;
+    html, body {
+      height: 100%;
       overflow: hidden;
+      font-family: Arial, sans-serif;
     }
-
-    /* Top Navbar */
-    .top-navbar {
-      position: fixed;
+    .container {
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+    .section {
+      height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      padding: 80px 20px 80px;
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      display: flex;
-      background-color: #fff;
-      justify-content: space-between;
-      color: #1e1e1e;
-      padding: 15px 20px;
-      align-items : center;
-      font-size: 18px;
-      z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+      transition: transform 0.6s ease-in-out;
     }
 
-    .navbar-title {
-      font-weight: bold;
-    }
-
-    .navbar-menu {
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    /* Bottom Navbar */
-    .bottom-navbar {
+    /* Navbar Styles */
+    .top-navbar, .bottom-navbar {
       position: fixed;
-      bottom: 0;
       left: 0;
       width: 100%;
-      background-color: #fff;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 10px 0;
+      background: #fff;
       z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .top-navbar {
+      top: 0;
+    }
+
+    .bottom-navbar {
+      bottom: 0;
+      justify-content: space-around;
+      padding: 10px 0;
     }
 
     .bottom-navbar a {
@@ -75,24 +72,14 @@
       margin-bottom: 3px;
     }
 
-    .bottom-navbar a:hover {
-      color: #fff;
-      background:#00aced;
+    .section h2 {
+      margin-bottom: 10px;
     }
 
-    /* Each Page Section */
-    .page {
-      height: 100vh;
-      padding: 80px 20px 80px; /* space for top and bottom navbar */
-      scroll-snap-align: start;
-    }
-
-    /* Responsive */
     @media (max-width: 480px) {
       .bottom-navbar a i {
         font-size: 16px;
       }
-
       .bottom-navbar a {
         font-size: 11px;
       }
@@ -100,41 +87,46 @@
   </style>
 </head>
 <body>
-  <!-- Top Navbar -->  
+
   <div class="top-navbar">
     <div class="navbar-title">Local News App</div>
     <div class="navbar-menu"><i class="fas fa-ellipsis"></i></div>
   </div>
 
-  <!-- Page Content (Each section is a full page) -->
-  <div class="page" style="background:#f9f9f9;">
-    <h2>ಸ್ವಾಗತ!</h2>
-    <p>ನೀವು ಈಗ navbar icons ಜೊತೆಗೆ ನೋಡುತ್ತಿದ್ದೀರಿ. ಇದು responsive ಮತ್ತು fixed layout ಆಗಿದೆ.</p>
-  </div>
-  <div class="page" style="background:#e0f7fa;">
-    <h2>Page 2</h2>
-    <p>ಇದು ದ್ವಿತೀಯ ಪುಟ.</p>
-  </div>
-  <div class="page" style="background:#ffe0b2;">
-    <h2>Page 3</h2>
-    <p>ಇದು ಮೂರನೇ ಪುಟ.</p>
+  <div class="container" id="scrollContainer">
+    <div class="section" style="background-color:#f8f9fa;"> 
+      <h2>ಸ್ವಾಗತ!</h2>
+      <p>ಇದು ಪ್ರಥಮ ಪುಟ.</p>
+    </div>
+    <div class="section" style="background-color:#d0f0fd; transform: translateY(100%);">
+      <h2>Page 2</h2>
+      <p>ಇದು ಎರಡನೇ ಪುಟ.</p>
+    </div>
+    <div class="section" style="background-color:#ffe0b2; transform: translateY(200%);">
+      <h2>Page 3</h2>
+      <p>ಇದು ಮೂರನೇ ಪುಟ.</p>
+    </div>
   </div>
 
-  <!-- Bottom Navbar with Icons -->  
   <div class="bottom-navbar">
     <a href="#"><i class="fas fa-home"></i>Home</a>
-    <a href="#"><i class="fas fa-search"></i>search</a>
+    <a href="#"><i class="fas fa-search"></i>Search</a>
     <a href="#"><i class="fas fa-plus-circle"></i>Create</a>
     <a href="#"><i class="fas fa-newspaper"></i>Posts</a>
     <a href="#"><i class="fas fa-user"></i>Profile</a>
   </div>
 
-  <!-- Scroll Script -->
   <script>
     let currentPage = 0;
-    const pages = document.querySelectorAll('.page');
-    const totalPages = pages.length;
+    const sections = document.querySelectorAll('.section');
+    const totalPages = sections.length;
     let scrolling = false;
+
+    function updateSectionPosition() {
+      sections.forEach((section, index) => {
+        section.style.transform = `translateY(${(index - currentPage) * 100}%)`;
+      });
+    }
 
     window.addEventListener('wheel', (e) => {
       if (scrolling) return;
@@ -146,11 +138,27 @@
         currentPage--;
       }
 
-      pages[currentPage].scrollIntoView({ behavior: 'smooth' });
+      updateSectionPosition();
 
       setTimeout(() => {
         scrolling = false;
-      }, 800); // delay between scrolls
+      }, 800);
+    });
+
+    // Optional: Swipe for mobile
+    let startY;
+    window.addEventListener('touchstart', e => startY = e.touches[0].clientY);
+    window.addEventListener('touchend', e => {
+      const endY = e.changedTouches[0].clientY;
+      if (scrolling) return;
+      if (startY - endY > 50 && currentPage < totalPages - 1) {
+        currentPage++;
+      } else if (endY - startY > 50 && currentPage > 0) {
+        currentPage--;
+      }
+      updateSectionPosition();
+      scrolling = true;
+      setTimeout(() => scrolling = false, 800);
     });
   </script>
 </body>

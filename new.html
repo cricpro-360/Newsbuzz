@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Horizontal Scroll News App</title>
-  <!-- Font Awesome CDN -->
+  <title>Local News App</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
   <style>
     * {
       margin: 0;
@@ -14,15 +12,9 @@
       box-sizing: border-box;
     }
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
-
     body {
-      padding-top: 60px;
-      padding-bottom: 60px;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
     }
 
     /* Top Navbar */
@@ -31,15 +23,15 @@
       top: 0;
       left: 0;
       width: 100%;
-      display: flex;
       background-color: #fff;
+      display: flex;
       justify-content: space-between;
       color: #1e1e1e;
       padding: 15px 20px;
-      align-items : center;
+      align-items: center;
       font-size: 18px;
       z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
     .navbar-title {
@@ -51,31 +43,34 @@
       cursor: pointer;
     }
 
-    /* Scroll Container */
+    /* Scrollable Sections */
     .scroll-container {
       display: flex;
-      overflow-x: auto;
       scroll-snap-type: x mandatory;
-      height: calc(100vh - 120px);
+      overflow-x: auto;
+      height: 100vh;
       scroll-behavior: smooth;
     }
 
     .section {
-      flex: 0 0 100%;
       scroll-snap-align: start;
-      height: calc(100vh - 120px);
+      flex-shrink: 0;
+      width: 100vw;
+      height: 100vh;
+      padding-top: 60px;
+      padding-bottom: 60px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
+      align-items: center;
       font-size: 24px;
-      color: white;
     }
 
-    .section:nth-child(1) { background-color: #007acc; }
-    .section:nth-child(2) { background-color: #28a745; }
-    .section:nth-child(3) { background-color: #e83e8c; }
-    .section:nth-child(4) { background-color: #ffc107; color: black; }
-    .section:nth-child(5) { background-color: #6f42c1; }
+    .section:nth-child(1) { background-color: #f2f2f2; }
+    .section:nth-child(2) { background-color: #dff0d8; }
+    .section:nth-child(3) { background-color: #d9edf7; }
+    .section:nth-child(4) { background-color: #fcf8e3; }
+    .section:nth-child(5) { background-color: #fbeee6; }
 
     /* Bottom Navbar */
     .bottom-navbar {
@@ -100,8 +95,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 5px 10px;
-      border-radius: 10px;
+      padding: 5px;
+      transition: background 0.3s;
+      border-radius: 8px;
     }
 
     .bottom-navbar a i {
@@ -110,11 +106,10 @@
     }
 
     .bottom-navbar a.active {
-      background-color: #00aced;
+      background: #00aced;
       color: #fff;
     }
 
-    /* Responsive */
     @media (max-width: 480px) {
       .bottom-navbar a i {
         font-size: 16px;
@@ -134,47 +129,54 @@
     <div class="navbar-menu"><i class="fas fa-ellipsis"></i></div>
   </div>
 
-  <!-- Horizontal Scroll Content -->
+  <!-- Scrollable Sections -->
   <div class="scroll-container" id="scrollContainer">
     <div class="section" id="home">ಹೋಮ್</div>
-    <div class="section" id="search">ಹುಡುಕಿ</div>
-    <div class="section" id="create">ಸೃಷ್ಟಿ</div>
+    <div class="section" id="search">ಹುಡುಕು</div>
+    <div class="section" id="create">ಸೃಷ್ಟಿಸಿ</div>
     <div class="section" id="posts">ಪೋಸ್ಟ್‌ಗಳು</div>
     <div class="section" id="profile">ಪ್ರೊಫೈಲ್</div>
   </div>
 
-  <!-- Bottom Navbar with Icons -->
-  <div class="bottom-navbar" id="navbar">
-    <a href="#home" data-target="home" class="active"><i class="fas fa-home"></i>Home</a>
-    <a href="#search" data-target="search"><i class="fas fa-search"></i>Search</a>
-    <a href="#create" data-target="create"><i class="fas fa-plus-circle"></i>Create</a>
-    <a href="#posts" data-target="posts"><i class="fas fa-newspaper"></i>Posts</a>
-    <a href="#profile" data-target="profile"><i class="fas fa-user"></i>Profile</a>
+  <!-- Bottom Navbar -->
+  <div class="bottom-navbar">
+    <a href="#home" class="nav-btn active"><i class="fas fa-home"></i>Home</a>
+    <a href="#search" class="nav-btn"><i class="fas fa-search"></i>Search</a>
+    <a href="#create" class="nav-btn"><i class="fas fa-plus-circle"></i>Create</a>
+    <a href="#posts" class="nav-btn"><i class="fas fa-newspaper"></i>Posts</a>
+    <a href="#profile" class="nav-btn"><i class="fas fa-user"></i>Profile</a>
   </div>
 
   <script>
-    const container = document.getElementById('scrollContainer');
-    const navLinks = document.querySelectorAll('.bottom-navbar a');
+    const scrollContainer = document.getElementById('scrollContainer');
+    const navLinks = document.querySelectorAll('.nav-btn');
     const sections = document.querySelectorAll('.section');
 
-    container.addEventListener('scroll', () => {
-      let currentIndex = 0;
-      sections.forEach((section, index) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.left >= 0 && rect.left < window.innerWidth) {
-          currentIndex = index;
-        }
-      });
-
-      navLinks.forEach(link => link.classList.remove('active'));
-      navLinks[currentIndex].classList.add('active');
-    });
-
+    // Scroll to section when nav clicked
     navLinks.forEach(link => {
       link.addEventListener('click', e => {
         e.preventDefault();
-        const id = link.getAttribute('data-target');
-        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        const targetId = link.getAttribute('href').substring(1);
+        const target = document.getElementById(targetId);
+        scrollContainer.scrollTo({
+          left: target.offsetLeft,
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Update active nav item on scroll
+    scrollContainer.addEventListener('scroll', () => {
+      const scrollLeft = scrollContainer.scrollLeft;
+      const sectionWidth = window.innerWidth;
+      const index = Math.round(scrollLeft / sectionWidth);
+
+      navLinks.forEach((link, i) => {
+        if (i === index) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
       });
     });
   </script>

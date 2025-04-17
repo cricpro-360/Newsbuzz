@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Full Page Horizontal Scroll</title>
+  <title>Horizontal Scroll News App</title>
+  <!-- Font Awesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
@@ -19,47 +20,62 @@
       font-family: Arial, sans-serif;
     }
 
+    body {
+      padding-top: 60px;
+      padding-bottom: 60px;
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      background-color: #fff;
+      justify-content: space-between;
+      color: #1e1e1e;
+      padding: 15px 20px;
+      align-items : center;
+      font-size: 18px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+    }
+
+    .navbar-title {
+      font-weight: bold;
+    }
+
+    .navbar-menu {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Scroll Container */
     .scroll-container {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      width: 100vw;
-      height: 100vh;
+      height: calc(100vh - 120px);
       scroll-behavior: smooth;
     }
 
-    .scroll-section {
+    .section {
       flex: 0 0 100%;
-      width: 100vw;
-      height: 100vh;
       scroll-snap-align: start;
+      height: calc(100vh - 120px);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       font-size: 24px;
       color: white;
     }
 
-    .scroll-section:nth-child(1) {
-      background-color: #007acc;
-    }
-
-    .scroll-section:nth-child(2) {
-      background-color: #28a745;
-    }
-
-    .scroll-section:nth-child(3) {
-      background-color: #e83e8c;
-    }
-
-    .scroll-section:nth-child(4) {
-      background-color: #ffc107;
-      color: black;
-    }
-
-    .scroll-section:nth-child(5) {
-      background-color: #6f42c1;
-    }
+    .section:nth-child(1) { background-color: #007acc; }
+    .section:nth-child(2) { background-color: #28a745; }
+    .section:nth-child(3) { background-color: #e83e8c; }
+    .section:nth-child(4) { background-color: #ffc107; color: black; }
+    .section:nth-child(5) { background-color: #6f42c1; }
 
     /* Bottom Navbar */
     .bottom-navbar {
@@ -67,49 +83,67 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background: rgba(255, 255, 255, 0.9);
-      overflow-x: auto;
-      white-space: nowrap;
-      z-index: 1000;
+      background-color: #fff;
       display: flex;
-      justify-content: center;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      z-index: 1000;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
     }
 
     .bottom-navbar a {
-      display: inline-block;
-      padding: 10px 15px;
-      text-align: center;
+      color: #1e1e1e;
       text-decoration: none;
-      color: #333;
+      text-align: center;
       font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 10px;
     }
 
     .bottom-navbar a i {
-      display: block;
       font-size: 18px;
       margin-bottom: 3px;
     }
 
     .bottom-navbar a.active {
       background-color: #00aced;
-      color: white;
-      border-radius: 10px;
+      color: #fff;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .bottom-navbar a i {
+        font-size: 16px;
+      }
+
+      .bottom-navbar a {
+        font-size: 11px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Scrollable Full Page Sections -->
-  <div class="scroll-container" id="scrollContainer">
-    <div class="scroll-section" id="home">ಹೋಮ್</div>
-    <div class="scroll-section" id="search">ಹುಡುಕಿ</div>
-    <div class="scroll-section" id="create">ಸೃಷ್ಟಿ</div>
-    <div class="scroll-section" id="posts">ಪೋಸ್ಟ್‌ಗಳು</div>
-    <div class="scroll-section" id="profile">ಪ್ರೊಫೈಲ್</div>
+  <!-- Top Navbar -->
+  <div class="top-navbar">
+    <div class="navbar-title">Local News App</div>
+    <div class="navbar-menu"><i class="fas fa-ellipsis"></i></div>
   </div>
 
-  <!-- Scrollable Bottom Navbar -->
+  <!-- Horizontal Scroll Content -->
+  <div class="scroll-container" id="scrollContainer">
+    <div class="section" id="home">ಹೋಮ್</div>
+    <div class="section" id="search">ಹುಡುಕಿ</div>
+    <div class="section" id="create">ಸೃಷ್ಟಿ</div>
+    <div class="section" id="posts">ಪೋಸ್ಟ್‌ಗಳು</div>
+    <div class="section" id="profile">ಪ್ರೊಫೈಲ್</div>
+  </div>
+
+  <!-- Bottom Navbar with Icons -->
   <div class="bottom-navbar" id="navbar">
     <a href="#home" data-target="home" class="active"><i class="fas fa-home"></i>Home</a>
     <a href="#search" data-target="search"><i class="fas fa-search"></i>Search</a>
@@ -121,7 +155,7 @@
   <script>
     const container = document.getElementById('scrollContainer');
     const navLinks = document.querySelectorAll('.bottom-navbar a');
-    const sections = document.querySelectorAll('.scroll-section');
+    const sections = document.querySelectorAll('.section');
 
     container.addEventListener('scroll', () => {
       let currentIndex = 0;
@@ -136,7 +170,6 @@
       navLinks[currentIndex].classList.add('active');
     });
 
-    // Smooth scroll on navbar click
     navLinks.forEach(link => {
       link.addEventListener('click', e => {
         e.preventDefault();

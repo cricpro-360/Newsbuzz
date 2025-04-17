@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Local News App</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>Navbar with Icons</title>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: Arial, sans-serif;
+      padding-top: 60px;
+      padding-bottom: 60px;
       overflow: hidden;
     }
 
@@ -23,15 +25,15 @@
       top: 0;
       left: 0;
       width: 100%;
-      background-color: #fff;
       display: flex;
+      background-color: #fff;
       justify-content: space-between;
       color: #1e1e1e;
       padding: 15px 20px;
-      align-items: center;
+      align-items : center;
       font-size: 18px;
       z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
     }
 
     .navbar-title {
@@ -42,35 +44,6 @@
       font-size: 20px;
       cursor: pointer;
     }
-
-    /* Scrollable Sections */
-    .scroll-container {
-      display: flex;
-      scroll-snap-type: x mandatory;
-      overflow-x: auto;
-      height: 100vh;
-      scroll-behavior: smooth;
-    }
-
-    .section {
-      scroll-snap-align: start;
-      flex-shrink: 0;
-      width: 100vw;
-      height: 100vh;
-      padding-top: 60px;
-      padding-bottom: 60px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 24px;
-    }
-
-    .section:nth-child(1) { background-color: #f2f2f2; }
-    .section:nth-child(2) { background-color: #dff0d8; }
-    .section:nth-child(3) { background-color: #d9edf7; }
-    .section:nth-child(4) { background-color: #fcf8e3; }
-    .section:nth-child(5) { background-color: #fbeee6; }
 
     /* Bottom Navbar */
     .bottom-navbar {
@@ -84,7 +57,7 @@
       align-items: center;
       padding: 10px 0;
       z-index: 1000;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
     }
 
     .bottom-navbar a {
@@ -95,9 +68,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 5px;
-      transition: background 0.3s;
-      border-radius: 8px;
     }
 
     .bottom-navbar a i {
@@ -105,11 +75,19 @@
       margin-bottom: 3px;
     }
 
-    .bottom-navbar a.active {
-      background: #00aced;
+    .bottom-navbar a:hover {
       color: #fff;
+      background:#00aced;
     }
 
+    /* Each Page Section */
+    .page {
+      height: 100vh;
+      padding: 80px 20px 80px; /* space for top and bottom navbar */
+      scroll-snap-align: start;
+    }
+
+    /* Responsive */
     @media (max-width: 480px) {
       .bottom-navbar a i {
         font-size: 16px;
@@ -122,64 +100,58 @@
   </style>
 </head>
 <body>
-
-  <!-- Top Navbar -->
+  <!-- Top Navbar -->  
   <div class="top-navbar">
     <div class="navbar-title">Local News App</div>
     <div class="navbar-menu"><i class="fas fa-ellipsis"></i></div>
   </div>
 
-  <!-- Scrollable Sections -->
-  <div class="scroll-container" id="scrollContainer">
-    <div class="section" id="home">ಹೋಮ್</div>
-    <div class="section" id="search">ಹುಡುಕು</div>
-    <div class="section" id="create">ಸೃಷ್ಟಿಸಿ</div>
-    <div class="section" id="posts">ಪೋಸ್ಟ್‌ಗಳು</div>
-    <div class="section" id="profile">ಪ್ರೊಫೈಲ್</div>
+  <!-- Page Content (Each section is a full page) -->
+  <div class="page" style="background:#f9f9f9;">
+    <h2>ಸ್ವಾಗತ!</h2>
+    <p>ನೀವು ಈಗ navbar icons ಜೊತೆಗೆ ನೋಡುತ್ತಿದ್ದೀರಿ. ಇದು responsive ಮತ್ತು fixed layout ಆಗಿದೆ.</p>
+  </div>
+  <div class="page" style="background:#e0f7fa;">
+    <h2>Page 2</h2>
+    <p>ಇದು ದ್ವಿತೀಯ ಪುಟ.</p>
+  </div>
+  <div class="page" style="background:#ffe0b2;">
+    <h2>Page 3</h2>
+    <p>ಇದು ಮೂರನೇ ಪುಟ.</p>
   </div>
 
-  <!-- Bottom Navbar -->
+  <!-- Bottom Navbar with Icons -->  
   <div class="bottom-navbar">
-    <a href="#home" class="nav-btn active"><i class="fas fa-home"></i>Home</a>
-    <a href="#search" class="nav-btn"><i class="fas fa-search"></i>Search</a>
-    <a href="#create" class="nav-btn"><i class="fas fa-plus-circle"></i>Create</a>
-    <a href="#posts" class="nav-btn"><i class="fas fa-newspaper"></i>Posts</a>
-    <a href="#profile" class="nav-btn"><i class="fas fa-user"></i>Profile</a>
+    <a href="#"><i class="fas fa-home"></i>Home</a>
+    <a href="#"><i class="fas fa-search"></i>search</a>
+    <a href="#"><i class="fas fa-plus-circle"></i>Create</a>
+    <a href="#"><i class="fas fa-newspaper"></i>Posts</a>
+    <a href="#"><i class="fas fa-user"></i>Profile</a>
   </div>
 
+  <!-- Scroll Script -->
   <script>
-    const scrollContainer = document.getElementById('scrollContainer');
-    const navLinks = document.querySelectorAll('.nav-btn');
-    const sections = document.querySelectorAll('.section');
+    let currentPage = 0;
+    const pages = document.querySelectorAll('.page');
+    const totalPages = pages.length;
+    let scrolling = false;
 
-    // Scroll to section when nav clicked
-    navLinks.forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href').substring(1);
-        const target = document.getElementById(targetId);
-        scrollContainer.scrollTo({
-          left: target.offsetLeft,
-          behavior: 'smooth'
-        });
-      });
-    });
+    window.addEventListener('wheel', (e) => {
+      if (scrolling) return;
+      scrolling = true;
 
-    // Update active nav item on scroll
-    scrollContainer.addEventListener('scroll', () => {
-      const scrollLeft = scrollContainer.scrollLeft;
-      const sectionWidth = window.innerWidth;
-      const index = Math.round(scrollLeft / sectionWidth);
+      if (e.deltaY > 0 && currentPage < totalPages - 1) {
+        currentPage++;
+      } else if (e.deltaY < 0 && currentPage > 0) {
+        currentPage--;
+      }
 
-      navLinks.forEach((link, i) => {
-        if (i === index) {
-          link.classList.add('active');
-        } else {
-          link.classList.remove('active');
-        }
-      });
+      pages[currentPage].scrollIntoView({ behavior: 'smooth' });
+
+      setTimeout(() => {
+        scrolling = false;
+      }, 800); // delay between scrolls
     });
   </script>
-
 </body>
 </html>

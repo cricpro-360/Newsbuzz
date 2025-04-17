@@ -1,106 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Horizontal Scroll with Navbar</title>
+  <title>Horizontal Scroll Pages & Navbar</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <style>
-    body, html {
+    * {
       margin: 0;
       padding: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: sans-serif;
+      box-sizing: border-box;
     }
 
+    body {
+      font-family: Arial, sans-serif;
+      padding-top: 60px;
+      padding-bottom: 60px;
+      overflow-x: hidden;
+    }
+
+    /* Top Navbar */
     .top-navbar {
-      height: 50px;
-      background: #6200ee;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       position: fixed;
       top: 0;
-      width: 100%;
-      z-index: 10;
-    }
-
-    .bottom-navbar {
-      height: 50px;
-      background: #eee;
-      position: fixed;
-      bottom: 0;
+      left: 0;
       width: 100%;
       display: flex;
-      justify-content: space-around;
+      background-color: #fff;
+      justify-content: space-between;
+      color: #1e1e1e;
+      padding: 15px 20px;
       align-items: center;
+      font-size: 18px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
-    .bottom-navbar button {
-      background: none;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .bottom-navbar .active {
-      color: #6200ee;
+    .navbar-title {
       font-weight: bold;
     }
 
-    .pages-container {
+    .navbar-menu {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Scrollable Content Sections */
+    .scroll-container {
       display: flex;
-      flex-direction: row;
-      width: 400%;
-      height: calc(100% - 100px); /* 50px top + 50px bottom nav */
-      position: absolute;
-      top: 50px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .scroll-section {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      padding: 20px;
+      min-height: 300px;
+    }
+
+    .scroll-section:nth-child(even) {
+      background-color: #f0f0f0;
+    }
+
+    .scroll-section:nth-child(odd) {
+      background-color: #e0e0ff;
+    }
+
+    .scroll-section h2 {
+      margin-bottom: 10px;
+    }
+
+    /* Scrollbar styling */
+    .scroll-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+      background-color: #aaa;
+      border-radius: 4px;
+    }
+
+    /* Bottom Scrollable Navbar */
+    .bottom-navbar {
+      position: fixed;
+      bottom: 0;
       left: 0;
-      transition: transform 0.3s ease-in-out;
+      width: 100%;
+      background-color: #fff;
+      overflow-x: auto;
+      white-space: nowrap;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
     }
 
-    .page {
-      width: 100vw;
-      height: 100%;
-      flex-shrink: 0;
-      overflow-y: auto;
-      padding: 10px;
+    .bottom-navbar a {
+      display: inline-block;
+      color: #1e1e1e;
+      text-decoration: none;
+      text-align: center;
+      font-size: 12px;
+      padding: 10px 14px;
     }
 
-    .page:nth-child(1) { background: #fce4ec; }
-    .page:nth-child(2) { background: #e1f5fe; }
-    .page:nth-child(3) { background: #e8f5e9; }
-    .page:nth-child(4) { background: #fff3e0; }
+    .bottom-navbar a i {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .bottom-navbar a:hover {
+      background-color: #00aced;
+      color: white;
+    }
+
+    @media (max-width: 480px) {
+      .bottom-navbar a {
+        font-size: 11px;
+        padding: 8px 10px;
+      }
+
+      .bottom-navbar a i {
+        font-size: 16px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <div class="top-navbar">My App</div>
-
-  <div class="pages-container" id="pages">
-    <div class="page">Home Content</div>
-    <div class="page">Search Content</div>
-    <div class="page">Notifications</div>
-    <div class="page">Profile</div>
+  <!-- Top Navbar -->
+  <div class="top-navbar">
+    <div class="navbar-title">Local News App</div>
+    <div class="navbar-menu"><i class="fas fa-ellipsis"></i></div>
   </div>
 
+  <!-- Scrollable Content Sections -->
+  <div class="scroll-container">
+    <div class="scroll-section">
+      <h2>ಸ್ವಾಗತ!</h2>
+      <p>ನೀವು ಈಗ navbar icons ಜೊತೆಗೆ ನೋಡುತ್ತಿದ್ದೀರಿ.</p>
+    </div>
+    <div class="scroll-section">
+      <h2>ವರ್ಗ 1</h2>
+      <p>ಇದು ಮೊದಲ ವಿಭಾಗ.</p>
+    </div>
+    <div class="scroll-section">
+      <h2>ವರ್ಗ 2</h2>
+      <p>ಇದು ಎರಡನೇ ವಿಭಾಗ.</p>
+    </div>
+    <div class="scroll-section">
+      <h2>ವರ್ಗ 3</h2>
+      <p>ಇದು ಮೂರನೇ ವಿಭಾಗ.</p>
+    </div>
+  </div>
+
+  <!-- Scrollable Bottom Navbar -->
   <div class="bottom-navbar">
-    <button onclick="goToPage(0)" id="nav0" class="active">Home</button>
-    <button onclick="goToPage(1)" id="nav1">Search</button>
-    <button onclick="goToPage(2)" id="nav2">Alerts</button>
-    <button onclick="goToPage(3)" id="nav3">Profile</button>
+    <a href="#"><i class="fas fa-home"></i>Home</a>
+    <a href="#"><i class="fas fa-search"></i>Search</a>
+    <a href="#"><i class="fas fa-plus-circle"></i>Create</a>
+    <a href="#"><i class="fas fa-newspaper"></i>Posts</a>
+    <a href="#"><i class="fas fa-user"></i>Profile</a>
+    <a href="#"><i class="fas fa-bell"></i>Alerts</a>
+    <a href="#"><i class="fas fa-cog"></i>Settings</a>
   </div>
-
-  <script>
-    function goToPage(index) {
-      document.getElementById('pages').style.transform = `translateX(-${index * 100}vw)`;
-      for (let i = 0; i < 4; i++) {
-        document.getElementById(`nav${i}`).classList.remove('active');
-      }
-      document.getElementById(`nav${index}`).classList.add('active');
-    }
-  </script>
 
 </body>
 </html>

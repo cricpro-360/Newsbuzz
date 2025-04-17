@@ -119,11 +119,11 @@
 
   <!-- Bottom Navbar -->
   <div class="bottom-navbar" id="bottomNavbar">
-    <a href="#" class="active"><i class="fas fa-home"></i>Home</a>
-    <a href="#"><i class="fas fa-search"></i>Search</a>
-    <a href="#"><i class="fas fa-plus-circle"></i>Create</a>
-    <a href="#"><i class="fas fa-newspaper"></i>Posts</a>
-    <a href="#"><i class="fas fa-user"></i>Profile</a>
+    <a href="#" data-index="0" class="active"><i class="fas fa-home"></i>Home</a>
+    <a href="#" data-index="1"><i class="fas fa-search"></i>Search</a>
+    <a href="#" data-index="2"><i class="fas fa-plus-circle"></i>Create</a>
+    <a href="#" data-index="1"><i class="fas fa-newspaper"></i>Posts</a>
+    <a href="#" data-index="2"><i class="fas fa-user"></i>Profile</a>
   </div>
 
   <script>
@@ -136,10 +136,12 @@
     function updateScrollPosition() {
       container.style.transform = `translateX(-${currentPage * 100}vw)`;
       navLinks.forEach((link, i) => {
-        link.classList.toggle("active", i === currentPage);
+        const index = parseInt(link.dataset.index);
+        link.classList.toggle("active", index === currentPage);
       });
     }
 
+    // Scroll by mouse or swipe
     window.addEventListener("wheel", (e) => {
       if (scrolling) return;
       scrolling = true;
@@ -151,7 +153,6 @@
       }
 
       updateScrollPosition();
-
       setTimeout(() => scrolling = false, 800);
     });
 
@@ -171,6 +172,16 @@
       updateScrollPosition();
       scrolling = true;
       setTimeout(() => scrolling = false, 800);
+    });
+
+    // Click on bottom nav
+    navLinks.forEach(link => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const index = parseInt(link.dataset.index);
+        currentPage = index;
+        updateScrollPosition();
+      });
     });
   </script>
 

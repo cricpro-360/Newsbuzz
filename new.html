@@ -175,20 +175,7 @@
       });
     }
 
-    // Scroll by mouse or swipe
-    window.addEventListener("wheel", (e) => {
-      if (scrolling) return;
-      scrolling = true;
-
-      if (e.deltaY > 0 && currentPage < sections.length - 1) {
-        currentPage++;
-      } else if (e.deltaY < 0 && currentPage > 0) {
-        currentPage--;
-      }
-
-      updateScrollPosition();
-      setTimeout(() => scrolling = false, 800);
-    });
+    
 
     // Swipe for mobile
     let startX;

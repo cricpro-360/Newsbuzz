@@ -112,8 +112,26 @@
   <!-- Horizontal Scroll Container -->
   <div class="container" id="scrollContainer">
     <div class="section" style="background-color: #f8f9fa;">
-      <h2>ಸ್ವಾಗತ!</h2>
-      <p>ಇದು ಪ್ರಥಮ ಪುಟ.</p>
+    <div class="container filters">
+    <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
+
+    <select id="state-filter" onchange="handleStateChange();">
+      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+    </select>
+
+    <select id="district-filter" onchange="handleDistrictChange();">
+      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
+
+    <select id="taluk-filter" onchange="handleTalukChange();">
+      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
+
+    <div id="posts" class="post-container">
+      <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
+    </div>
+    </div>
     </div>
     <div class="section" style="background-color: #d0f0fd;">
       <h2>Page 2</h2>

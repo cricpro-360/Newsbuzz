@@ -175,26 +175,6 @@
       });
     }
 
-    
-
-    // Swipe for mobile
-    let startX;
-    window.addEventListener("touchstart", e => startX = e.touches[0].clientX);
-    window.addEventListener("touchend", e => {
-      const endX = e.changedTouches[0].clientX;
-      if (scrolling) return;
-
-      if (startX - endX > 50 && currentPage < sections.length - 1) {
-        currentPage++;
-      } else if (endX - startX > 50 && currentPage > 0) {
-        currentPage--;
-      }
-
-      updateScrollPosition();
-      scrolling = true;
-      setTimeout(() => scrolling = false, 800);
-    });
-
     // Click on bottom nav
     navLinks.forEach(link => {
       link.addEventListener("click", (e) => {

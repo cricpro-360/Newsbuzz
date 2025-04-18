@@ -153,6 +153,19 @@ h1, h2 {
     .filters {
       margin-top: 2rem;
     }
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.filters select {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px;
+  font-size: 16px;
+}
 
     /* Optional tweak for very small screens */
 @media (max-width: 480px) {

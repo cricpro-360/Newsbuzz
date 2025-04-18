@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local News App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      color: #000;
+      padding: 15px 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar-title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    /* Bottom Navbar */
+    .bottom-navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #fff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      z-index: 1000;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .bottom-navbar a {
+      color: #1e1e1e;
+      text-decoration: none;
+      text-align: center;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bottom-navbar a i {
+      font-size: 18px;
+      margin-bottom: 3px;
+    }
+
+    .bottom-navbar a.active {
+      color: #00aced;
+    }
+
+    /* Scrollable Sections */
+    .horizontal-scroll-container {
+      display: flex;
+      flex-direction: row;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      height: 100vh;
+      scroll-behavior: smooth;
+    }
+
+    .section {
+      flex-shrink: 0;
+      width: 100vw;
+      height: 100vh;
+      scroll-snap-align: start;
+      overflow-y: auto;
+      padding: 70px 15px 70px; /* space for navbars */
+    }
+
+    .section:nth-child(even) {
+      background: #f0f0f0;
+    }
+
+    .section h2 {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <div class="top-navbar">
+    <div class="navbar-title">Local News App</div>
+    <div><i class="fas fa-ellipsis-h"></i></div>
+  </div>
+
+  <!-- Horizontal Sections -->
+  <div class="horizontal-scroll-container" id="scrollContainer">
+    <div class="section" id="home"><h2>Home</h2><p>ಸ್ವಾಗತ</p></div>
+    <div class="section" id="search"><h2>Search</h2><p>ಹುಡುಕಿ</p></div>
+    <div class="section" id="create"><h2>Create</h2><p>ಪೋಸ್ಟ್ ಸೇರಿಸಿ</p></div>
+    <div class="section" id="posts"><h2>Posts</h2><p>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</p></div>
+    <div class="section" id="profile"><h2>Profile</h2><p>ನಿಮ್ಮ ಪ್ರೊಫೈಲ್</p></div>
+  </div>
+
+  <!-- Bottom Navbar -->
+  <div class="bottom-navbar">
+    <a href="#home" class="nav-btn active"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="#search" class="nav-btn"><i class="fas fa-search"></i><span>Search</span></a>
+    <a href="#create" class="nav-btn"><i class="fas fa-plus-circle"></i><span>Create</span></a>
+    <a href="#posts" class="nav-btn"><i class="fas fa-newspaper"></i><span>Posts</span></a>
+    <a href="#profile" class="nav-btn"><i class="fas fa-user"></i><span>Profile</span></a>
+  </div>
+
+  <script>
+    const container = document.getElementById('scrollContainer');
+    const navBtns = document.querySelectorAll('.nav-btn');
+
+    // Scroll sync with nav button highlight
+    container.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('.section');
+      let index = 0;
+
+      sections.forEach((sec, i) => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.left >= 0 && rect.left < window.innerWidth / 2) {
+          index = i;
+        }
+      });
+
+      navBtns.forEach(btn => btn.classList.remove('active'));
+      navBtns[index].classList.add('active');
+    });
+
+    // Nav click scroll to section
+    navBtns.forEach((btn, index) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        container.scrollTo({
+          left: index * window.innerWidth,
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

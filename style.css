@@ -11,7 +11,7 @@ input, textarea {
 }
 
 button {
-  padding: 10px 20px;
+  padding: ;
   background-color: #2196f3;
   color: white;
   border: none;
@@ -154,6 +154,12 @@ h1, h2 {
       margin-top: 2rem;
     }
 
-
+    /* Optional tweak for very small screens */
+@media (max-width: 480px) {
+  .posts-images {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+}
   
 

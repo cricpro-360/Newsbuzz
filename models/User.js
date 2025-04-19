@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
-  phone: String,
-  username: String,
-  profilePic: String,
-  otp: String, // temporary OTP
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  username: { type: String, default: '' },
+  profilePic: { type: String, default: '' }
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);

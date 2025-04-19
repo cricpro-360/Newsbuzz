@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Like Post</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .post-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+    }
+
+    .post-content {
+      margin-bottom: 15px;
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .like-btn {
+      background-color: #0078ff;
+      color: white;
+      padding: 5px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .like-btn:hover {
+      background-color: #005bb5;
+    }
+
+    #like-count {
+      font-size: 1.2em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="post-container">
+    <div class="post">
+      <div class="post-content">
+        <p>This is a sample post content.</p>
+      </div>
+      <div class="post-actions">
+        <button class="like-btn" onclick="toggleLike()">Like</button>
+        <span id="like-count">0</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let likeCount = 0;
+
+    function toggleLike() {
+      likeCount++;
+      document.getElementById("like-count").textContent = likeCount;
+    }
+  </script>
+
+</body>
+</html>

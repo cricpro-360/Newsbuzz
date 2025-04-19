@@ -141,7 +141,7 @@
                 ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image">` : ''}
                 <small>Posted on ${date}</small>
                 <br>
-                <small>Views: ${post.views || 0}</small>
+                <small data-id="${post._id}">Views: ${post.views || 0}</small>
                 <div>
                   <button id="like-btn-${post._id}" class="like-btn" onclick="toggleLike('${post._id}')">Like</button>
                   <span id="like-count-${post._id}" class="like-count">0</span>
@@ -156,7 +156,16 @@
     }
 
     function increaseViews(postId) {
-      fetch(`${API_URL}/posts/view/${postId}`);
+  fetch(`${API_URL}/posts/view/${postId}`)
+    .then(res => res.json())
+    .then(data => {
+      // Update views on the post list instantly
+      const viewText = document.querySelector(`.post small[data-id="${postId}"]`);
+      if (viewText) {
+        viewText.textContent = `Views: ${data.views}`;
+      }
+    })
+    .catch(err => console.error('View update failed:', err));
     }
 
     function loadLikeData(postId) {

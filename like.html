@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Like Post</title>
+  <title>Instagram-like Post</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -26,6 +26,8 @@
 
     .post-content {
       margin-bottom: 15px;
+      font-size: 16px;
+      color: #333;
     }
 
     .post-actions {
@@ -35,25 +37,25 @@
     }
 
     .like-btn {
-      background-color: #0078ff;
-      color: white;
-      padding: 5px 15px;
+      background-color: white;
       border: none;
-      border-radius: 5px;
+      font-size: 20px;
       cursor: pointer;
+      padding: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .like-btn.liked {
+      color: #f00;
     }
 
     .like-btn:hover {
-      background-color: #005bb5;
+      opacity: 0.8;
     }
 
     #like-count {
       font-size: 1.2em;
       color: #333;
-    }
-
-    .liked {
-      background-color: #00c300;
     }
   </style>
 </head>
@@ -65,7 +67,7 @@
         <p>This is a sample post content.</p>
       </div>
       <div class="post-actions">
-        <button id="like-btn" class="like-btn" onclick="toggleLike()">Like</button>
+        <button id="like-btn" class="like-btn" onclick="toggleLike()">❤️</button>
         <span id="like-count">0</span>
       </div>
     </div>
@@ -75,24 +77,30 @@
     let likeCount = parseInt(localStorage.getItem("likeCount")) || 0; // Get stored like count or set to 0
     const userHasLiked = localStorage.getItem("userHasLiked") === 'true'; // Check if the user has already liked
 
-    // Update the like count on the page
+    // Set initial like count and button style
     document.getElementById("like-count").textContent = likeCount;
-
-    // Disable the like button if the user has already liked
     if (userHasLiked) {
-      document.getElementById("like-btn").disabled = true;
-      document.getElementById("like-btn").classList.add('liked');
+      document.getElementById("like-btn").classList.add("liked");
     }
 
+    // Function to toggle the like/unlike status
     function toggleLike() {
-      if (!userHasLiked) {
+      if (userHasLiked) {
+        // Unlike the post
+        likeCount--;
+        localStorage.setItem("likeCount", likeCount);
+        localStorage.setItem("userHasLiked", 'false');
+        document.getElementById("like-btn").classList.remove("liked");
+      } else {
+        // Like the post
         likeCount++;
-        localStorage.setItem("likeCount", likeCount); // Save new like count in localStorage
-        localStorage.setItem("userHasLiked", 'true'); // Mark that the user has liked the post
-        document.getElementById("like-count").textContent = likeCount;
-        document.getElementById("like-btn").disabled = true; // Disable the like button
-        document.getElementById("like-btn").classList.add('liked'); // Change button color to indicate like
+        localStorage.setItem("likeCount", likeCount);
+        localStorage.setItem("userHasLiked", 'true');
+        document.getElementById("like-btn").classList.add("liked");
       }
+
+      // Update the displayed like count
+      document.getElementById("like-count").textContent = likeCount;
     }
   </script>
 

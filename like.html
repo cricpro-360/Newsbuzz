@@ -51,6 +51,10 @@
       font-size: 1.2em;
       color: #333;
     }
+
+    .liked {
+      background-color: #00c300;
+    }
   </style>
 </head>
 <body>
@@ -61,18 +65,34 @@
         <p>This is a sample post content.</p>
       </div>
       <div class="post-actions">
-        <button class="like-btn" onclick="toggleLike()">Like</button>
+        <button id="like-btn" class="like-btn" onclick="toggleLike()">Like</button>
         <span id="like-count">0</span>
       </div>
     </div>
   </div>
 
   <script>
-    let likeCount = 0;
+    let likeCount = parseInt(localStorage.getItem("likeCount")) || 0; // Get stored like count or set to 0
+    const userHasLiked = localStorage.getItem("userHasLiked") === 'true'; // Check if the user has already liked
+
+    // Update the like count on the page
+    document.getElementById("like-count").textContent = likeCount;
+
+    // Disable the like button if the user has already liked
+    if (userHasLiked) {
+      document.getElementById("like-btn").disabled = true;
+      document.getElementById("like-btn").classList.add('liked');
+    }
 
     function toggleLike() {
-      likeCount++;
-      document.getElementById("like-count").textContent = likeCount;
+      if (!userHasLiked) {
+        likeCount++;
+        localStorage.setItem("likeCount", likeCount); // Save new like count in localStorage
+        localStorage.setItem("userHasLiked", 'true'); // Mark that the user has liked the post
+        document.getElementById("like-count").textContent = likeCount;
+        document.getElementById("like-btn").disabled = true; // Disable the like button
+        document.getElementById("like-btn").classList.add('liked'); // Change button color to indicate like
+      }
     }
   </script>
 

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ಸ್ಥಳೀಯ ಅಂಗಡಿ ಮಾಹಿತಿ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    form, .filter-section, .shop-list {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background: #3498db;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .shop {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>ಅಂಗಡಿ ಮಾಹಿತಿ ಸಲ್ಲಿಸಿ</h2>
+  <form id="shopForm">
+    <input type="text" name="name" placeholder="ಅಂಗಡಿ ಹೆಸರು" required />
+    <input type="text" name="phone" placeholder="ದೂರವಾಣಿ ಸಂಖ್ಯೆ" required />
+    <input type="text" name="category" placeholder="ವರ್ಗ (ಉದಾ: ಬಟ್ಟೆ, ಮಧು)" required />
+    <input type="text" name="state" placeholder="ರಾಜ್ಯ" required />
+    <input type="text" name="district" placeholder="ಜಿಲ್ಲೆ" required />
+    <input type="text" name="taluk" placeholder="ತಾಲೂಕು" required />
+    <button type="submit">ಸಲ್ಲಿಸು</button>
+  </form>
+
+  <h2>ಸ್ಥಳ ಆಧಾರಿತ ಅಂಗಡಿಗಳ ಪಟ್ಟಿ</h2>
+  <div class="filter-section">
+    <select id="stateFilter">
+      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="Karnataka">Karnataka</option>
+      <option value="Maharashtra">Maharashtra</option>
+    </select>
+
+    <select id="districtFilter">
+      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="Bangalore">Bangalore</option>
+      <option value="Tumkur">Tumkur</option>
+    </select>
+  </div>
+
+  <div class="shop-list" id="shopList">
+    <p>ದಯವಿಟ್ಟು ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ ಅಂಗಡಿಗಳನ್ನು ನೋಡಲು</p>
+  </div>
+
+  <script>
+    const API_URL = 'https://newsbuzz-1.onrender.com';
+
+    document.getElementById('shopForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(this).entries());
+
+      const res = await fetch(`${API_URL}/shops/add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      alert(result.message || 'Shop submitted!');
+      this.reset();
+    });
+
+    document.getElementById('stateFilter').addEventListener('change', loadShops);
+    document.getElementById('districtFilter').addEventListener('change', loadShops);
+
+    async function loadShops() {
+      const state = document.getElementById('stateFilter').value;
+      const district = document.getElementById('districtFilter').value;
+
+      let url = `${API_URL}/shops?`;
+      if (state) url += `state=${state}&`;
+      if (district) url += `district=${district}`;
+
+      const res = await fetch(url);
+      const shops = await res.json();
+
+      const shopList = document.getElementById('shopList');
+      shopList.innerHTML = '';
+
+      if (shops.length === 0) {
+        shopList.innerHTML = '<p>ಯಾವುದೇ ಅಂಗಡಿಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
+      }
+
+      shops.forEach(shop => {
+        const div = document.createElement('div');
+        div.className = 'shop';
+        div.innerHTML = `
+          <strong>${shop.name}</strong><br/>
+          Phone: ${shop.phone}<br/>
+          Category: ${shop.category}<br/>
+          Location: ${shop.state}, ${shop.district}, ${shop.taluk}
+        `;
+        shopList.appendChild(div);
+      });
+    }
+  </script>
+
+</body>
+</html>

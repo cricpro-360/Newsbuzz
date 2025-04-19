@@ -190,10 +190,20 @@
   <div class="bottom-navbar">
     <a href="#"><i class="fas fa-home"></i>Home</a>
     <a href="search.html"><i class="fas fa-search"></i>search</a>
-    <a href="create.html"><i class="fas fa-plus-circle"></i>Create</a>
+    <a href="create.html" class="active"><i class="fas fa-plus-circle"></i>Create</a>
     <a href="#"><i class="fas fa-newspaper"></i>Posts</a>
     <a href="#"><i class="fas fa-user"></i>Profile</a>
   </div>
+    <script>
+      // Highlight active nav icon based on current page
+const currentPage = location.pathname.split('/').pop();
 
+document.querySelectorAll('.bottom-navbar a').forEach(link => {
+  const linkPage = link.getAttribute('href');
+  if (linkPage === currentPage || (linkPage === '#' && currentPage === 'index.html')) {
+    link.classList.add('active');
+  }
+});
+    </script>
 </body>
 </html>

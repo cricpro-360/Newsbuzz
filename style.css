@@ -172,7 +172,7 @@ h1, h2 {
 }
 
 .filters select {
-  flex: 0;
+  flex: 1;
   min-width: 120px;
   padding: 8px;
   font-size: 16px;

@@ -19,16 +19,9 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 const postModels = require('./models/Post');
 const userModels = require('./models/User');
 
-const authRoutes = require('./authRoutes');
-app.use('/auth', authRoutes);
+const emailAuthRoutes = require('./emailAuthRoutes');
+app.use('/auth', emailAuthRoutes);
 
-const postRoutes = require('./postRoutes');
-app.use('/posts', postRoutes);
-
-app.use('/posts', authMiddleware, postRoutes);
-
-const postRoutes = require('./routes/posts'); // or './routes/post'
-app.use('/posts', postRoutes);
 
 // Create or update a user app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
 

@@ -1,49 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Email OTP Login</title>
 </head>
 <body>
-  <h2>Login via Email</h2>
-  <input type="email" id="email" placeholder="Enter your email"><br>
+  <h2>Login via Email OTP</h2>
+
+  <input type="email" id="email" placeholder="Enter your email">
   <button onclick="sendOTP()">Send OTP</button>
 
-  <div id="otpBox" style="display:none;">
-    <input type="text" id="otp" placeholder="Enter OTP"><br>
-    <button onclick="verifyOTP()">Verify</button>
+  <div id="otpSection" style="display: none; margin-top: 10px;">
+    <input type="text" id="otp" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Verify OTP</button>
   </div>
 
   <script>
-    const backend = 'https://newsbuzz-1.onrender.com';
+    const backendURL = "https://newsbuzz-1.onrender.com";
 
     async function sendOTP() {
-      const email = document.getElementById('email').value;
-      const res = await fetch(`${backend}/auth/send-otp`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+      const email = document.getElementById("email").value;
+      const response = await fetch(`${backendURL}/auth/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email })
       });
-      const data = await res.json();
+
+      const data = await response.json();
       alert(data.message);
-      if (data.success) document.getElementById('otpBox').style.display = 'block';
+
+      if (data.success) {
+        document.getElementById("otpSection").style.display = "block";
+      }
     }
 
     async function verifyOTP() {
-      const email = document.getElementById('email').value;
-      const otp = document.getElementById('otp').value;
-      const res = await fetch(`${backend}/auth/verify-otp`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+      const email = document.getElementById("email").value;
+      const otp = document.getElementById("otp").value;
+
+      const response = await fetch(`${backendURL}/auth/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp })
       });
-      const data = await res.json();
-      if (data.success) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        alert("Login successful!");
-        window.location.href = 'index.html'; // or profile.html
-      } else {
-        alert(data.message);
+
+      const data = await response.json();
+      alert(data.message);
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        window.location.href = "index.html"; // or profile.html
       }
     }
   </script>

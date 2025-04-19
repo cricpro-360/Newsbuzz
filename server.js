@@ -87,6 +87,24 @@ const modifiedPosts = posts.map(post => ({
   bio: post.user?.bio || ''
 }));
 
+//shop
+  const mongoose = require('mongoose');
+
+const ShopSchema = new mongoose.Schema({
+  name: String,
+  phone: String,
+  category: String,
+  state: String,
+  district: String,
+  taluk: String,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model('Shop', ShopSchema);                                           
+
 res.json(modifiedPosts);
 
 } catch (err) { res.status(500).json({ message: 'Error fetching posts' }); } });

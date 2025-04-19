@@ -297,6 +297,16 @@
         loadPosts(); // default load
       }
     };
+
+    // Highlight active nav icon based on current page
+const currentPage = location.pathname.split('/').pop();
+
+document.querySelectorAll('.bottom-navbar a').forEach(link => {
+  const linkPage = link.getAttribute('href');
+  if (linkPage === currentPage || (linkPage === '#' && currentPage === 'index.html')) {
+    link.classList.add('active');
+  }
+});
       </script>
 
   

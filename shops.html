@@ -1,63 +1,118 @@
 <!DOCTYPE html>
-<html lang="kn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Shop Search</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Shop Card</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f2f2f2;
+      font-family: sans-serif;
+      background: #f2f2f2;
       padding: 20px;
     }
-    .shop-card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin: 15px 0;
-      max-width: 500px;
-    }
-    .shop-name {
-      font-size: 24px;
-      font-weight: bold;
-      color: #2c3e50;
+    h2 {
       margin-bottom: 10px;
     }
-    .status {
+    input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
       font-size: 16px;
-      margin: 6px 0;
-      font-weight: 500;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
-    .open {
-      color: green;
+    .shop-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 15px;
     }
-    .closed {
-      color: red;
+    .shop-name {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 5px;
     }
-    .info {
-      font-size: 15px;
+    .location {
       color: #555;
-      margin: 4px 0;
     }
   </style>
 </head>
 <body>
 
-  <div class="shop-card">
-    <div class="shop-name">Sri Manjunatha Traders</div>
-    <div class="status open">Status: Open (9:00 AM - 9:00 PM)</div>
-    <!-- Use .closed class instead for closed shops -->
-    <div class="info">Started Year: 2012</div>
-    <div class="info">Location: Karnataka, Tumkur, Gubbi</div>
-  </div>
+  <h2>All Shops</h2>
+  <input type="text" id="searchInput" placeholder="Search by village, city, taluk, district, or state">
 
-  <div class="shop-card">
-    <div class="shop-name">Lakshmi Bakery</div>
-    <div class="status closed">Status: Closed (Opens at 6:00 AM)</div>
-    <div class="info">Started Year: 2005</div>
-    <div class="info">Location: Karnataka, Bangalore, Jayanagar</div>
-  </div>
+  <div id="shopList"></div>
+
+  <script>
+    const shops = [
+      {
+        name: "Sri Manjunatha Traders",
+        state: "Karnataka",
+        district: "Tumkur",
+        taluk: "Gubbi",
+        city: "Gubbi Town",
+        village: "Hosahalli"
+      },
+      {
+        name: "Lakshmi Bakery",
+        state: "Karnataka",
+        district: "Bangalore",
+        taluk: "South",
+        city: "Jayanagar",
+        village: "JP Nagar"
+      },
+      {
+        name: "Green Grocers",
+        state: "Kerala",
+        district: "Ernakulam",
+        taluk: "Aluva",
+        city: "Aluva City",
+        village: "Pulinchode"
+      }
+    ];
+
+    const input = document.getElementById("searchInput");
+    const shopList = document.getElementById("shopList");
+
+    function displayShops(filter = "") {
+      shopList.innerHTML = "";
+
+      const filtered = shops.filter(shop =>
+        shop.state.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.district.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.taluk.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.city.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.village.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        shopList.innerHTML = "<p>No shops found.</p>";
+        return;
+      }
+
+      filtered.forEach(shop => {
+        const div = document.createElement("div");
+        div.className = "shop-card";
+        div.innerHTML = `
+          <div class="shop-name">${shop.name}</div>
+          <div class="location">
+            ${shop.village}, ${shop.city}, ${shop.taluk}, ${shop.district}, ${shop.state}
+          </div>
+        `;
+        shopList.appendChild(div);
+      });
+    }
+
+    input.addEventListener("input", (e) => {
+      displayShops(e.target.value);
+    });
+
+    // Show all shops initially
+    displayShops();
+  </script>
 
 </body>
 </html>

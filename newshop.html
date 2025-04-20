@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Shops List</title>
+  <title>Shops with Icons</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f2f2f2;
+      background-color: #f9f9f9;
       padding: 20px;
     }
     h2 {
@@ -28,19 +29,37 @@
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       padding: 20px;
-      margin: 15px 0;
+      margin: 15px auto;
       max-width: 500px;
+      transition: 0.3s;
+    }
+    .shop-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .shop-name {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: bold;
       color: #2c3e50;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
     }
-    .status {
-      font-size: 16px;
+    .shop-name svg {
+      margin-right: 8px;
+      color: #3498db;
+    }
+    .detail {
+      font-size: 15px;
+      color: #444;
       margin: 6px 0;
-      font-weight: 500;
+      display: flex;
+      align-items: center;
+    }
+    .detail svg {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      color: #666;
     }
     .open {
       color: green;
@@ -48,16 +67,11 @@
     .closed {
       color: red;
     }
-    .info {
-      font-size: 15px;
-      color: #555;
-      margin: 4px 0;
-    }
   </style>
 </head>
 <body>
 
-  <h2>ಸಂಪೂರ್ಣ ಅಂಗಡಿ ಪಟ್ಟಿ</h2>
+  <h2>ಅಂಗಡಿ ಪಟ್ಟಿ (ಹುಡುಕಾಟ ಸಹಿತ)</h2>
   <input type="text" id="searchInput" placeholder="ಗ್ರಾಮ / ನಗರ / ತಾಲ್ಲೂಕು / ಜಿಲ್ಲೆ / ರಾಜ್ಯ ಮೂಲಕ ಹುಡುಕಿ">
 
   <div id="shopList"></div>
@@ -88,12 +102,11 @@
       }
     ];
 
-    const searchInput = document.getElementById("searchInput");
     const shopList = document.getElementById("shopList");
+    const searchInput = document.getElementById("searchInput");
 
     function displayShops(filter = "") {
       shopList.innerHTML = "";
-
       const filtered = shops.filter(shop =>
         shop.state.toLowerCase().includes(filter.toLowerCase()) ||
         shop.district.toLowerCase().includes(filter.toLowerCase()) ||
@@ -108,25 +121,34 @@
       }
 
       filtered.forEach(shop => {
-        const div = document.createElement("div");
-        div.className = "shop-card";
-        div.innerHTML = `
-          <div class="shop-name">${shop.name}</div>
-          <div class="status ${shop.status}">
+        const card = document.createElement("div");
+        card.className = "shop-card";
+        card.innerHTML = `
+          <div class="shop-name">
+            <i data-lucide="store"></i> ${shop.name}
+          </div>
+          <div class="detail ${shop.status}">
+            <i data-lucide="${shop.status === 'open' ? 'check-circle' : 'x-circle'}"></i>
             Status: ${shop.status === "open" ? "Open" : "Closed"} (${shop.timing})
           </div>
-          <div class="info">Started Year: ${shop.year}</div>
-          <div class="info">Location: ${shop.village}, ${shop.city}, ${shop.taluk}, ${shop.district}, ${shop.state}</div>
+          <div class="detail">
+            <i data-lucide="calendar"></i> Started Year: ${shop.year}
+          </div>
+          <div class="detail">
+            <i data-lucide="map-pin"></i> Location: ${shop.village}, ${shop.city}, ${shop.taluk}, ${shop.district}, ${shop.state}
+          </div>
         `;
-        shopList.appendChild(div);
+        shopList.appendChild(card);
       });
+
+      lucide.createIcons(); // render all icons
     }
 
     searchInput.addEventListener("input", (e) => {
       displayShops(e.target.value);
     });
 
-    displayShops(); // Initial load
+    displayShops(); // initial load
   </script>
 
 </body>

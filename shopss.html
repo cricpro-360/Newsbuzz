@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shop Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    input, select {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 400px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .shop-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin: 10px 0;
+    }
+    .shop-name {
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Search Shops by Location</h2>
+  <input type="text" id="searchInput" placeholder="Enter district or taluk..." />
+
+  <div id="shopList"></div>
+
+  <script>
+    const shops = [
+      { name: "Sri Manjunatha Traders", state: "Karnataka", district: "Tumkur", taluk: "Gubbi" },
+      { name: "Lakshmi Bakery", state: "Karnataka", district: "Bangalore", taluk: "Jayanagar" },
+      { name: "Green Grocers", state: "Kerala", district: "Ernakulam", taluk: "Aluva" },
+    ];
+
+    const input = document.getElementById("searchInput");
+    const shopList = document.getElementById("shopList");
+
+    function showShops(filter = "") {
+      shopList.innerHTML = "";
+
+      const filtered = shops.filter(shop =>
+        shop.district.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.taluk.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        shopList.innerHTML = "<p>No shops found.</p>";
+        return;
+      }
+
+      filtered.forEach(shop => {
+        const div = document.createElement("div");
+        div.className = "shop-card";
+        div.innerHTML = `
+          <div class="shop-name">${shop.name}</div>
+          <div>Location: ${shop.state}, ${shop.district}, ${shop.taluk}</div>
+        `;
+        shopList.appendChild(div);
+      });
+    }
+
+    input.addEventListener("input", (e) => {
+      showShops(e.target.value);
+    });
+
+    // Initial load
+    showShops();
+  </script>
+
+</body>
+</html>

@@ -37,29 +37,6 @@
     .bio {
       margin-top: 5px;
     }
-    input, textarea, button {
-      width: 100%;
-      max-width: 400px;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 16px;
-      display: block;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    input[readonly], textarea[readonly] {
-      background: #f3f3f3;
-    }
-    button {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -71,6 +48,30 @@
       height: 110px;
       object-fit: cover;
       border-radius: 6px;
+    }
+    #editSection {
+      display: none;
+      margin-top: 20px;
+    }
+    input, textarea, button {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
     }
     @media (max-width: 600px) {
       .profile-header {
@@ -96,14 +97,17 @@
         <div><strong id="followers">0</strong><br>ಅನುಯಾಯಿಗಳು</div>
         <div><strong id="following">0</strong><br>ಅನುಸರಣೆ</div>
       </div>
+      <button onclick="showEdit()">ಎಡಿಟ್</button>
     </div>
   </div>
 
-  <input type="text" id="username" placeholder="ಹೆಸರು ನಮೂದಿಸಿ" readonly>
-  <textarea id="bio" placeholder="ಬಯೋ ನಮೂದಿಸಿ" readonly></textarea>
-  <input type="file" id="profileImageFile" accept="image/*" disabled>
-  <button id="editBtn" onclick="toggleEdit()">ಎಡಿಟ್</button>
-  <button id="saveBtn" onclick="uploadProfile()" style="display:none;">ಸೇವ್</button>
+  <div id="editSection">
+    <input type="text" id="username" placeholder="ಹೆಸರು ನಮೂದಿಸಿ">
+    <textarea id="bio" placeholder="ಬಯೋ ನಮೂದಿಸಿ"></textarea>
+    <input type="file" id="profileImageFile" accept="image/*">
+    <button onclick="uploadProfile()">ಸೇವ್</button>
+    <button onclick="cancelEdit()">ರದ್ದುಮಾಡು</button>
+  </div>
 
   <div class="grid" id="userPosts"></div>
 
@@ -116,13 +120,15 @@
       return 'user_' + Math.random().toString(36).substr(2, 9);
     }
 
-    function toggleEdit() {
-      const isReadOnly = document.getElementById('username').readOnly;
-      document.getElementById('username').readOnly = !isReadOnly;
-      document.getElementById('bio').readOnly = !isReadOnly;
-      document.getElementById('profileImageFile').disabled = !document.getElementById('profileImageFile').disabled;
-      document.getElementById('editBtn').style.display = isReadOnly ? 'none' : 'inline-block';
-      document.getElementById('saveBtn').style.display = isReadOnly ? 'inline-block' : 'none';
+    function showEdit() {
+      const profile = JSON.parse(localStorage.getItem('userProfile'));
+      document.getElementById('username').value = profile?.username || '';
+      document.getElementById('bio').value = profile?.bio || '';
+      document.getElementById('editSection').style.display = 'block';
+    }
+
+    function cancelEdit() {
+      document.getElementById('editSection').style.display = 'none';
     }
 
     function uploadProfile() {
@@ -147,7 +153,10 @@
           body: JSON.stringify(finalProfile)
         })
         .then(res => res.json())
-        .then(() => loadProfile())
+        .then(() => {
+          loadProfile();
+          document.getElementById('editSection').style.display = 'none';
+        })
         .catch(err => console.error("User creation failed:", err));
       };
 
@@ -168,8 +177,6 @@
       } else {
         saveProfileToBackend(profile);
       }
-
-      toggleEdit();
     }
 
     async function loadProfile() {
@@ -179,8 +186,6 @@
       document.getElementById('previewName').innerText = profile.username;
       document.getElementById('previewBio').innerText = profile.bio || '';
       document.getElementById('previewImage').src = profile.profilePic;
-      document.getElementById('username').value = profile.username;
-      document.getElementById('bio').value = profile.bio || '';
 
       try {
         const res = await fetch(`${API_URL}/user/${profile.userId}`);

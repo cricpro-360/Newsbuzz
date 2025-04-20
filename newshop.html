@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shops List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    h2 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    input {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+    .shop-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin: 15px 0;
+      max-width: 500px;
+    }
+    .shop-name {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    .status {
+      font-size: 16px;
+      margin: 6px 0;
+      font-weight: 500;
+    }
+    .open {
+      color: green;
+    }
+    .closed {
+      color: red;
+    }
+    .info {
+      font-size: 15px;
+      color: #555;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>ಸಂಪೂರ್ಣ ಅಂಗಡಿ ಪಟ್ಟಿ</h2>
+  <input type="text" id="searchInput" placeholder="ಗ್ರಾಮ / ನಗರ / ತಾಲ್ಲೂಕು / ಜಿಲ್ಲೆ / ರಾಜ್ಯ ಮೂಲಕ ಹುಡುಕಿ">
+
+  <div id="shopList"></div>
+
+  <script>
+    const shops = [
+      {
+        name: "Sri Manjunatha Traders",
+        status: "open",
+        timing: "9:00 AM - 9:00 PM",
+        year: 2012,
+        state: "Karnataka",
+        district: "Tumkur",
+        taluk: "Gubbi",
+        city: "Gubbi Town",
+        village: "Hosahalli"
+      },
+      {
+        name: "Lakshmi Bakery",
+        status: "closed",
+        timing: "Opens at 6:00 AM",
+        year: 2005,
+        state: "Karnataka",
+        district: "Bangalore",
+        taluk: "South",
+        city: "Jayanagar",
+        village: "JP Nagar"
+      }
+    ];
+
+    const searchInput = document.getElementById("searchInput");
+    const shopList = document.getElementById("shopList");
+
+    function displayShops(filter = "") {
+      shopList.innerHTML = "";
+
+      const filtered = shops.filter(shop =>
+        shop.state.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.district.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.taluk.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.city.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.village.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        shopList.innerHTML = "<p>ಯಾವುದೇ ಅಂಗಡಿ ಪತ್ತೆಯಾಗಿಲ್ಲ.</p>";
+        return;
+      }
+
+      filtered.forEach(shop => {
+        const div = document.createElement("div");
+        div.className = "shop-card";
+        div.innerHTML = `
+          <div class="shop-name">${shop.name}</div>
+          <div class="status ${shop.status}">
+            Status: ${shop.status === "open" ? "Open" : "Closed"} (${shop.timing})
+          </div>
+          <div class="info">Started Year: ${shop.year}</div>
+          <div class="info">Location: ${shop.village}, ${shop.city}, ${shop.taluk}, ${shop.district}, ${shop.state}</div>
+        `;
+        shopList.appendChild(div);
+      });
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      displayShops(e.target.value);
+    });
+
+    displayShops(); // Initial load
+  </script>
+
+</body>
+</html>

@@ -1,28 +1,12 @@
 const express = require('express');
-const Post = require('./models/Post');
-const authenticateUser = require('./authMiddleware');
-
 const router = express.Router();
+const Post = require('../models/Post');
 
-// Create a post with the logged-in user's username
-router.post('/posts', authenticateUser, async (req, res) => {
-  const { title, content, imageUrl, state, district } = req.body;
-  const username = req.user.username;
-
+router.get('/user/:userId', async (req, res) => {
   try {
-    const post = await Post.create({
-      title,
-      content,
-      imageUrl,
-      state,
-      district,
-      username
-    });
-
-    res.json(post);
+    const posts = await Post.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+    res.json(posts);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create post' });
+    res.status(500).json({ error: 'Something went wrong' });
   }
 });
-
-module.exports = router;

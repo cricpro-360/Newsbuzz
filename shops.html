@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop Card</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    .shop-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin: 15px 0;
+      max-width: 500px;
+    }
+    .shop-name {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    .status {
+      font-size: 16px;
+      margin: 6px 0;
+      font-weight: 500;
+    }
+    .open {
+      color: green;
+    }
+    .closed {
+      color: red;
+    }
+    .info {
+      font-size: 15px;
+      color: #555;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="shop-card">
+    <div class="shop-name">Sri Manjunatha Traders</div>
+    <div class="status open">Status: Open (9:00 AM - 9:00 PM)</div>
+    <!-- Use .closed class instead for closed shops -->
+    <div class="info">Started Year: 2012</div>
+    <div class="info">Location: Karnataka, Tumkur, Gubbi</div>
+  </div>
+
+  <div class="shop-card">
+    <div class="shop-name">Lakshmi Bakery</div>
+    <div class="status closed">Status: Closed (Opens at 6:00 AM)</div>
+    <div class="info">Started Year: 2005</div>
+    <div class="info">Location: Karnataka, Bangalore, Jayanagar</div>
+  </div>
+
+</body>
+</html>

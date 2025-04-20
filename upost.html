@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="fast2sms" content="ucYKX2s0sOQNiae6ti7AWnaIoJoWpqkt">
+  <title>Navbar with Icons</title>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div id="user-posts"></div>
+
+<script>
+  const userId = localStorage.getItem('userId');
+
+  fetch(`https://newsbuzz-1.onrender.com/posts/user/${userId}`)
+    .then(response => response.json())
+    .then(posts => {
+      const container = document.getElementById('user-posts');
+      posts.forEach(post => {
+        const postDiv = document.createElement('div');
+        postDiv.innerHTML = `
+          <h3>${post.title}</h3>
+          <img src="${post.image}" alt="Post Image" style="max-width: 100%">
+          <p>${post.content}</p>
+          <hr/>
+        `;
+        container.appendChild(postDiv);
+      });
+    })
+    .catch(error => console.error('Error fetching user posts:', error));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ನನ್ನ ಪ್ರೊಫೈಲ್</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 15px;
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+    }
+
+    .profile-header {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .profile-header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .counts {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .counts div {
+      text-align: center;
+    }
+
+    .bio {
+      margin-top: 5px;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      display: none;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    #saveBtn {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    #saveBtn:hover {
+      background-color: #0056b3;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .grid img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .edit-btn {
+      margin-top: 15px;
+      background: #eee;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .counts {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-header">
+    <img id="previewImage" src="" alt="Profile Pic">
+    <div class="profile-info">
+      <h2 id="previewName">...</h2>
+      <p class="bio" id="previewBio">...</p>
+      <div class="counts">
+        <div><strong id="postCount">0</strong><br>ಪೋಸ್ಟ್</div>
+        <div><strong id="followers">0</strong><br>ಅನುಯಾಯಿಗಳು</div>
+        <div><strong id="following">0</strong><br>ಅನುಸರಣೆ</div>
+      </div>
+      <button class="edit-btn" onclick="toggleEdit()">ಪ್ರೊಫೈಲ್ ಎಡಿಟ್ ಮಾಡಿ</button>
+    </div>
+  </div>
+
+  <!-- Editable Fields -->
+  <input type="text" id="username" placeholder="ಹೆಸರು ನಮೂದಿಸಿ">
+  <textarea id="bio" placeholder="ಬಯೋ ನಮೂದಿಸಿ"></textarea>
+  <input type="file" id="profileImageFile" accept="image/*">
+  <button id="saveBtn" onclick="uploadProfile()">ಸೇವ್</button>
+
+  <div class="grid" id="userPosts">
+    <!-- User posts will appear here -->
+  </div>
+
+  <script>
+    const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dods2fuur/image/upload';
+    const CLOUDINARY_UPLOAD_PRESET = 'newsbuzz';
+    const API_URL = 'https://newsbuzz-1.onrender.com';
+
+    function generateRandomId() {
+      return 'user_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    function toggleEdit() {
+      const inputs = document.querySelectorAll('input, textarea, #saveBtn');
+      inputs.forEach(el => el.style.display = el.style.display === 'block' ? 'none' : 'block');
+    }
+
+    function uploadProfile() {
+      const username = document.getElementById('username').value.trim();
+      const bio = document.getElementById('bio').value.trim();
+      const file = document.getElementById('profileImageFile').files[0];
+
+      if (!username) {
+        alert('ದಯವಿಟ್ಟು ಹೆಸರು ನಮೂದಿಸಿ');
+        return;
+      }
+
+      const existing = JSON.parse(localStorage.getItem('userProfile')) || {};
+      const userId = existing.userId || generateRandomId();
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+        fetch(CLOUDINARY_URL, {
+          method: 'POST',
+          body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+          saveProfile(userId, username, bio, data.secure_url);
+        })
+        .catch(() => alert("ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ವಿಫಲವಾಗಿದೆ"));
+      } else {
+        saveProfile(userId, username, bio, existing.profilePic);
+      }
+    }
+
+    function saveProfile(userId, username, bio, profilePic) {
+      const profile = { userId, username, bio, profilePic };
+      localStorage.setItem('userProfile', JSON.stringify(profile));
+
+      fetch(`${API_URL}/user/create-or-update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profile)
+      })
+      .then(res => res.json())
+      .then(data => console.log("User updated:", data))
+      .catch(err => console.error("User update failed:", err));
+
+      loadProfile();
+      toggleEdit();
+    }
+
+    async function loadProfile() {
+      const profile = JSON.parse(localStorage.getItem('userProfile'));
+      if (!profile) return;
+
+      document.getElementById('previewName').innerText = profile.username;
+      document.getElementById('previewBio').innerText = profile.bio || '';
+      document.getElementById('previewImage').src = profile.profilePic;
+      document.getElementById('username').value = profile.username;
+      document.getElementById('bio').value = profile.bio || '';
+
+      try {
+        const res = await fetch(`${API_URL}/user/${profile.userId}`);
+        const data = await res.json();
+        document.getElementById('postCount').innerText = data.posts?.length || 0;
+        document.getElementById('followers').innerText = data.followers?.length || 0;
+        document.getElementById('following').innerText = data.following?.length || 0;
+
+        const postGrid = document.getElementById('userPosts');
+        postGrid.innerHTML = '';

@@ -1,37 +1,53 @@
-h2 {
-      color: #333;
-      font-size: 24px;
-      margin-bottom: 30px;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  padding: 20px;
+  justify-items: center;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 25px;
-      max-width: 600px;
-      margin: auto;
-    }
+.item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 90px;
+  transition: transform 0.3s;
+}
 
-    .item {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 15px;
-      transition: transform 0.2s ease;
-    }
+.item:hover {
+  transform: translateY(-5px);
+}
 
-    .item:hover {
-      transform: translateY(-5px);
-    }
+.icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
 
-    .icon {
-      width: 60px;
-      height: 60px;
-      margin-bottom: 10px;
-      text-align: center;
-    }
+.label {
+  font-size: 14px;
+  color: #333;
+}
 
-    .label {
-      font-size: 16px;
-      color: #444;
-    }
+@media (max-width: 400px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .item {
+    width: 80px;
+  }
+
+  .icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .label {
+    font-size: 12px;
+  }
+}

@@ -1,157 +1,220 @@
 <!DOCTYPE html>
 <html lang="kn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ನಮ್ಮ ಸುದ್ದಿ</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</title>
+  <link rel="stylesheet" href="styl.css">
   <style>
-    body {
-      font-family: Arial;
-      margin: 0;
-      padding: 0;
+    .preview {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    .top-navbar {
-      background-color: #6200ea;
-      color: white;
-      padding: 10px;
-      text-align: center;
-      font-size: 20px;
-    }
-
-    .container {
-      padding: 20px;
-    }
-
-    select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
-    }
-
-    .state-box {
-      background: #eee;
-      margin-top: 30px;
-      padding: 15px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    #location-card {
+    #locationCard {
       display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: #fff;
+      margin-top: 10px;
     }
-
-    .card-content {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
+    #selectLocationBtn {
+      margin-top: 20px;
     }
-
-    .btn-close {
-      background: #6200ea;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-      border-radius: 5px;
+    .locationOption {
+      margin: 5px;
+      padding: 5px 10px;
     }
   </style>
 </head>
 <body>
+  <div class="container filters">
+    <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
 
-  <div class="top-navbar">ನಮ್ಮ ಸುದ್ದಿ</div>
+    <!-- Location Selector Button + Card -->
+    <button id="selectLocationBtn">ಲೋಕೇಶನ್ ಆಯ್ಕೆಮಾಡಿ</button>
+    <div id="locationCard">
+      <p>ನಿಮ್ಮ ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ:</p>
+      <button class="locationOption">ಚಿತ್ರದುರ್ಗ</button>
+      <button class="locationOption">ಚಳ್ಳಕೆರೆ</button>
+      <button class="locationOption">ಮೊಳಕಾಲ್ಮೂರು</button>
+    </div>
 
-  <div class="container">
-    <!-- State Select -->
-    <label for="state-select">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ:</label>
-    <select id="state-select">
+    <select id="state-filter" onchange="handleStateChange();">
       <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
       <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
-      <option value="ಮಹಾರಾಷ್ಟ್ರ">ಮಹಾರಾಷ್ಟ್ರ</option>
     </select>
-    <button onclick="saveState()">ಸೇವ್ ಮಾಡಿ</button>
 
-    <!-- State Display -->
-    <div id="state-display" class="state-box" onclick="openLocationCard()">
-      ರಾಜ್ಯ ಲೋಡ್ ಆಗುತ್ತಿದೆ...
-    </div>
-  </div>
+    <select id="district-filter" onchange="handleDistrictChange();">
+      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
 
-  <!-- Location Card -->
-  <div id="location-card">
-    <div class="card-content">
-      <h3>ನಿಮ್ಮ ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</h3>
+    <select id="taluk-filter" onchange="handleTalukChange();">
+      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
 
-      <select id="district-select">
-        <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
-        <option>ಬೆಂಗಳೂರು</option>
-        <option>ಮಂಡ್ಯ</option>
-        <option>ಮೈಸೂರು</option>
-      </select>
-
-      <select id="taluk-select">
-        <option value="">ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
-        <option>ದಾಸನಪುರ</option>
-        <option>ಹುಣಸೂರು</option>
-        <option>ನಂಜನಗೂಡು</option>
-      </select>
-
-      <button class="btn-close" onclick="closeLocationCard()">ಮುಚ್ಚಿ</button>
+    <div id="posts" class="post-container">
+      <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
     </div>
   </div>
 
   <script>
-    // Show stored state on load
-    window.onload = function () {
-      const selectedState = localStorage.getItem("selectedState");
-      const stateDisplay = document.getElementById("state-display");
+    const API_URL = 'https://newsbuzz-1.onrender.com';
 
-      if (selectedState) {
-        stateDisplay.textContent = selectedState;
-      } else {
-        stateDisplay.textContent = "ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿಲ್ಲ";
+    const locationData = {
+      'ಕರ್ನಾಟಕ': {
+        'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
+        'ಹುಬ್ಬಳ್ಳಿ': ['ಹುಬ್ಬಳ್ಳಿ ಉತ್ತರ', 'ನವಲಗುಂದ']
       }
     };
 
-    function saveState() {
-      const state = document.getElementById("state-select").value;
-      if (state) {
-        localStorage.setItem("selectedState", state);
-        document.getElementById("state-display").textContent = state;
-        alert("ರಾಜ್ಯ ಸೇವ್ ಆಗಿದೆ!");
+    function updateDistrictFilter() {
+      const state = document.getElementById('state-filter').value;
+      const districtSelect = document.getElementById('district-filter');
+      const talukSelect = document.getElementById('taluk-filter');
+      districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+      if (locationData[state]) {
+        Object.keys(locationData[state]).forEach(district => {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
+    }
+
+    function updateTalukFilter() {
+      const state = document.getElementById('state-filter').value;
+      const district = document.getElementById('district-filter').value;
+      const talukSelect = document.getElementById('taluk-filter');
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+      if (locationData[state] && locationData[state][district]) {
+        locationData[state][district].forEach(taluk => {
+          const option = document.createElement('option');
+          option.value = taluk;
+          option.textContent = taluk;
+          talukSelect.appendChild(option);
+        });
+      }
+    }
+
+    function loadPosts() {
+      const state = document.getElementById('state-filter').value;
+      const district = document.getElementById('district-filter').value;
+      const taluk = document.getElementById('taluk-filter').value;
+
+      let url = `${API_URL}/posts`;
+      const params = [];
+
+      if (state) params.push(`state=${encodeURIComponent(state)}`);
+      if (district) params.push(`district=${encodeURIComponent(district)}`);
+      if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
+
+      if (params.length > 0) url += `?${params.join('&')}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(posts => {
+          const postDiv = document.getElementById('posts');
+          postDiv.innerHTML = '';
+
+          if (!posts.length) {
+            postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
+            return;
+          }
+
+          posts.forEach(post => {
+            const date = new Date(post.createdAt).toLocaleString();
+            postDiv.innerHTML += `
+            <div class="user-info">
+              <img src="${post.profilePic}" width="40" height="40">
+              <a href="profile-view.html?user=${ post.userId }">${ post.username }</a>
+            </div>
+            <div class="post">
+              <h3>${post.title}</h3>
+              <p class="preview">${post.content}</p>
+              <a href="post.html?id=${post._id}" class="post-link" target="_blank">ಮತ್ತಷ್ಟು ಓದಿ</a>
+              ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image">` : ''}
+              <small>Posted on ${date}</small>
+            </div>`;
+          });
+        })
+        .catch(() => {
+          document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
+        });
+    }
+
+    function handleStateChange() {
+      const state = document.getElementById('state-filter').value;
+      localStorage.setItem('filterState', state);
+      updateDistrictFilter();
+      setTimeout(() => {
+        const savedDistrict = localStorage.getItem('filterDistrict');
+        if (savedDistrict) {
+          document.getElementById('district-filter').value = savedDistrict;
+          updateTalukFilter();
+          setTimeout(() => {
+            const savedTaluk = localStorage.getItem('filterTaluk');
+            if (savedTaluk) {
+              document.getElementById('taluk-filter').value = savedTaluk;
+            }
+            loadPosts();
+          }, 100);
+        } else {
+          loadPosts();
+        }
+      }, 100);
+    }
+
+    function handleDistrictChange() {
+      const district = document.getElementById('district-filter').value;
+      localStorage.setItem('filterDistrict', district);
+      updateTalukFilter();
+      setTimeout(() => {
+        const savedTaluk = localStorage.getItem('filterTaluk');
+        if (savedTaluk) {
+          document.getElementById('taluk-filter').value = savedTaluk;
+        }
+        loadPosts();
+      }, 100);
+    }
+
+    function handleTalukChange() {
+      const taluk = document.getElementById('taluk-filter').value;
+      localStorage.setItem('filterTaluk', taluk);
+      loadPosts();
+    }
+
+    // Show/hide location card
+    document.getElementById("selectLocationBtn").addEventListener("click", function () {
+      document.getElementById("locationCard").style.display = "block";
+    });
+
+    const locationOptions = document.querySelectorAll(".locationOption");
+    locationOptions.forEach(option => {
+      option.addEventListener("click", () => {
+        const selectedLocation = option.innerText;
+        alert("ನೀವು ಆಯ್ಕೆಮಾಡಿದ ಸ್ಥಳ: " + selectedLocation);
+        localStorage.setItem("userLocation", selectedLocation);
+        document.getElementById("locationCard").style.display = "none";
+      });
+    });
+
+    // Load saved location on startup
+    window.onload = () => {
+      const savedState = localStorage.getItem('filterState');
+      if (savedState) {
+        document.getElementById('state-filter').value = savedState;
+        handleStateChange();
       } else {
-        alert("ದಯವಿಟ್ಟು ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ");
+        loadPosts();
       }
-    }
-
-    function openLocationCard() {
-      const selectedState = localStorage.getItem("selectedState");
-      if (!selectedState) {
-        alert("ದಯವಿಟ್ಟು ಮೊದಲು ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ");
-        return;
-      }
-      document.getElementById("location-card").style.display = "flex";
-    }
-
-    function closeLocationCard() {
-      document.getElementById("location-card").style.display = "none";
-    }
+    };
   </script>
-
 </body>
 </html>

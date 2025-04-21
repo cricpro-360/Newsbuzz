@@ -5,11 +5,10 @@ h2 {
     }
 
     .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 25px;
-      max-width: 600px;
-      margin: auto;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 30px;
     }
 
     .item {

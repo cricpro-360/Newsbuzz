@@ -3,150 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ಸ್ಥಳೀಯ ಸುದ್ದಿ</title>
+  <title>ನಮ್ಮ ಸುದ್ದಿ</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      padding: 0;
+    }
+
+    .top-navbar {
+      background-color: #6200ea;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .state-box {
+      background: #eee;
+      margin-top: 30px;
+      padding: 15px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #location-card {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .card-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .btn-close {
+      background: #6200ea;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-  <h1>ಸ್ಥಳೀಯ ಸುದ್ದಿ</h1>
 
-  <div>
-    <label for="state-filter">ರಾಜ್ಯ:</label>
-    <select id="state-filter" onchange="updateDistrictFilter()">
-      <option value="">ಆಯ್ಕೆಮಾಡಿ</option>
+  <div class="top-navbar">ನಮ್ಮ ಸುದ್ದಿ</div>
+
+  <div class="container">
+    <!-- State Select -->
+    <label for="state-select">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ:</label>
+    <select id="state-select">
+      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
       <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+      <option value="ಮಹಾರಾಷ್ಟ್ರ">ಮಹಾರಾಷ್ಟ್ರ</option>
     </select>
+    <button onclick="saveState()">ಸೇವ್ ಮಾಡಿ</button>
 
-    <label for="district-filter">ಜಿಲ್ಲೆ:</label>
-    <select id="district-filter" onchange="updateTalukFilter()">
-      <option value="">ಆಯ್ಕೆಮಾಡಿ</option>
-    </select>
-
-    <label for="taluk-filter">ತಾಲೂಕು:</label>
-    <select id="taluk-filter" onchange="loadPosts()">
-      <option value="">ಆಯ್ಕೆಮಾಡಿ</option>
-    </select>
+    <!-- State Display -->
+    <div id="state-display" class="state-box" onclick="openLocationCard()">
+      ರಾಜ್ಯ ಲೋಡ್ ಆಗುತ್ತಿದೆ...
+    </div>
   </div>
 
-  <div id="posts"></div>
+  <!-- Location Card -->
+  <div id="location-card">
+    <div class="card-content">
+      <h3>ನಿಮ್ಮ ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</h3>
 
-  <!-- Modal for selecting location -->
-  <div id="location-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 20px; border-radius: 10px; max-width: 90%;">
-      <h3>ನಿಮ್ಮ ರಾಜ್ಯ ಮತ್ತು ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</h3>
-      <select id="modal-state" onchange="populateModalDistricts()">
-        <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
-        <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
-      </select>
-      <select id="modal-district">
+      <select id="district-select">
         <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+        <option>ಬೆಂಗಳೂರು</option>
+        <option>ಮಂಡ್ಯ</option>
+        <option>ಮೈಸೂರು</option>
       </select>
-      <br><br>
-      <button onclick="confirmLocation()">ನಮ್ಮ ಜಿಲ್ಲೆ ಆರಿಸಿ</button>
+
+      <select id="taluk-select">
+        <option value="">ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+        <option>ದಾಸನಪುರ</option>
+        <option>ಹುಣಸೂರು</option>
+        <option>ನಂಜನಗೂಡು</option>
+      </select>
+
+      <button class="btn-close" onclick="closeLocationCard()">ಮುಚ್ಚಿ</button>
     </div>
   </div>
 
   <script>
-    const locationData = {
-      "ಕರ್ನಾಟಕ": {
-        "ಬೆಂಗಳೂರು": ["ಇಂಡಿರಾನಗರ", "ಮಲ್ಲೇಶ್ವರಂ"],
-        "ಮೈಸೂರು": ["ನಂಜನಗೂಡು", "ಟಿ.ನರಸೀಪುರ"],
-        "ಉಡುಪಿ": ["ಕಾರ್ಕಳ", "ಕುಂದಾಪುರ"]
+    // Show stored state on load
+    window.onload = function () {
+      const selectedState = localStorage.getItem("selectedState");
+      const stateDisplay = document.getElementById("state-display");
+
+      if (selectedState) {
+        stateDisplay.textContent = selectedState;
+      } else {
+        stateDisplay.textContent = "ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿಲ್ಲ";
       }
     };
 
-    function updateDistrictFilter() {
-      const state = document.getElementById('state-filter').value;
-      const districtSelect = document.getElementById('district-filter');
-      districtSelect.innerHTML = '<option value="">ಆಯ್ಕೆಮಾಡಿ</option>';
-
-      if (locationData[state]) {
-        Object.keys(locationData[state]).forEach(district => {
-          const option = document.createElement('option');
-          option.value = district;
-          option.textContent = district;
-          districtSelect.appendChild(option);
-        });
-      }
-    }
-
-    function updateTalukFilter() {
-      const state = document.getElementById('state-filter').value;
-      const district = document.getElementById('district-filter').value;
-      const talukSelect = document.getElementById('taluk-filter');
-      talukSelect.innerHTML = '<option value="">ಆಯ್ಕೆಮಾಡಿ</option>';
-
-      if (locationData[state] && locationData[state][district]) {
-        locationData[state][district].forEach(taluk => {
-          const option = document.createElement('option');
-          option.value = taluk;
-          option.textContent = taluk;
-          talukSelect.appendChild(option);
-        });
-      }
-    }
-
-    function loadPosts() {
-      const state = document.getElementById('state-filter').value;
-      const district = document.getElementById('district-filter').value;
-      const taluk = document.getElementById('taluk-filter').value;
-
-      const postsDiv = document.getElementById('posts');
-      postsDiv.innerHTML = `<p>ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡುತ್ತಿದೆ: ${state} / ${district} / ${taluk}</p>`;
-    }
-
-    function populateModalDistricts() {
-      const state = document.getElementById('modal-state').value;
-      const districtSelect = document.getElementById('modal-district');
-      districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
-
-      if (locationData[state]) {
-        Object.keys(locationData[state]).forEach(district => {
-          const option = document.createElement('option');
-          option.value = district;
-          option.textContent = district;
-          districtSelect.appendChild(option);
-        });
-      }
-    }
-
-    function confirmLocation() {
-      const state = document.getElementById('modal-state').value;
-      const district = document.getElementById('modal-district').value;
-
-      if (state && district) {
-        localStorage.setItem('filterState', state);
-        localStorage.setItem('filterDistrict', district);
-        document.getElementById('state-filter').value = state;
-        updateDistrictFilter();
-
-        setTimeout(() => {
-          document.getElementById('district-filter').value = district;
-          updateTalukFilter();
-          loadPosts();
-        }, 100);
-
-        document.getElementById('location-modal').style.display = 'none';
+    function saveState() {
+      const state = document.getElementById("state-select").value;
+      if (state) {
+        localStorage.setItem("selectedState", state);
+        document.getElementById("state-display").textContent = state;
+        alert("ರಾಜ್ಯ ಸೇವ್ ಆಗಿದೆ!");
       } else {
-        alert('ದಯವಿಟ್ಟು ರಾಜ್ಯ ಮತ್ತು ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ');
+        alert("ದಯವಿಟ್ಟು ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ");
       }
     }
 
-    window.onload = () => {
-      const savedState = localStorage.getItem('filterState');
-      const savedDistrict = localStorage.getItem('filterDistrict');
-
-      if (savedState && savedDistrict) {
-        document.getElementById('state-filter').value = savedState;
-        updateDistrictFilter();
-
-        setTimeout(() => {
-          document.getElementById('district-filter').value = savedDistrict;
-          updateTalukFilter();
-        }, 100);
-      } else {
-        document.getElementById('location-modal').style.display = 'flex';
+    function openLocationCard() {
+      const selectedState = localStorage.getItem("selectedState");
+      if (!selectedState) {
+        alert("ದಯವಿಟ್ಟು ಮೊದಲು ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ");
+        return;
       }
-    };
+      document.getElementById("location-card").style.display = "flex";
+    }
+
+    function closeLocationCard() {
+      document.getElementById("location-card").style.display = "none";
+    }
   </script>
+
 </body>
 </html>

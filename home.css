@@ -26,3 +26,12 @@
   border-radius: 10px;
   margin-top: 10px;
 }
+
+.post h3 {
+  margin-top: 0;
+}
+
+.post small {
+  color: #666;
+  font-size: 0.85em;
+}

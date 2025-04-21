@@ -1,18 +1,19 @@
 .grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
   padding: 20px;
-  justify-items: center;
+  gap: 15px;
 }
 
 .item {
   background: #fff;
+  width: 45%;
+  margin-bottom: 15px;
   border-radius: 12px;
   padding: 10px;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  width: 90px;
   transition: transform 0.3s;
 }
 
@@ -32,14 +33,10 @@
   color: #333;
 }
 
-@media (max-width: 400px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
 
+@media (max-width: 400px) {
   .item {
-    width: 80px;
+    width: 48%;
   }
 
   .icon {
@@ -48,6 +45,6 @@
   }
 
   .label {
-    font-size: 12px;
+    font-size: 13px;
   }
 }

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shop Details Note</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -61,6 +62,30 @@
       }
     }
 
+    .send-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .send-button:hover {
+      background-color: #0056b3;
+    }
+
+    .send-button i {
+      margin-right: 8px;
+      font-size: 18px;
+    }
+
     @media (max-width: 480px) {
       body {
         padding: 10px;
@@ -91,5 +116,11 @@
       <li>Must be include <strong>"TIMING"</strong> (e.g., 9:00AM to 9:00PM) and <strong>"HOLIDAY"</strong> (if no holiday, no need to mention) in your shop details.</li>
     </ol>
   </div>
+
+     <p>Your shop details send here:</p>
+  <a href="mailto:hindusthannews360@gmail.com" class="send-button">
+    <i class="fas fa-envelope"></i> Send
+  </a>
+  
 </body>
 </html>

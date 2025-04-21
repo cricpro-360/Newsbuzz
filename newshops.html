@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shops Directory</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    input, select, button {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .shop-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin: 15px auto;
+      max-width: 500px;
+      cursor: pointer;
+    }
+    .shop-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+    }
+    .shop-name svg {
+      margin-right: 8px;
+    }
+    .status.open { color: green; }
+    .status.closed { color: red; }
+
+    #shopDetails {
+      margin-top: 30px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 700px;
+      display: none;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .detail-box {
+      background: #f0f0f0;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .detail-box strong {
+      display: block;
+      color: #333;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ</h2>
+  <input type="text" id="searchInput" placeholder="ಹುಡುಕಾಟ: ಗ್ರಾಮ / ನಗರ / ತಾಲ್ಲೂಕು" />
+
+  <div id="shopList"></div>
+
+  <div id="shopDetails">
+    <h2>Shop Details</h2>
+    <div class="detail-grid" id="detailsGrid"></div>
+  </div>
+
+  <script>
+    const shopList = document.getElementById("shopList");
+    const searchInput = document.getElementById("searchInput");
+    const shopDetails = document.getElementById("shopDetails");
+    const detailsGrid = document.getElementById("detailsGrid");
+
+    const shops = [
+      {
+        name: "Sri Manjunatha Traders",
+        status: "open",
+        timing: "9:00 AM - 9:00 PM",
+        year: "2012",
+        village: "Gubbi",
+        city: "Tumkur",
+        taluk: "Gubbi",
+        district: "Tumkur",
+        state: "Karnataka"
+      },
+      {
+        name: "Lakshmi Bakery",
+        status: "closed",
+        timing: "Opens at 6:00 AM",
+        year: "2005",
+        village: "Jayanagar",
+        city: "Bangalore",
+        taluk: "South",
+        district: "Bangalore",
+        state: "Karnataka"
+      }
+    ];
+
+    function displayShops(filter = "") {
+      shopList.innerHTML = "";
+      const filtered = shops.filter(shop =>
+        shop.state.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.district.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.taluk.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.city.toLowerCase().includes(filter.toLowerCase()) ||
+        shop.village.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      filtered.forEach((shop, index) => {
+        const card = document.createElement("div");
+        card.className = "shop-card";
+        card.innerHTML = `
+          <div class="shop-name"><i data-lucide="store"></i>${shop.name}</div>
+          <div class="status ${shop.status}">Status: ${shop.status}</div>
+        `;
+        card.addEventListener("click", () => showDetails(shop));
+        shopList.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function showDetails(shop) {
+      detailsGrid.innerHTML = `
+        <div class="detail-box"><strong>Shop Name:</strong> ${shop.name}</div>
+        <div class="detail-box"><strong>Status:</strong> ${shop.status} (${shop.timing})</div>
+        <div class="detail-box"><strong>Started Year:</strong> ${shop.year}</div>
+        <div class="detail-box"><strong>Village:</strong> ${shop.village}</div>
+        <div class="detail-box"><strong>City:</strong> ${shop.city}</div>
+        <div class="detail-box"><strong>Taluk:</strong> ${shop.taluk}</div>
+        <div class="detail-box"><strong>District:</strong> ${shop.district}</div>
+        <div class="detail-box"><strong>State:</strong> ${shop.state}</div>
+      `;
+      shopDetails.style.display = "block";
+    }
+
+    searchInput.addEventListener("input", () => {
+      displayShops(searchInput.value);
+    });
+
+    displayShops();
+  </script>
+</body>
+</html>

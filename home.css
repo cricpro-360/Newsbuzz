@@ -1,1 +1,13 @@
-  
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.filters select {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px;
+  font-size: 16px;
+}  

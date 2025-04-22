@@ -2,25 +2,26 @@
 <html lang="kn">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ಪ್ರಕಾರ ಆಯ್ಕೆ</title>
   <style>
     body {
       font-family: 'Noto Sans Kannada', sans-serif;
       text-align: center;
       background: #fff;
+      margin: 0;
       padding: 20px;
     }
 
     .title {
-      font-size: 24px;
-      margin-bottom: 30px;
+      font-size: 22px;
+      margin-bottom: 25px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 30px;
-      justify-items: center;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 25px;
     }
 
     .item {
@@ -54,6 +55,26 @@
     .icon img {
       width: 40px;
       height: 40px;
+    }
+
+    @media (max-width: 480px) {
+      .title {
+        font-size: 18px;
+      }
+
+      .icon {
+        width: 70px;
+        height: 70px;
+      }
+
+      .icon img {
+        width: 30px;
+        height: 30px;
+      }
+
+      .item p {
+        font-size: 14px;
+      }
     }
   </style>
 </head>

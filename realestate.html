@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ರಿಯಲ್ ಎಸ್ಟೇಟ್</title>
+  <!-- Font Awesome CDN for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -128,20 +130,28 @@
     }
 
     .btn-call, .btn-wa {
-      background: #ffcc00;
       padding: 8px 12px;
       border: none;
       border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
       text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-call {
+      background: #ffcc00;
       color: black;
-      display: inline-block;
     }
 
     .btn-wa {
       background: #25d366;
       color: white;
+    }
+
+    .btn-call i, .btn-wa i {
+      margin-right: 6px;
     }
 
     @media (max-width: 480px) {
@@ -156,18 +166,20 @@
 
 <header>
   <div class="left-header">
-    <button onclick="history.back()">←</button>
+    <button onclick="history.back()"><i class="fas fa-arrow-left"></i></button>
     <h1>ರಿಯಲ್ ಎಸ್ಟೇಟ್</h1>
   </div>
-  <button class="post-btn">+ ಪೋಸ್ಟ್ ಸೇರಿಸಿ</button>
+  <button class="post-btn"><i class="fas fa-plus"></i> ಪೋಸ್ಟ್ ಸೇರಿಸಿ</button>
 </header>
 
 <div class="search-container">
   <input type="text" placeholder="ಲೋಕ್ಯಾಲಿಟಿ ಹುಡುಕಿ">
-  <button>🔍</button>
+  <button><i class="fas fa-search"></i></button>
 </div>
 
-<div class="filter" onclick="toggleFilter()">ಇನ್ನಷ್ಟು ಫಿಲ್ಟರ್‌ಗಳು ▼</div>
+<div class="filter" onclick="toggleFilter()">
+  ಇನ್ನಷ್ಟು ಫಿಲ್ಟರ್‌ಗಳು <i class="fas fa-chevron-down"></i>
+</div>
 
 <!-- Card 1 -->
 <div class="card">
@@ -179,8 +191,12 @@
     <div class="card-small">28 ಅಕ್ಟೋಬರ್, 23 - 55 ವೀಕ್ಷಣೆ</div>
   </div>
   <div class="card-footer">
-    <a class="btn-wa" href="https://wa.me/919876543210" target="_blank">WhatsApp</a>
-    <a class="btn-call" href="tel:+919876543210">ಕರೆ ಮಾಡಿ</a>
+    <a class="btn-wa" href="https://wa.me/919876543210" target="_blank">
+      <i class="fab fa-whatsapp"></i> WhatsApp
+    </a>
+    <a class="btn-call" href="tel:+919876543210">
+      <i class="fas fa-phone"></i> ಕರೆ ಮಾಡಿ
+    </a>
   </div>
 </div>
 

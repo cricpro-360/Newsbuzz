@@ -7,21 +7,22 @@
   <style>
     body {
       font-family: 'Noto Sans Kannada', sans-serif;
-      text-align: center;
       background: #fff;
       margin: 0;
       padding: 20px;
+      text-align: center;
     }
 
     .title {
-      font-size: 22px;
-      margin-bottom: 25px;
+      font-size: 24px;
+      margin-bottom: 30px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      justify-items: center;
     }
 
     .item {
@@ -29,19 +30,19 @@
     }
 
     .icon {
-      width: 80px;
-      height: 80px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .item p {
-      margin-top: 10px;
-      font-size: 16px;
+      margin-top: 12px;
+      font-size: 18px;
     }
 
     .news { background-color: #a6b91a; }
@@ -53,27 +54,13 @@
     .survey { background-color: #45a29e; }
 
     .icon img {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
     }
 
-    @media (max-width: 480px) {
-      .title {
-        font-size: 18px;
-      }
-
-      .icon {
-        width: 70px;
-        height: 70px;
-      }
-
-      .icon img {
-        width: 30px;
-        height: 30px;
-      }
-
-      .item p {
-        font-size: 14px;
+    @media (max-width: 500px) {
+      .grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>

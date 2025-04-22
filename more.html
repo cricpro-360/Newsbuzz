@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News Categories</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 10px;
+      background: #f9f9f9;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .horizontal-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding-bottom: 10px;
+    }
+
+    .scroll-item {
+      flex: 0 0 auto;
+      background: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .vertical-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .icon {
+      font-size: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .scroll-item {
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+
+      .list-item {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>ಎಲ್ಲೆಯ ಸುದ್ದಿಗಳು</h2>
+  <div class="horizontal-scroll">
+    <div class="scroll-item">🔥 ಟ್ರೆಂಡಿಂಗ್</div>
+    <div class="scroll-item">🟢 ವಾಟ್ಸಪ್ ಸ್ಟೇಟಸ್</div>
+    <div class="scroll-item">🏛️ ಜೀವನ ಶೈಲಿ</div>
+    <div class="scroll-item">📰 ಮ್ಯಾಗಜಿನ್</div>
+    <div class="scroll-item">🔪 ಕ್ರೈಂ ನ್ಯೂಸ್</div>
+    <div class="scroll-item">🗺️ ಸರ್ಕಾರಿ ಯೋಜನೆ</div>
+  </div>
+
+  <h2>ನಿಮ್ಮ ಪ್ರದೇಶದಿಂದ</h2>
+  <div class="vertical-list">
+    <div class="list-item"><span class="icon">🟥</span> ಚಿತ್ರಕಥೆ ಸುದ್ದಿ</div>
+    <div class="list-item"><span class="icon">🟦</span> ಜಿಲ್ಲಾ ಸುದ್ದಿ</div>
+    <div class="list-item"><span class="icon">🟨</span> ಉದ್ಯೋಗ</div>
+    <div class="list-item"><span class="icon">🟩</span> ವಧು-ವರರ ವೆದಿಕೆ</div>
+    <div class="list-item"><span class="icon">🏠</span> ರಿಯಲ್ ಎಸ್ಟೇಟ್</div>
+    <div class="list-item"><span class="icon">🏷️</span> ಖರೀದಿ-ಮಾರಾಟ</div>
+    <div class="list-item"><span class="icon">🎁</span> ಶುಭಾಷಯಗಳು</div>
+    <div class="list-item"><span class="icon">🏬</span> ಲೋಕಲ್ ಮಾರುಕಟ್ಟೆ</div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ರಿಯಲ್ ಎಸ್ಟೇಟ್</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+    }
+
+    header {
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .left-header {
+      display: flex;
+      align-items: center;
+    }
+
+    .left-header button {
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    header .post-btn {
+      background-color: #ffcc00;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .search-container {
+      padding: 10px;
+      background: #fff;
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .search-container input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .search-container button {
+      padding: 8px 12px;
+      background: #eee;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .filter {
+      padding: 10px;
+      text-align: center;
+      background: #fff;
+      font-weight: bold;
+      color: #007bff;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+
+    .card {
+      background: #fff;
+      margin: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .card img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 10px;
+    }
+
+    .card-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .card-subtitle {
+      color: gray;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .card-small {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .card-footer {
+      padding: 10px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-call, .btn-wa {
+      background: #ffcc00;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      color: black;
+      display: inline-block;
+    }
+
+    .btn-wa {
+      background: #25d366;
+      color: white;
+    }
+
+    @media (max-width: 480px) {
+      .card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="left-header">
+    <button onclick="history.back()">←</button>
+    <h1>ರಿಯಲ್ ಎಸ್ಟೇಟ್</h1>
+  </div>
+  <button class="post-btn">+ ಪೋಸ್ಟ್ ಸೇರಿಸಿ</button>
+</header>
+
+<div class="search-container">
+  <input type="text" placeholder="ಲೋಕ್ಯಾಲಿಟಿ ಹುಡುಕಿ">
+  <button>🔍</button>
+</div>
+
+<div class="filter" onclick="toggleFilter()">ಇನ್ನಷ್ಟು ಫಿಲ್ಟರ್‌ಗಳು ▼</div>
+
+<!-- Card 1 -->
+<div class="card">
+  <img src="https://i.imgur.com/zZ2K4gP.jpg" alt="Store">
+  <div class="card-content">
+    <div class="card-title">ಕಾಂಟಾಕ್ಟ್ ಓನರ್ ಫಾರ್ ಪ್ಲೇಸ್</div>
+    <div class="card-subtitle">ಅಂಗಡಿ ಬಾಡಿಗೆಗೆ/ಭೂಮಿಗಾಗಿ</div>
+    <div class="card-subtitle">ಅಮೋಸ್ ಹೊಟೇಲ್ ಬ್ಯಾಂಕ್ ಸೈಡ್, ಹೊಸ ಸಂತೆ ಮಧ್ಯ</div>
+    <div class="card-small">28 ಅಕ್ಟೋಬರ್, 23 - 55 ವೀಕ್ಷಣೆ</div>
+  </div>
+  <div class="card-footer">
+    <a class="btn-wa" href="https://wa.me/919876543210" target="_blank">WhatsApp</a>
+    <a class="btn-call" href="tel:+919876543210">ಕರೆ ಮಾಡಿ</a>
+  </div>
+</div>
+
+<!-- Card 2 -->
+<div class="card">
+  <img src="https://i.imgur.com/Zd68sJN.jpg" alt="Land">
+  <div class="card-content">
+    <div class="card-title">₹ 1.25 Cr</div>
+    <div class="card-subtitle">ಅಗ್ರಿಕಲ್ಚರ್ ಲ್ಯಾಂಡ್ ಸೇಲ್</div>
+  </div>
+</div>
+
+<script>
+  function toggleFilter() {
+    alert("ಫಿಲ್ಟರ್‌ಗಳು ಶೀಘ್ರದಲ್ಲೇ ಲಭ್ಯವಿರುತ್ತವೆ!");
+  }
+</script>
+
+</body>
+</html>

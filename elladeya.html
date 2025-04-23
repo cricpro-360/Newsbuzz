@@ -3,11 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Page Snap Scroll</title>
+  <title>ಎಲ್ಲೆಡಿಯ ಸುದ್ದಿ</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body { font-family: sans-serif; overflow: hidden; }
+
+    .top-navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 10px 15px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .top-navbar h1 {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .back-button {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .menu {
+      color: blue;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
     .tab-bar {
       display: flex;
@@ -20,6 +44,7 @@
       padding: 12px 20px;
       cursor: pointer;
       flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .tab-bar .active {
@@ -34,11 +59,11 @@
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
       width: 100vw;
-      height: calc(100vh - 50px); /* Leave space for tab bar */
+      height: calc(100vh - 96px); /* Top nav + tab bar */
     }
 
     .scroll-container::-webkit-scrollbar {
-      display: none; /* Hide scrollbar */
+      display: none;
     }
 
     .page {
@@ -53,6 +78,14 @@
 </head>
 <body>
 
+<!-- Top Navbar -->
+<div class="top-navbar">
+  <div class="back-button">&#8592;</div>
+  <h1>ಎಲ್ಲೆಡಿಯ ಸುದ್ದಿ</h1>
+  <div class="menu">ಮನು &#9662;</div>
+</div>
+
+<!-- Tabs -->
 <div class="tab-bar" id="tabBar">
   <div class="tab active" data-index="0">ಟ್ರೆಂಡಿಂಗ್</div>
   <div class="tab" data-index="1">ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</div>
@@ -61,6 +94,7 @@
   <div class="tab" data-index="4">ಜೀವನ ಶೈಲಿ</div>
 </div>
 
+<!-- Scrollable Pages -->
 <div class="scroll-container" id="scrollContainer">
   <div class="page"><h2>ಟ್ರೆಂಡಿಂಗ್</h2><p>ಭೂಕಂಪನ ಸುದ್ದಿ</p></div>
   <div class="page"><h2>ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</h2><p>ಕ್ರಿಕೆಟ್, ಫುಟ್‌ಬಾಲ್</p></div>

@@ -8,58 +8,68 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: sans-serif; overflow: hidden; }
 
+    /* Top Navbar */
     .top-navbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #fff;
+      background: white;
       padding: 10px 15px;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #ddd;
     }
 
-    .top-navbar h1 {
+    .back-button {
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .title {
       font-size: 18px;
       font-weight: bold;
     }
 
-    .back-button {
-      font-size: 20px;
-      cursor: pointer;
-    }
-
     .menu {
-      color: blue;
+      color: #007bff;
       font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
     }
 
+    /* Tab Bar */
     .tab-bar {
       display: flex;
       overflow-x: auto;
+      white-space: nowrap;
       background: #f2f2f2;
       border-bottom: 2px solid #ccc;
     }
 
-    .tab-bar div {
-      padding: 12px 20px;
-      cursor: pointer;
-      flex-shrink: 0;
-      white-space: nowrap;
+    .tab-bar::-webkit-scrollbar {
+      display: none;
     }
 
-    .tab-bar .active {
+    .tab {
+      padding: 12px 20px;
+      font-size: 15px;
+      cursor: pointer;
+      flex-shrink: 0;
+      color: #555;
+    }
+
+    .tab.active {
       color: orange;
       font-weight: bold;
       border-bottom: 3px solid orange;
     }
 
+    /* Scroll Pages */
     .scroll-container {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
       width: 100vw;
-      height: calc(100vh - 96px); /* Top nav + tab bar */
+      height: calc(100vh - 96px); /* 48px top nav + 48px tab bar */
     }
 
     .scroll-container::-webkit-scrollbar {
@@ -71,57 +81,71 @@
       flex-shrink: 0;
       width: 100vw;
       height: 100%;
-      padding: 20px;
-      background: #fff;
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    .page h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
 
-<!-- Top Navbar -->
-<div class="top-navbar">
-  <div class="back-button">&#8592;</div>
-  <h1>ಎಲ್ಲೆಡಿಯ ಸುದ್ದಿ</h1>
-  <div class="menu">ಮನು &#9662;</div>
-</div>
+  <!-- Top Navbar -->
+  <div class="top-navbar">
+    <div class="back-button">&#8592;</div>
+    <div class="title">ಎಲ್ಲೆಡಿಯ ಸುದ್ದಿ</div>
+    <div class="menu">ಮನು &#9662;</div>
+  </div>
 
-<!-- Tabs -->
-<div class="tab-bar" id="tabBar">
-  <div class="tab active" data-index="0">ಟ್ರೆಂಡಿಂಗ್</div>
-  <div class="tab" data-index="1">ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</div>
-  <div class="tab" data-index="2">ಕ್ರೈಂ ನ್ಯೂಸ್</div>
-  <div class="tab" data-index="3">IPL 2025</div>
-  <div class="tab" data-index="4">ಜೀವನ ಶೈಲಿ</div>
-</div>
+  <!-- Horizontal Tab Bar -->
+  <div class="tab-bar" id="tabBar">
+    <div class="tab active" data-index="0">ಟ್ರೆಂಡಿಂಗ್</div>
+    <div class="tab" data-index="1">ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</div>
+    <div class="tab" data-index="2">ಕ್ರೈಂ ನ್ಯೂಸ್</div>
+    <div class="tab" data-index="3">IPL 2025</div>
+    <div class="tab" data-index="4">ಜೀವನ ಶೈಲಿ</div>
+  </div>
 
-<!-- Scrollable Pages -->
-<div class="scroll-container" id="scrollContainer">
-  <div class="page"><h2>ಟ್ರೆಂಡಿಂಗ್</h2><p>ಭೂಕಂಪನ ಸುದ್ದಿ</p></div>
-  <div class="page"><h2>ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</h2><p>ಕ್ರಿಕೆಟ್, ಫುಟ್‌ಬಾಲ್</p></div>
-  <div class="page"><h2>ಕ್ರೈಂ ನ್ಯೂಸ್</h2><p>ಅಪರಾಧ ಮಾಹಿತಿ</p></div>
-  <div class="page"><h2>IPL 2025</h2><p>ಐಪಿಎಲ್ ಟೀಂಸ್</p></div>
-  <div class="page"><h2>ಜೀವನ ಶೈಲಿ</h2><p>ಆರೋಗ್ಯ, ಫ್ಯಾಷನ್</p></div>
-</div>
+  <!-- Snap Scroll Pages -->
+  <div class="scroll-container" id="scrollContainer">
+    <div class="page">
+      <h2>ಟ್ರೆಂಡಿಂಗ್</h2>
+      <p>ಗುಜರಾತ್‌ನ ಕಚ್ ಜಿಲ್ಲೆಯಲ್ಲಿ 4.3 ತೀವ್ರತೆಯ ಭೂಕಂಪನ</p>
+      <img src="https://www.volcanodiscovery.com/uploads/tx_takomapageearthquakes/india_earthquake_map.jpg" width="100%" />
+    </div>
+    <div class="page">
+      <h2>ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</h2>
+      <p>ಐಪಿಎಲ್ ಕ್ರಿಕೆಟ್ ಆಟಗಾರನ ಬಿಕ್ಕಟ್ಟು ಕ್ಷಣ</p>
+      <img src="https://static.toiimg.com/thumb/msid-107149116,width-400,resizemode-4/107149116.jpg" width="100%" />
+    </div>
+    <div class="page"><h2>ಕ್ರೈಂ ನ್ಯೂಸ್</h2><p>ಅಪರಾಧ ಸುದ್ದಿ ಇಲ್ಲಿಗೆ ಬರಲಿದೆ.</p></div>
+    <div class="page"><h2>IPL 2025</h2><p>ಟೀಮ್ಸ್, ಶೆಡ್ಯೂಲ್, ಪ್ಲೇಯರ್ ಅಪ್‌ಡೇಟ್ಸ್.</p></div>
+    <div class="page"><h2>ಜೀವನ ಶೈಲಿ</h2><p>ಆರೋಗ್ಯ, ಫ್ಯಾಷನ್, ಟ್ರೆಂಡ್ಸ್ ಇತ್ಯಾದಿ.</p></div>
+  </div>
 
-<script>
-  const tabs = document.querySelectorAll('.tab');
-  const scrollContainer = document.getElementById('scrollContainer');
+  <!-- Script to handle scroll + tab highlight -->
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const scrollContainer = document.getElementById('scrollContainer');
 
-  tabs.forEach((tab, index) => {
-    tab.addEventListener('click', () => {
-      scrollContainer.scrollTo({
-        left: index * window.innerWidth,
-        behavior: 'smooth'
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => {
+        scrollContainer.scrollTo({
+          left: index * window.innerWidth,
+          behavior: 'smooth'
+        });
       });
     });
-  });
 
-  scrollContainer.addEventListener('scroll', () => {
-    const index = Math.round(scrollContainer.scrollLeft / window.innerWidth);
-    tabs.forEach(t => t.classList.remove('active'));
-    tabs[index].classList.add('active');
-  });
-</script>
+    scrollContainer.addEventListener('scroll', () => {
+      const index = Math.round(scrollContainer.scrollLeft / window.innerWidth);
+      tabs.forEach(t => t.classList.remove('active'));
+      tabs[index].classList.add('active');
+    });
+  </script>
 
 </body>
 </html>

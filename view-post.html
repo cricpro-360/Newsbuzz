@@ -1,10 +1,8 @@
-<!-- view-post.html -->
-<!DOCTYPE html>
-<html lang="kn">
+<!DOCTYPE html><html lang="kn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ಯೆಲ್ಲಾ ಪೋಸ್ಟ್ಗಳು</title>
+  <title>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</title>
   <link rel="stylesheet" href="styl.css">
   <style>
     .preview {
@@ -14,39 +12,29 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .post img { max-width: 100%; width: 100%; margin-top: 10px; }
   </style>
 </head>
 <body>
   <div class="container filters">
-    <h2>ಯೆಲ್ಲಾ ಪೋಸ್ಟ್ಗಳು</h2>
+    <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2><select id="state-filter" onchange="handleStateChange();">
+  <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+  <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+</select>
 
-    <select id="state-filter" onmchange="handleStateChange();">
-      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
-      <option value="ಕರ್ನಾಟಕ"> ಕರ್ನಾಟಕ </option>
-    </select>
+<select id="district-filter" onchange="handleDistrictChange();">
+  <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+</select>
 
-    <select id="district-filter" onchange="handleDistrictChange();">
-      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
-    </select>
+<select id="taluk-filter" onchange="handleTalukChange();">
+  <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+</select>
 
-    <select id="taluk-filter" onchange="handleTalukChange();">
-      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
-    </select>
+<div id="posts" class="post-container">
+  <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
+</div>
 
-    <select id="category-filter" onchange="handleCategoryChange();">
-      <option value="">ವರ್ಗ ಆಯ್ಕೆಮಾಡಿ</option>
-      <option value="ರಾಜಕೀಯ">ರಾಜಕೀಯ</option>
-      <option value="ಕ್ರಿಕೆಟ್">ಕ್ರಿಕೆಟ್</option>
-      <option value="ಅಂತರಾಷ್ಟ್ರೀಯ">ಅಂತರಾಷ್ಟ್ರೀಯ</option>
-      <option value="ಪ್ರಾದೇಶಿಕ">ಪ್ರಾದೇಶಿಕ</option>
-    </select>
-
-    <div id="posts" class="post-container">
-      <p class="no-posts">ಪೋಸ್ಟ್ಗಳ್ನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಿದೆ...</p>
-    </div>
-  </div>
-
-  <script>
+  </div>  <script defer>
     const API_URL = 'https://newsbuzz-1.onrender.com';
 
     const locationData = {
@@ -93,48 +81,59 @@
       const state = document.getElementById('state-filter').value;
       const district = document.getElementById('district-filter').value;
       const taluk = document.getElementById('taluk-filter').value;
-      const category = document.getElementById('category-filter').value;
 
-      let url = `${API_URL}/posts`;
+      let url = `${API_URL}/posts?limit=10`;
       const params = [];
 
       if (state) params.push(`state=${encodeURIComponent(state)}`);
       if (district) params.push(`district=${encodeURIComponent(district)}`);
       if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
-      if (category) params.push(`category=${encodeURIComponent(category)}`);
 
-      if (params.length > 0) url += `?${params.join('&')}`;
+      if (params.length > 0) url += `&${params.join('&')}`;
+
+      const cached = localStorage.getItem("filteredPostsCache");
+      const cacheKey = `state=${state}&district=${district}&taluk=${taluk}`;
+
+      if (cached && JSON.parse(cached).key === cacheKey) {
+        renderPosts(JSON.parse(cached).data);
+        return;
+      }
 
       fetch(url)
         .then(res => res.json())
         .then(posts => {
-          const postDiv = document.getElementById('posts');
-          postDiv.innerHTML = '';
-
-          if (!posts.length) {
-            postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್ಗಳು ಲಬ್ಯವಿಲ್ಲ.</p>';
-            return;
-          }
-
-          posts.forEach(post => {
-            const date = new Date(post.createdAt).toLocaleString();
-            postDiv.innerHTML += `
-            <div class="user-info">
-              <img src="${post.profilePic}" width="40" height="40">
-              <a href="profile-view.html?user=${post.userId}">${post.username}</a>
-            </div>
-            <div class="post">
-              <h3>${post.title}</h3>
-              <p class="preview">${post.content}</p>
-              <a href="post.html?id=${post._id}" class="post-link" target="_blank">ಮತ್ತಸ್ತು ಓದಿ</a>
-              ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image">` : ''}
-              <small>Posted on ${date}</small>
-            </div>`;
-          });
+          localStorage.setItem("filteredPostsCache", JSON.stringify({ key: cacheKey, data: posts }));
+          renderPosts(posts);
         })
         .catch(() => {
-          document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್ಗಳ್ನ್ನು ಲೋಡ್ ಮಾಡಲುತ್ತಿದೆ.</p>';
+          document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
         });
+    }
+
+    function renderPosts(posts) {
+      const postDiv = document.getElementById('posts');
+      postDiv.innerHTML = '';
+
+      if (!posts.length) {
+        postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
+        return;
+      }
+
+      posts.forEach(post => {
+        const date = new Date(post.createdAt).toLocaleString();
+        postDiv.innerHTML += `
+          <div class="user-info">
+            <img src="${post.profilePic}" width="40" height="40">
+            <a href="profile-view.html?user=${post.userId}">${post.username}</a>
+          </div>
+          <div class="post">
+            <h3>${post.title}</h3>
+            <p class="preview">${post.content}</p>
+            <a href="post.html?id=${post._id}" class="post-link" target="_blank">ಮತ್ತಷ್ಟು ಓದಿ</a>
+            ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}" class="post-image">` : ''}
+            <small>Posted on ${date}</small>
+          </div>`;
+      });
     }
 
     function handleStateChange() {
@@ -151,7 +150,7 @@
             if (savedTaluk) {
               document.getElementById('taluk-filter').value = savedTaluk;
             }
-            loadPosts()
+            loadPosts();
           }, 100);
         } else {
           loadPosts();
@@ -178,18 +177,8 @@
       loadPosts();
     }
 
-    function handleCategoryChange() {
-      const category = document.getElementById('category-filter').value;
-      localStorage.setItem('filterCategory', category);
-      loadPosts();
-    }
-
     window.onload = () => {
       const savedState = localStorage.getItem('filterState');
-      const savedCategory = localStorage.getItem('filterCategory');
-      if (savedCategory) {
-        document.getElementById('category-filter').value = savedCategory;
-      }
       if (savedState) {
         document.getElementById('state-filter').value = savedState;
         handleStateChange();

@@ -1,11 +1,20 @@
-<a href="elladeya.html" onclick="goToTab(3)">IPL 2025 ಗೆ ಹೋಗಿ</a>
-
+<a href="elladeya.html?tab=3">Go to IPL 2025</a>
 <script>
-  function goToTab(index) {
+  const params = new URLSearchParams(window.location.search);
+  const tabIndex = parseInt(params.get("tab"));
+
+  if (!isNaN(tabIndex)) {
     const container = document.getElementById('scrollContainer');
     container.scrollTo({
-      left: index * window.innerWidth,
+      left: tabIndex * window.innerWidth,
       behavior: 'smooth'
     });
+
+    // Optional: highlight correct tab
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    if (tabs[tabIndex]) {
+      tabs[tabIndex].classList.add('active');
+    }
   }
 </script>

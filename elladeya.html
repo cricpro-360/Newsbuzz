@@ -3,47 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ಎಲ್ಲೆದೆಯ ಸುದ್ದಿ</title>
+  <title>Page Snap Scroll</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body { font-family: sans-serif; overflow: hidden; }
 
     .tab-bar {
       display: flex;
       overflow-x: auto;
-      white-space: nowrap;
+      background: #f2f2f2;
       border-bottom: 2px solid #ccc;
-      background: #f1f1f1;
     }
 
     .tab-bar div {
-      padding: 10px 20px;
+      padding: 12px 20px;
       cursor: pointer;
       flex-shrink: 0;
     }
 
     .tab-bar .active {
       color: orange;
-      border-bottom: 3px solid orange;
       font-weight: bold;
+      border-bottom: 3px solid orange;
     }
 
     .scroll-container {
       display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
       width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      position: relative;
+      height: calc(100vh - 50px); /* Leave space for tab bar */
     }
 
-    .scroll-container .page {
+    .scroll-container::-webkit-scrollbar {
+      display: none; /* Hide scrollbar */
+    }
+
+    .page {
+      scroll-snap-align: start;
       flex-shrink: 0;
       width: 100vw;
-      height: 100vh;
+      height: 100%;
       padding: 20px;
-      background: #fefefe;
-      border-right: 1px solid #eee;
-      transition: transform 0.5s ease;
+      background: #fff;
     }
   </style>
 </head>
@@ -58,46 +62,30 @@
 </div>
 
 <div class="scroll-container" id="scrollContainer">
-  <div class="page"><h2>ಟ್ರೆಂಡಿಂಗ್</h2><p>ಗುಜರಾತ್‌ನ ಭೂಕಂಪನ ಸುದ್ದಿ</p></div>
-  <div class="page"><h2>ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</h2><p>ಕ್ರಿಕೆಟ್ ನ್ಯೂಸ್</p></div>
-  <div class="page"><h2>ಕ್ರೈಂ ನ್ಯೂಸ್</h2><p>ಅಪರಾಧದ ವಿವರಗಳು</p></div>
-  <div class="page"><h2>IPL 2025</h2><p>ಐಪಿಎಲ್ ಅಪ್ಡೇಟ್ಸ್</p></div>
+  <div class="page"><h2>ಟ್ರೆಂಡಿಂಗ್</h2><p>ಭೂಕಂಪನ ಸುದ್ದಿ</p></div>
+  <div class="page"><h2>ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</h2><p>ಕ್ರಿಕೆಟ್, ಫುಟ್‌ಬಾಲ್</p></div>
+  <div class="page"><h2>ಕ್ರೈಂ ನ್ಯೂಸ್</h2><p>ಅಪರಾಧ ಮಾಹಿತಿ</p></div>
+  <div class="page"><h2>IPL 2025</h2><p>ಐಪಿಎಲ್ ಟೀಂಸ್</p></div>
   <div class="page"><h2>ಜೀವನ ಶೈಲಿ</h2><p>ಆರೋಗ್ಯ, ಫ್ಯಾಷನ್</p></div>
 </div>
 
 <script>
   const tabs = document.querySelectorAll('.tab');
   const scrollContainer = document.getElementById('scrollContainer');
-  let isScrolling = false; // To control the one-time scroll
 
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => {
-      if (!isScrolling) {
-        isScrolling = true;
-        scrollContainer.style.transform = `translateX(-${index * 100}vw)`;
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        setTimeout(() => { isScrolling = false; }, 500); // Lock scroll for 0.5s
-      }
+      scrollContainer.scrollTo({
+        left: index * window.innerWidth,
+        behavior: 'smooth'
+      });
     });
   });
 
-  scrollContainer.addEventListener('wheel', (e) => {
-    if (isScrolling) return;
-    const currentPageIndex = Math.round(scrollContainer.scrollLeft / window.innerWidth);
-    let nextPageIndex = e.deltaY > 0 ? currentPageIndex + 1 : currentPageIndex - 1;
-    
-    // Ensure we stay within bounds
-    if (nextPageIndex < 0) nextPageIndex = 0;
-    if (nextPageIndex >= tabs.length) nextPageIndex = tabs.length - 1;
-
-    // Scroll to the next page
-    isScrolling = true;
-    scrollContainer.style.transform = `translateX(-${nextPageIndex * 100}vw)`;
+  scrollContainer.addEventListener('scroll', () => {
+    const index = Math.round(scrollContainer.scrollLeft / window.innerWidth);
     tabs.forEach(t => t.classList.remove('active'));
-    tabs[nextPageIndex].classList.add('active');
-
-    setTimeout(() => { isScrolling = false; }, 500); // Lock scroll for 0.5s
+    tabs[index].classList.add('active');
   });
 </script>
 

@@ -13,20 +13,25 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .post img { max-width: 100%; width: 100%; margin-top: 10px; }
-
-    /* Spinner Style */
+    .post img {
+      max-width: 100%;
+      width: 100%;
+      margin-top: 10px;
+    }
+    #spinner {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
     .spinner {
       border: 4px solid #f3f3f3;
       border-top: 4px solid #3498db;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       animation: spin 1s linear infinite;
-      margin: 20px auto;
-      display: none;
+      margin: auto;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -36,6 +41,7 @@
 <body>
   <div class="container filters">
     <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
+
     <select id="state-filter" onchange="handleStateChange();">
       <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
       <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
@@ -49,8 +55,7 @@
       <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
     </select>
 
-    <!-- Spinner -->
-    <div id="spinner" class="spinner"></div>
+    <div id="spinner"><div class="spinner"></div></div>
 
     <div id="posts" class="post-container">
       <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
@@ -117,13 +122,13 @@
       const cacheKey = `state=${state}&district=${district}&taluk=${taluk}`;
       const cached = JSON.parse(localStorage.getItem("filteredPostsCache"));
       const cacheTime = localStorage.getItem("filteredPostsTime");
-      const cacheTTL = 5 * 60 * 1000; // 5 minutes
+      const cacheTTL = 5 * 60 * 1000;
 
-      // Show the spinner before the fetch request starts
       document.getElementById('spinner').style.display = 'block';
 
       if (cached && cached.key === cacheKey && cacheTime && (Date.now() - cacheTime < cacheTTL)) {
         renderPosts(cached.data);
+        document.getElementById('spinner').style.display = 'none';
         return;
       }
 
@@ -138,7 +143,6 @@
           document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
         })
         .finally(() => {
-          // Hide the spinner after the request completes
           document.getElementById('spinner').style.display = 'none';
         });
     }
@@ -167,6 +171,8 @@
             <small>Posted on ${date}</small>
           </div>`;
       });
+
+      document.getElementById('spinner').style.display = 'none';
     }
 
     function handleStateChange() {

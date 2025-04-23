@@ -1,45 +1,53 @@
-<!DOCTYPE html>
-<html lang="kn">
+<!-- view-post.html (with loading speed optimizations) --><!DOCTYPE html><html lang="kn">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ನಂಜನಗೂಡು ಪೋಸ್ಟ್‌ಗಳು</title>
   <style>
     .post { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .post img { width: 100%; max-width: 300px; display: block; margin-top: 10px; }
   </style>
 </head>
 <body>
   <h2>ನಂಜನಗೂಡು ತಾಲ್ಲೂಕಿನ ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
-  <div id="posts">ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</div>
+  <div id="posts">ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</div>  <script defer>
+    const API_URL = "https://newsbuzz-1.onrender.com/posts?taluk=ನಂಜನಗೂಡು&limit=10";
 
-  <script>
-    const API_URL = "https://newsbuzz-1.onrender.com/posts?taluk=ನಂಜನಗೂಡು";
+    function renderPosts(posts) {
+      const container = document.getElementById("posts");
+      container.innerHTML = "";
 
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(posts => {
-        const container = document.getElementById("posts");
-        container.innerHTML = "";
+      if (!posts.length) {
+        container.innerHTML = "<p>ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>";
+        return;
+      }
 
-        if (!posts.length) {
-          container.innerHTML = "<p>ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>";
-          return;
-        }
-
-        posts.forEach(post => {
-          const postDiv = document.createElement("div");
-          postDiv.className = "post";
-          postDiv.innerHTML = `
-            <h3>${post.title}</h3>
-            <p>${post.content}</p>
-            ${post.imageUrl ? `<img src="${post.imageUrl}" width="100%">` : ''}
-            <small>Posted by ${post.username}</small>
-          `;
-          container.appendChild(postDiv);
-        });
-      })
-      .catch(() => {
-        document.getElementById("posts").innerHTML = "<p>ಡೇಟಾ ಲೋಡ್ ವಿಫಲವಾಗಿದೆ.</p>";
+      posts.forEach(post => {
+        const postDiv = document.createElement("div");
+        postDiv.className = "post";
+        postDiv.innerHTML = `
+          <h3>${post.title}</h3>
+          <p>${post.content}</p>
+          ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_300/')}" alt="Image">` : ''}
+          <small>Posted by ${post.username}</small>
+        `;
+        container.appendChild(postDiv);
       });
-  </script>
-</body>
+    }
+
+    const cached = localStorage.getItem("nanajPostData");
+    if (cached) {
+      renderPosts(JSON.parse(cached));
+    } else {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          localStorage.setItem("nanajPostData", JSON.stringify(data));
+          renderPosts(data);
+        })
+        .catch(() => {
+          document.getElementById("posts").innerHTML = "<p>ಡೇಟಾ ಲೋಡ್ ವಿಫಲವಾಗಿದೆ.</p>";
+        });
+    }
+  </script></body>
 </html>

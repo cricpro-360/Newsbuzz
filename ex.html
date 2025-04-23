@@ -1,0 +1,11 @@
+<a href="#" onclick="goToTab(3)">IPL 2025 ಗೆ ಹೋಗಿ</a>
+
+<script>
+  function goToTab(index) {
+    const container = document.getElementById('scrollContainer');
+    container.scrollTo({
+      left: index * window.innerWidth,
+      behavior: 'smooth'
+    });
+  }
+</script>

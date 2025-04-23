@@ -25,7 +25,15 @@
     </select>
 
     <select id="taluk">
-      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ(Optional)</option>
+      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ (ಐಚ್ಛಿಕ)</option>
+    </select>
+
+    <select id="category">
+      <option value="">ವರ್ಗ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="ರಾಜಕೀಯ">ರಾಜಕೀಯ</option>
+      <option value="ಕ್ರಿಕೆಟ್">ಕ್ರಿಕೆಟ್</option>
+      <option value="ಅಂತರಾಷ್ಟ್ರೀಯ">ಅಂತರಾಷ್ಟ್ರೀಯ</option>
+      <option value="ಪ್ರಾದೇಶಿಕ">ಪ್ರಾದೇಶಿಕ</option>
     </select>
 
     <button onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
@@ -88,6 +96,7 @@
       const state = document.getElementById('state').value.trim();
       const district = document.getElementById('district').value.trim();
       const taluk = document.getElementById('taluk').value.trim();
+      const category = document.getElementById('category').value.trim();
       const imageFile = document.getElementById('image').files[0];
 
       if (!title || !content || !state || !district) {
@@ -101,14 +110,15 @@
       formData.append('state', state);
       formData.append('district', district);
       if (taluk) formData.append('taluk', taluk);
+      if (category) formData.append('category', category);
       if (imageFile) formData.append('image', imageFile);
 
       const profile = JSON.parse(localStorage.getItem('userProfile'));
-if (profile) {
-  formData.append('username', profile.username);
-  formData.append('profilePic', profile.profilePic);
-  formData.append('userId', profile.userId); // Add this if available
-}
+      if (profile) {
+        formData.append('username', profile.username);
+        formData.append('profilePic', profile.profilePic);
+        formData.append('userId', profile.userId);
+      }
 
       fetch(`${API_URL}/posts`, {
         method: 'POST',
@@ -122,6 +132,7 @@ if (profile) {
         document.getElementById('state').value = '';
         document.getElementById('district').value = '';
         document.getElementById('taluk').value = '';
+        document.getElementById('category').value = '';
         document.getElementById('image').value = '';
       })
       .catch(() => showMessage("ಪೋಸ್ಟ್ ರಚನೆಯಲ್ಲಿ ದೋಷ.", "error"));

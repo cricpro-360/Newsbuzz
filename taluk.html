@@ -10,44 +10,55 @@
 </head>
 <body>
   <h2>ನಂಜನಗೂಡು ತಾಲ್ಲೂಕಿನ ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
-  <div id="posts">ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</div>  <script defer>
-    const API_URL = "https://newsbuzz-1.onrender.com/posts?taluk=ನಂಜನಗೂಡು&limit=10";
+  <div id="posts">ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</div> 
 
-    function renderPosts(posts) {
-      const container = document.getElementById("posts");
-      container.innerHTML = "";
 
-      if (!posts.length) {
-        container.innerHTML = "<p>ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>";
-        return;
-      }
+<script defer>
+  const API_URL = "https://newsbuzz-1.onrender.com/posts?taluk=ನಂಜನಗೂಡು&limit=10";
 
-      posts.forEach(post => {
-        const postDiv = document.createElement("div");
-        postDiv.className = "post";
-        postDiv.innerHTML = `
-          <h3>${post.title}</h3>
-          <p>${post.content}</p>
-          ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_300/')}" alt="Image">` : ''}
-          <small>Posted by ${post.username}</small>
-        `;
-        container.appendChild(postDiv);
+  function renderPosts(posts) {
+    const container = document.getElementById("posts");
+    container.innerHTML = "";
+
+    if (!posts.length) {
+      container.innerHTML = "<p>ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>";
+      return;
+    }
+
+    posts.forEach(post => {
+      const postDiv = document.createElement("div");
+      postDiv.className = "post";
+      postDiv.innerHTML = `
+        <h3>${post.title}</h3>
+        <p>${post.content}</p>
+        ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_300/')}" alt="Image">` : ''}
+        <small>Posted by ${post.username}</small>
+      `;
+      container.appendChild(postDiv);
+    });
+  }
+
+  const cacheKey = "nanajPostData";
+  const cacheTimeKey = "nanajPostTime";
+  const cacheTTL = 5 * 60 * 1000; // 5 minutes
+
+  const cached = localStorage.getItem(cacheKey);
+  const cachedTime = localStorage.getItem(cacheTimeKey);
+
+  if (cached && cachedTime && (Date.now() - cachedTime < cacheTTL)) {
+    renderPosts(JSON.parse(cached));
+  } else {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        localStorage.setItem(cacheKey, JSON.stringify(data));
+        localStorage.setItem(cacheTimeKey, Date.now());
+        renderPosts(data);
+      })
+      .catch(() => {
+        document.getElementById("posts").innerHTML = "<p>ಡೇಟಾ ಲೋಡ್ ವಿಫಲವಾಗಿದೆ.</p>";
       });
-    }
-
-    const cached = localStorage.getItem("nanajPostData");
-    if (cached) {
-      renderPosts(JSON.parse(cached));
-    } else {
-      fetch(API_URL)
-        .then(res => res.json())
-        .then(data => {
-          localStorage.setItem("nanajPostData", JSON.stringify(data));
-          renderPosts(data);
-        })
-        .catch(() => {
-          document.getElementById("posts").innerHTML = "<p>ಡೇಟಾ ಲೋಡ್ ವಿಫಲವಾಗಿದೆ.</p>";
-        });
-    }
-  </script></body>
+  }
+</script>
+</body>
 </html>

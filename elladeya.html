@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ಎಲ್ಲೆದೆಯ ಸುದ್ದಿ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+    }
+
+    .tabs-wrapper {
+      overflow-x: auto;
+      display: flex;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      background: #f1f1f1;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .tabs-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      padding: 16px;
+      text-align: center;
+      font-size: 18px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab.active {
+      border-bottom: 3px solid orange;
+      color: orange;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+    }
+
+    .nav-buttons button {
+      padding: 8px 16px;
+      font-size: 16px;
+      background: orange;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tabs-wrapper" id="tabsWrapper">
+  <div class="tab active" data-index="0">ಟ್ರೆಂಡಿಂಗ್</div>
+  <div class="tab" data-index="1">ವಾಟ್ಸ್ ಸ್ಪೋರ್ಟ್ಸ್</div>
+  <div class="tab" data-index="2">ಕ್ರೈಂ ನ್ಯೂಸ್</div>
+  <div class="tab" data-index="3">IPL 2025</div>
+  <div class="tab" data-index="4">ಜೀವನ ಶೈಲಿ</div>
+</div>
+
+<div class="content" id="contentBox">
+  <div>ಗುಜರಾತ್‌ನ ಕಚ್ ಜಿಲ್ಲೆಯಲ್ಲಿ 4.3 ತೀವ್ರತೆಯ ಭೂಕಂಪನ</div>
+</div>
+
+<div class="nav-buttons">
+  <button onclick="scrollTabs(-1)">Prev</button>
+  <button onclick="scrollTabs(1)">Next</button>
+</div>
+
+<script>
+  const tabsWrapper = document.getElementById("tabsWrapper");
+  const tabs = document.querySelectorAll(".tab");
+  const contentBox = document.getElementById("contentBox");
+
+  let currentIndex = 0;
+
+  function updateTabs(index) {
+    tabs.forEach(tab => tab.classList.remove("active"));
+    tabs[index].classList.add("active");
+
+    // Update content manually for demo
+    const contents = [
+      "ಗುಜರಾತ್‌ನ ಕಚ್ ಜಿಲ್ಲೆಯಲ್ಲಿ 4.3 ತೀವ್ರತೆಯ ಭೂಕಂಪನ",
+      "ಐಪಿಎಲ್ 2025 ನಿಂದ ಇತ್ತೀಚಿನ ಕ್ರಿಕೆಟ್ ನ್ಯೂಸ್",
+      "ಇತ್ತೀಚಿನ ಅಪರಾಧ ಘಟನೆಗಳ ಮಾಹಿತಿ",
+      "ಐಪಿಎಲ್ 2025 ನ ಮಾಹಿತಿಗಳು ಇಲ್ಲಿ",
+      "ಆರೋಗ್ಯ, ಫ್ಯಾಷನ್, ಟ್ರೆಂಡ್ಸ್ ಮಾಹಿತಿ"
+    ];
+    contentBox.innerHTML = `<div>${contents[index]}</div>`;
+  }
+
+  function scrollTabs(direction) {
+    currentIndex = Math.max(0, Math.min(tabs.length - 1, currentIndex + direction));
+    const targetTab = tabs[currentIndex];
+    tabsWrapper.scrollTo({
+      left: targetTab.offsetLeft,
+      behavior: 'smooth'
+    });
+    updateTabs(currentIndex);
+  }
+
+  // Add click to tab to jump
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      currentIndex = parseInt(tab.dataset.index);
+      scrollTabs(0);
+    });
+  });
+</script>
+
+</body>
+</html>

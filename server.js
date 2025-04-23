@@ -24,7 +24,8 @@ app.use('/auth', emailAuthRoutes);
 
 app.use('/posts', postRoutes);
 
-// Create or update a user app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
+// Create or update a user
+app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
 
 if (user) {
   user.username = username;
@@ -45,7 +46,8 @@ res.json(user);
 
 } catch (err) { res.status(500).json({ message: 'Error creating/updating user' }); } });
 
-// Create a post app.post('/posts', upload.single('image'), async (req, res) => { try { const user = await User.findById(req.body.userId); if (!user) return res.status(404).json({ message: 'User not found' });
+// Create a post
+app.post('/posts', upload.single('image'), async (req, res) => { try { const user = await User.findById(req.body.userId); if (!user) return res.status(404).json({ message: 'User not found' });
 
 const post = new Post({
   title: req.body.title,

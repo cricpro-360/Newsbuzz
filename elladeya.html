@@ -30,21 +30,20 @@
 
     .scroll-container {
       display: flex;
-      overflow-x: scroll;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
       width: 100vw;
       height: 100vh;
+      overflow: hidden;
+      position: relative;
     }
 
-    .page {
-      scroll-snap-align: start;
-      flex: none;
+    .scroll-container .page {
+      flex-shrink: 0;
       width: 100vw;
       height: 100vh;
       padding: 20px;
       background: #fefefe;
       border-right: 1px solid #eee;
+      transition: transform 0.5s ease;
     }
   </style>
 </head>
@@ -69,20 +68,36 @@
 <script>
   const tabs = document.querySelectorAll('.tab');
   const scrollContainer = document.getElementById('scrollContainer');
+  let isScrolling = false; // To control the one-time scroll
 
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => {
-      scrollContainer.scrollTo({
-        left: index * window.innerWidth,
-        behavior: 'smooth'
-      });
+      if (!isScrolling) {
+        isScrolling = true;
+        scrollContainer.style.transform = `translateX(-${index * 100}vw)`;
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        setTimeout(() => { isScrolling = false; }, 500); // Lock scroll for 0.5s
+      }
     });
   });
 
-  scrollContainer.addEventListener('scroll', () => {
-    const index = Math.round(scrollContainer.scrollLeft / window.innerWidth);
+  scrollContainer.addEventListener('wheel', (e) => {
+    if (isScrolling) return;
+    const currentPageIndex = Math.round(scrollContainer.scrollLeft / window.innerWidth);
+    let nextPageIndex = e.deltaY > 0 ? currentPageIndex + 1 : currentPageIndex - 1;
+    
+    // Ensure we stay within bounds
+    if (nextPageIndex < 0) nextPageIndex = 0;
+    if (nextPageIndex >= tabs.length) nextPageIndex = tabs.length - 1;
+
+    // Scroll to the next page
+    isScrolling = true;
+    scrollContainer.style.transform = `translateX(-${nextPageIndex * 100}vw)`;
     tabs.forEach(t => t.classList.remove('active'));
-    tabs[index].classList.add('active');
+    tabs[nextPageIndex].classList.add('active');
+
+    setTimeout(() => { isScrolling = false; }, 500); // Lock scroll for 0.5s
   });
 </script>
 

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="kn">
+<!DOCTYPE html>
+<html lang="kn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,24 +18,26 @@
 </head>
 <body>
   <div class="container filters">
-    <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2><select id="state-filter" onchange="handleStateChange();">
-  <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
-  <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
-</select>
+    <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
+    <select id="state-filter" onchange="handleStateChange();">
+      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+    </select>
 
-<select id="district-filter" onchange="handleDistrictChange();">
-  <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
-</select>
+    <select id="district-filter" onchange="handleDistrictChange();">
+      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
 
-<select id="taluk-filter" onchange="handleTalukChange();">
-  <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
-</select>
+    <select id="taluk-filter" onchange="handleTalukChange();">
+      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
 
-<div id="posts" class="post-container">
-  <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
-</div>
+    <div id="posts" class="post-container">
+      <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
+    </div>
+  </div>
 
-  </div>  <script defer>
+  <script defer>
     const API_URL = 'https://newsbuzz-1.onrender.com';
 
     const locationData = {
@@ -91,11 +94,13 @@
 
       if (params.length > 0) url += `&${params.join('&')}`;
 
-      const cached = localStorage.getItem("filteredPostsCache");
       const cacheKey = `state=${state}&district=${district}&taluk=${taluk}`;
+      const cached = JSON.parse(localStorage.getItem("filteredPostsCache"));
+      const cacheTime = localStorage.getItem("filteredPostsTime");
+      const cacheTTL = 5 * 60 * 1000; // 5 minutes
 
-      if (cached && JSON.parse(cached).key === cacheKey) {
-        renderPosts(JSON.parse(cached).data);
+      if (cached && cached.key === cacheKey && cacheTime && (Date.now() - cacheTime < cacheTTL)) {
+        renderPosts(cached.data);
         return;
       }
 
@@ -103,6 +108,7 @@
         .then(res => res.json())
         .then(posts => {
           localStorage.setItem("filteredPostsCache", JSON.stringify({ key: cacheKey, data: posts }));
+          localStorage.setItem("filteredPostsTime", Date.now());
           renderPosts(posts);
         })
         .catch(() => {

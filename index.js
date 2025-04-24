@@ -1,4 +1,4 @@
-const API_URL = 'https://newsbuzz-1.onrender.com';
+   const API_URL = 'https://newsbuzz-1.onrender.com';
 
     const locationData = {
       'ಕರ್ನಾಟಕ': {
@@ -45,48 +45,63 @@ const API_URL = 'https://newsbuzz-1.onrender.com';
       const district = document.getElementById('district-filter').value;
       const taluk = document.getElementById('taluk-filter').value;
 
-      let url = `${API_URL}/posts`;
+      let url = `${API_URL}/posts?limit=10`;
       const params = [];
 
       if (state) params.push(`state=${encodeURIComponent(state)}`);
       if (district) params.push(`district=${encodeURIComponent(district)}`);
       if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
 
-      if (params.length > 0) url += `?${params.join('&')}`;
+      if (params.length > 0) url += `&${params.join('&')}`;
+
+      const cacheKey = `state=${state}&district=${district}&taluk=${taluk}`;
+      const cached = JSON.parse(localStorage.getItem("filteredPostsCache"));
+      const cacheTime = localStorage.getItem("filteredPostsTime");
+      const cacheTTL = 5 * 60 * 1000; // 5 minutes
+
+      if (cached && cached.key === cacheKey && cacheTime && (Date.now() - cacheTime < cacheTTL)) {
+        renderPosts(cached.data);
+        return;
+      }
 
       fetch(url)
         .then(res => res.json())
         .then(posts => {
-          const postDiv = document.getElementById('posts');
-          postDiv.innerHTML = '';
-
-          if (!posts.length) {
-            postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
-            return;
-          }
-
-          posts.forEach(post => {
-            const date = new Date(post.createdAt).toLocaleString();
-            postDiv.innerHTML += `
-            <div class="user-info">
-  <img src="${post.profilePic}" width="40" height="40">
-  <a href="profile-view.html?user=${ post.userId }">${ post.username }</a>
-</div>
-              <div class="post">
-                <h3>${post.title}</h3>
-                <p class="preview">${post.content}</p>
-                <a href="post.html?id=${post._id}" class="post-link" target="_blank">ಮತ್ತಷ್ಟು ಓದಿ</a>
-                ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image">` : ''}
-                <small>Posted on ${date}</small>
-              </div>`;
-          });
+          localStorage.setItem("filteredPostsCache", JSON.stringify({ key: cacheKey, data: posts }));
+          localStorage.setItem("filteredPostsTime", Date.now());
+          renderPosts(posts);
         })
         .catch(() => {
           document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
         });
     }
 
-    // Store selections
+    function renderPosts(posts) {
+      const postDiv = document.getElementById('posts');
+      postDiv.innerHTML = '';
+
+      if (!posts.length) {
+        postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
+        return;
+      }
+
+      posts.forEach(post => {
+        const date = new Date(post.createdAt).toLocaleString();
+        postDiv.innerHTML += `
+          <div class="user-info">
+            <img src="${post.profilePic}" width="40" height="40">
+            <a href="profile-view.html?user=${post.userId}">${post.username}</a>
+          </div>
+          <div class="post">
+            <h3>${post.title}</h3>
+            <p class="preview">${post.content}</p>
+            <a href="post.html?id=${post._id}" class="post-link" target="_blank">ಮತ್ತಷ್ಟು ಓದಿ</a>
+            ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}" class="post-image">` : ''}
+            <small>Posted on ${date}</small>
+          </div>`;
+      });
+    }
+
     function handleStateChange() {
       const state = document.getElementById('state-filter').value;
       localStorage.setItem('filterState', state);
@@ -128,13 +143,12 @@ const API_URL = 'https://newsbuzz-1.onrender.com';
       loadPosts();
     }
 
-    // Load saved location on startup
     window.onload = () => {
       const savedState = localStorage.getItem('filterState');
       if (savedState) {
         document.getElementById('state-filter').value = savedState;
-        handleStateChange(); // includes loading posts
+        handleStateChange();
       } else {
-        loadPosts(); // default load
+        loadPosts();
       }
     };

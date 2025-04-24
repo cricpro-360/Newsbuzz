@@ -1,4 +1,5 @@
-   const API_URL = 'https://newsbuzz-1.onrender.com';
+<script defer>
+    const API_URL = 'https://newsbuzz-1.onrender.com';
 
     const locationData = {
       'ಕರ್ನಾಟಕ': {
@@ -152,3 +153,4 @@
         loadPosts();
       }
     };
+  </script>

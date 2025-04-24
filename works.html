@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ol<!DOCTYPE html>
 <html lang="kn">
 <head>
   <meta charset="UTF-8" />
@@ -266,7 +266,7 @@
 
     function updateScrollPosition() {
       const scrollTo = currentPage * window.innerWidth;
-      container.scrollTo({ left: scrollTo, behavior: 'smooth' });
+      container.scrollTo({ left: scrollTo, behavior: 'instant' });
       navLinks.forEach((link, i) => {
         link.classList.toggle("active", i === currentPage);
       });

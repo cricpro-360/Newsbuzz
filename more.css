@@ -1,46 +1,53 @@
-/* Base Layout Styles */
-.container {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
+h2 {
+      font-size: 18px;
+      margin: 10px 0;
+    }
 
-.section {
-  flex: 0 0 100%;
-  scroll-snap-align: start;
-  min-height: 100vh;
-  overflow-y: auto;
-}
+    .horizontal-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding-bottom: 10px;
+    }
 
-/* Horizontal Scroll Items (e.g., filters/tabs) */
-.horizontal-scroll {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  white-space: nowrap;
-  padding-bottom: 8px;
-}
+    .scroll-item {
+      flex: 0 0 auto;
+      background: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      white-space: nowrap;
+      font-size: 14px;
+    }
 
-.scroll-item {
-  flex: 0 0 auto;
-  padding: 6px 12px;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-  font-size: 14px;
-}
+    .vertical-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
 
-/* Responsive Adjustment for Mobile Screens */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    transform: none !important;
-  }
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
 
-  .section {
-    min-width: 100%;
-    height: auto;
-    scroll-snap-align: none;
-  }
-}
+    .icon {
+      font-size: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .scroll-item {
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+
+      .list-item {
+        font-size: 14px;
+      }
+    }

@@ -1,55 +1,46 @@
+/* Base Layout Styles */
+.container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.section {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Horizontal Scroll Items (e.g., filters/tabs) */
 .horizontal-scroll {
   display: flex;
   overflow-x: auto;
   gap: 10px;
-  padding: 10px;
-  scroll-snap-type: x mandatory;
+  white-space: nowrap;
+  padding-bottom: 8px;
 }
 
 .scroll-item {
   flex: 0 0 auto;
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 10px 15px;
-  white-space: nowrap;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  scroll-snap-align: start;
+  padding: 6px 12px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 15px;
   font-size: 14px;
 }
 
-.vertical-list {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-}
-
-.list-item {
-  background: #fff;
-  margin-bottom: 8px;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-}
-
-.list-item .icon {
-  margin-right: 10px;
-}
-
-@media (max-width: 480px) {
-  .scroll-item {
-    font-size: 12px;
-    padding: 8px 12px;
+/* Responsive Adjustment for Mobile Screens */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    transform: none !important;
   }
 
-  .list-item {
-    font-size: 13px;
-    padding: 10px;
-  }
-
-  .list-item .icon {
-    font-size: 16px;
+  .section {
+    min-width: 100%;
+    height: auto;
+    scroll-snap-align: none;
   }
 }

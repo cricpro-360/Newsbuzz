@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</title>
   <style>
     html, body {
       height: 100%;
@@ -87,20 +87,29 @@
       font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
     }
-    .spinner {
+    button.submit-btn .spinner {
       display: none;
-      margin: 15px auto;
-      width: 30px;
-      height: 30px;
-      border: 4px solid #ffb300;
-      border-top: 4px solid transparent;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
+    button.submit-btn.loading .text {
+      display: none;
+    }
+    button.submit-btn.loading .spinner {
+      display: inline-block;
+    }
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -109,7 +118,6 @@
     <button onclick="history.back()" style="background: none; border: none; font-size: 24px; cursor: pointer; margin-right: 10px;"><i class="fas fa-arrow-left"></i></button>
     <h2 style="margin: 0;">ನ್ಯೂಸ್</h2>
   </div>
-
   <div class="container">
     <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>
     <div id="message" class="message"></div>
@@ -131,12 +139,27 @@
       <button class="mic" onclick="startSpeech('content')">🎤</button>
     </div>
 
-    <div class="field"><select id="state" onchange="updateDistricts()"><option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option><option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option></select></div>
-    <div class="field"><select id="district" onchange="updateTaluks()"><option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option></select></div>
-    <div class="field"><select id="taluk"><option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ (ಐಚ್ಛಿಕ)</option></select></div>
+    <div class="field">
+      <select id="state" onchange="updateDistricts()">
+        <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+        <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+      </select>
+    </div>
+    <div class="field">
+      <select id="district" onchange="updateTaluks()">
+        <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+      </select>
+    </div>
+    <div class="field">
+      <select id="taluk">
+        <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ (ಐಚ್ಛಿಕ)</option>
+      </select>
+    </div>
 
-    <button class="submit-btn" id="submitBtn" onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
-    <div id="spinner" class="spinner"></div>
+    <button class="submit-btn" id="submitBtn" onclick="createPost()">
+      <span class="text">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</span>
+      <div class="spinner"></div>
+    </button>
   </div>
 
   <script>
@@ -207,22 +230,18 @@
     }
 
     function createPost() {
-      const btn = document.getElementById('submitBtn');
-      const spinner = document.getElementById('spinner');
-      btn.style.display = 'none';
-      spinner.style.display = 'block';
-
       const title = document.getElementById('title').value.trim();
       const content = document.getElementById('content').value.trim();
       const state = document.getElementById('state').value.trim();
       const district = document.getElementById('district').value.trim();
       const taluk = document.getElementById('taluk').value.trim();
       const imageFile = document.getElementById('image').files[0];
+      const btn = document.getElementById('submitBtn');
+      btn.classList.add('loading');
 
       if (!title || !content || !state || !district) {
         showMessage("ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ.", "error");
-        btn.style.display = 'block';
-        spinner.style.display = 'none';
+        btn.classList.remove('loading');
         return;
       }
 
@@ -260,8 +279,7 @@
       })
       .catch(() => showMessage("ಪೋಸ್ಟ್ ರಚನೆಯಲ್ಲಿ ದೋಷ.", "error"))
       .finally(() => {
-        btn.style.display = 'block';
-        spinner.style.display = 'none';
+        btn.classList.remove('loading');
       });
     }
   </script>

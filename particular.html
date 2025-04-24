@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Post Details</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    #post-container { max-width: 600px; margin: auto; }
+    img { width: 100%; max-height: 300px; object-fit: cover; }
+    h2 { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <div id="post-container">
+    <h2 id="post-title">Loading...</h2>
+    <img id="post-image" />
+    <p id="post-content"></p>
+    <p id="post-location"></p>
+  </div>
+
+  <script>
+    // Use the static ID directly
+    const postId = '6808e27690fd667a29be866d';
+
+    fetch(`https://newsbuzz-1.onrender.com/posts/${postId}`)
+      .then(res => res.json())
+      .then(post => {
+        document.getElementById('post-title').innerText = post.title;
+        document.getElementById('post-content').innerText = post.content;
+        document.getElementById('post-location').innerText = 
+          `Location: ${post.state || ''}, ${post.district || ''}, ${post.taluk || ''}`;
+        document.getElementById('post-image').src = post.image;
+      })
+      .catch(err => {
+        document.getElementById('post-title').innerText = 'Failed to load post.';
+        console.error(err);
+      });
+  </script>
+</body>
+</html>

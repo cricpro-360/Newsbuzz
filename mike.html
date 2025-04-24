@@ -1,157 +1,128 @@
 <!DOCTYPE html>
 <html lang="kn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</title>
   <style>
     body {
       font-family: sans-serif;
-      background: #fff;
-      margin: 0;
-      padding: 16px;
+      background: #f9f9f9;
+      padding: 20px;
     }
     .container {
       max-width: 500px;
       margin: auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h1 {
       text-align: center;
+      margin-bottom: 20px;
     }
     .image-upload {
-      background: #eee;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      height: 200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      margin-bottom: 16px;
+      border: 2px dashed #bbb;
+      padding: 20px;
       text-align: center;
+      cursor: pointer;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      position: relative;
     }
-    .image-upload span {
-      font-size: 48px;
+    .image-upload img {
+      max-width: 100%;
+      max-height: 200px;
+      display: none;
+      margin-top: 10px;
+      border-radius: 10px;
     }
-    .input-group {
+    .field {
       display: flex;
+      margin-bottom: 15px;
       align-items: center;
-      margin-bottom: 12px;
     }
-    .input-group input,
-    .input-group textarea,
-    .input-group select {
-      flex: 1;
+    .field input[type="text"],
+    .field textarea,
+    .field select {
+      width: 100%;
       padding: 10px;
-      font-size: 16px;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      outline: none;
     }
-    .input-group button {
+    .field button.mic {
       margin-left: 8px;
-      background: #ffc107;
+      padding: 10px;
+      background: #ffcc00;
       border: none;
       border-radius: 50%;
-      padding: 10px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .terms {
-      margin: 16px 0;
-    }
-    .terms label {
-      font-size: 14px;
-    }
-    button[type="submit"],
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #ffc107;
-      border: none;
-      border-radius: 4px;
       cursor: pointer;
     }
     .message {
-      margin: 12px 0;
-      padding: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 5px;
       display: none;
     }
     .message.success {
-      background-color: #d4edda;
+      background: #d4edda;
       color: #155724;
     }
     .message.error {
-      background-color: #f8d7da;
+      background: #f8d7da;
       color: #721c24;
+    }
+    button.submit-btn {
+      background: #ffb300;
+      color: #fff;
+      border: none;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>ನ್ಯೂಸ್</h1>
-
+    <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>
     <div id="message" class="message"></div>
 
+    <!-- Upload Card -->
     <div class="image-upload" onclick="document.getElementById('image').click()">
-      <span>+</span>
-      <p>ಫೋಟೋಗಳನ್ನು ಅಥವಾ ವೀಡಿಯೋಗಳನ್ನು ಸೇರಿಸಿ</p>
-      <input type="file" id="image" accept="image/*" style="display:none;">
+      <span id="plus-icon" style="font-size: 30px;">+</span>
+      <p id="upload-text">ಫೋಟೋಗಳನ್ನು ಅಥವಾ ವೀಡಿಯೋಗಳನ್ನು ಸೇರಿಸಿ</p>
+      <img id="preview" src="">
+      <input type="file" id="image" accept="image/*" style="display:none;" onchange="previewImage(event)">
     </div>
 
-    <div class="input-group">
-      <input type="text" id="title" placeholder="ಹೆಡ್ಲೈನ್ಗಳನ್ನು ಸೇರಿಸಿ" maxlength="60">
-      <button onclick="startVoiceInput('title')">🎤</button>
+    <!-- Title Input -->
+    <div class="field">
+      <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
+      <button class="mic" onclick="startSpeech('title')">🎤</button>
     </div>
 
-    <div class="input-group">
-      <textarea id="content" placeholder="ನ್ಯೂಸ್" maxlength="1200"></textarea>
-      <button onclick="startVoiceInput('content')">🎤</button>
+    <!-- Content Input -->
+    <div class="field">
+      <textarea id="content" rows="4" placeholder="ವಿಷಯ ನಮೂದಿಸಿ"></textarea>
+      <button class="mic" onclick="startSpeech('content')">🎤</button>
     </div>
 
-    <div class="input-group">
-      <input type="text" id="category" placeholder="ಕ್ಷೇತ್ರ / ತಾಲೂಕು ಸುದ್ದಿ" maxlength="255">
-      <button onclick="startVoiceInput('category')">🎤</button>
-    </div>
+    <!-- Location Dropdowns -->
+    <div class="field"><select id="state" onchange="updateDistricts()"><option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option><option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option></select></div>
+    <div class="field"><select id="district" onchange="updateTaluks()"><option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option></select></div>
+    <div class="field"><select id="taluk"><option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ (ಐಚ್ಛಿಕ)</option></select></div>
 
-    <div class="input-group">
-      <input type="text" id="reporter" placeholder="ಹೆಚ್ಚಿನ ಮಾಹಿತಿ" maxlength="5000">
-      <button onclick="startVoiceInput('reporter')">🎤</button>
-    </div>
-
-    <div class="input-group">
-      <select id="state" onchange="updateDistricts()">
-        <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
-        <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <select id="district" onchange="updateTaluks()">
-        <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <select id="taluk">
-        <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ(Optional)</option>
-      </select>
-    </div>
-
-    <div class="terms">
-      <label>
-        <input type="checkbox" required>
-        ನಾನು ಈ ನಿಯಮ ಮತ್ತು ಪ್ರತಿಪತ್ತಿಗಳನ್ನು ಒಪ್ಪಿಕೊಳ್ಳುತ್ತೇನೆ
-      </label>
-    </div>
-
-    <button class="submit-btn" onclick="createPost()">ಸಬ್ಮಿಟ್ ಮಾಡಿ</button>
+    <!-- Submit Button -->
+    <button class="submit-btn" onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
   </div>
 
   <script>
     const API_URL = 'https://newsbuzz-1.onrender.com';
-
     const locationData = {
       'ಕರ್ನಾಟಕ': {
         'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು', 'ನವಲಗುಂದ'],
@@ -165,13 +136,11 @@
       const talukSelect = document.getElementById('taluk');
       districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
       talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
-
       if (locationData[state]) {
-        Object.keys(locationData[state]).forEach(district => {
-          const option = document.createElement('option');
-          option.value = district;
-          option.textContent = district;
-          districtSelect.appendChild(option);
+        Object.keys(locationData[state]).forEach(d => {
+          let opt = document.createElement('option');
+          opt.value = d; opt.textContent = d;
+          districtSelect.appendChild(opt);
         });
       }
     }
@@ -181,15 +150,25 @@
       const district = document.getElementById('district').value;
       const talukSelect = document.getElementById('taluk');
       talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
-
       if (locationData[state] && locationData[state][district]) {
-        locationData[state][district].forEach(taluk => {
-          const option = document.createElement('option');
-          option.value = taluk;
-          option.textContent = taluk;
-          talukSelect.appendChild(option);
+        locationData[state][district].forEach(t => {
+          let opt = document.createElement('option');
+          opt.value = t; opt.textContent = t;
+          talukSelect.appendChild(opt);
         });
       }
+    }
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('preview').src = e.target.result;
+        document.getElementById('preview').style.display = 'block';
+        document.getElementById('plus-icon').style.display = 'none';
+        document.getElementById('upload-text').style.display = 'none';
+      };
+      if (file) reader.readAsDataURL(file);
     }
 
     function showMessage(text, type) {
@@ -200,14 +179,21 @@
       setTimeout(() => msgDiv.style.display = 'none', 4000);
     }
 
+    function startSpeech(fieldId) {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'kn-IN';
+      recognition.onresult = function(event) {
+        document.getElementById(fieldId).value = event.results[0][0].transcript;
+      };
+      recognition.start();
+    }
+
     function createPost() {
       const title = document.getElementById('title').value.trim();
       const content = document.getElementById('content').value.trim();
       const state = document.getElementById('state').value.trim();
       const district = document.getElementById('district').value.trim();
       const taluk = document.getElementById('taluk').value.trim();
-      const category = document.getElementById('category').value.trim();
-      const reporter = document.getElementById('reporter').value.trim();
       const imageFile = document.getElementById('image').files[0];
 
       if (!title || !content || !state || !district) {
@@ -222,8 +208,6 @@
       formData.append('district', district);
       if (taluk) formData.append('taluk', taluk);
       if (imageFile) formData.append('image', imageFile);
-      formData.append('category', category);
-      formData.append('reporter', reporter);
 
       const profile = JSON.parse(localStorage.getItem('userProfile'));
       if (profile) {
@@ -239,18 +223,17 @@
       .then(res => res.json())
       .then(() => {
         showMessage("ಪೋಸ್ಟ್ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!", "success");
-        document.querySelectorAll('input, textarea, select').forEach(el => el.value = '');
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+        document.getElementById('state').value = '';
+        document.getElementById('district').value = '';
+        document.getElementById('taluk').value = '';
+        document.getElementById('image').value = '';
+        document.getElementById('preview').style.display = 'none';
+        document.getElementById('plus-icon').style.display = 'block';
+        document.getElementById('upload-text').style.display = 'block';
       })
       .catch(() => showMessage("ಪೋಸ್ಟ್ ರಚನೆಯಲ್ಲಿ ದೋಷ.", "error"));
-    }
-
-    function startVoiceInput(elementId) {
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'kn-IN';
-      recognition.start();
-      recognition.onresult = function(event) {
-        document.getElementById(elementId).value = event.results[0][0].transcript;
-      };
     }
   </script>
 </body>

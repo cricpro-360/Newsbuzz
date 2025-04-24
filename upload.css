@@ -1,0 +1,52 @@
+body {
+      font-family: 'Noto Sans Kannada', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #fff;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      justify-items: center;
+    }
+
+    .item {
+      text-align: center;
+    }
+
+    .icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .item p {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .news { background-color: #a6b91a; }
+    .jobs { background-color: #2e9be4; }
+    .offers { background-color: #f97b3f; }
+    .market { background-color: #e972da; }
+    .realestate { background-color: #a8d28f; }
+    .opinion { background-color: #61b15a; }
+    .survey { background-color: #45a29e; }
+
+    .icon img {
+      width: 48px;
+      height: 48px;
+    }

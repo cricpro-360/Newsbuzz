@@ -1,8 +1,9 @@
-<!DOCTYPE html><html lang="kn">
+<!DOCTYPE html>
+<html lang="kn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</title>
   <style>
     html, body {
@@ -86,6 +87,27 @@
       font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
+      position: relative;
+    }
+    button.submit-btn.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    button.submit-btn.loading::after {
+      content: "";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      transform: translateY(-50%);
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -94,37 +116,42 @@
   <div style="display: flex; align-items: center; padding: 10px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;">
     <button onclick="history.back()" style="background: none; border: none; font-size: 24px; cursor: pointer; margin-right: 10px;"><i class="fas fa-arrow-left"></i></button>
     <h2 style="margin: 0;">ನ್ಯೂಸ್</h2>
-  </div>  <div class="container">
+  </div>
+
+  <div class="container">
     <h1>ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h1>
-    <div id="message" class="message"></div><!-- Upload Card -->
-<div class="image-upload" onclick="document.getElementById('image').click()">
-  <span id="plus-icon" style="font-size: 30px;">+</span>
-  <p id="upload-text">ಫೋಟೋಗಳನ್ನು ಅಥವಾ ವೀಡಿಯೋಗಳನ್ನು ಸೇರಿಸಿ</p>
-  <img id="preview" src="">
-  <input type="file" id="image" accept="image/*" style="display:none;" onchange="previewImage(event)">
-</div>
+    <div id="message" class="message"></div>
 
-<!-- Title Input -->
-<div class="field">
-  <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
-  <button class="mic" onclick="startSpeech('title')">🎤</button>
-</div>
+    <!-- Upload Card -->
+    <div class="image-upload" onclick="document.getElementById('image').click()">
+      <span id="plus-icon" style="font-size: 30px;">+</span>
+      <p id="upload-text">ಫೋಟೋಗಳನ್ನು ಅಥವಾ ವೀಡಿಯೋಗಳನ್ನು ಸೇರಿಸಿ</p>
+      <img id="preview" src="">
+      <input type="file" id="image" accept="image/*" style="display:none;" onchange="previewImage(event)">
+    </div>
 
-<!-- Content Input -->
-<div class="field">
-  <textarea id="content" rows="4" placeholder="ವಿಷಯ ನಮೂದಿಸಿ"></textarea>
-  <button class="mic" onclick="startSpeech('content')">🎤</button>
-</div>
+    <!-- Title Input -->
+    <div class="field">
+      <input type="text" id="title" placeholder="ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ">
+      <button class="mic" onclick="startSpeech('title')">🎤</button>
+    </div>
 
-<!-- Location Dropdowns -->
-<div class="field"><select id="state" onchange="updateDistricts()"><option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option><option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option></select></div>
-<div class="field"><select id="district" onchange="updateTaluks()"><option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option></select></div>
-<div class="field"><select id="taluk"><option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ (ಐಚ್ಛಿಕ)</option></select></div>
+    <!-- Content Input -->
+    <div class="field">
+      <textarea id="content" rows="4" placeholder="ವಿಷಯ ನಮೂದಿಸಿ"></textarea>
+      <button class="mic" onclick="startSpeech('content')">🎤</button>
+    </div>
 
-<!-- Submit Button -->
-<button class="submit-btn" onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
+    <!-- Location Dropdowns -->
+    <div class="field"><select id="state" onchange="updateDistricts()"><option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option><option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option></select></div>
+    <div class="field"><select id="district" onchange="updateTaluks()"><option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option></select></div>
+    <div class="field"><select id="taluk"><option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ (ಐಚ್ಛಿಕ)</option></select></div>
 
-  </div>  <script>
+    <!-- Submit Button -->
+    <button class="submit-btn" id="submitBtn" onclick="createPost()">ಪೋಸ್ಟ್ ಸಲ್ಲಿಸಿ</button>
+  </div>
+
+  <script>
     const API_URL = 'https://newsbuzz-1.onrender.com';
     const locationData = {
       'ಕರ್ನಾಟಕ': {
@@ -192,6 +219,10 @@
     }
 
     function createPost() {
+      const btn = document.getElementById('submitBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
       const title = document.getElementById('title').value.trim();
       const content = document.getElementById('content').value.trim();
       const state = document.getElementById('state').value.trim();
@@ -201,6 +232,8 @@
 
       if (!title || !content || !state || !district) {
         showMessage("ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ.", "error");
+        btn.classList.remove('loading');
+        btn.disabled = false;
         return;
       }
 
@@ -236,7 +269,11 @@
         document.getElementById('plus-icon').style.display = 'block';
         document.getElementById('upload-text').style.display = 'block';
       })
-      .catch(() => showMessage("ಪೋಸ್ಟ್ ರಚನೆಯಲ್ಲಿ ದೋಷ.", "error"));
+      .catch(() => showMessage("ಪೋಸ್ಟ್ ರಚನೆಯಲ್ಲಿ ದೋಷ.", "error"))
+      .finally(() => {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      });
     }
   </script>
 </body>

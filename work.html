@@ -165,14 +165,24 @@
   <div class="scroll-container" id="scrollContainer">
     
     <div class="section" style="background-color: #f8f9fa;">
-      <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
-      <div class="filters-container">
-        <select id="state-filter"><option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option><option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option></select>
-        <select id="district-filter"><option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option></select>
-        <select id="taluk-filter"><option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option></select>
-      </div>
-      <div id="posts" class="post-container">
-        <p>ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
+      <div class="container filters">
+    <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
+    <select id="state-filter" onchange="handleStateChange();">
+      <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+      <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+    </select>
+
+    <select id="district-filter" onchange="handleDistrictChange();">
+      <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
+
+    <select id="taluk-filter" onchange="handleTalukChange();">
+      <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+    </select>
+
+    <div id="posts" class="post-container">
+      <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
+    </div>
       </div>
     </div>
 

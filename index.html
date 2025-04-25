@@ -190,7 +190,7 @@
   </div>
   </div>
 
-  <button onclick="openLocationModal()" style="position:fixed;top:60px;right:16px;z-index:1100;background:yellow;padding:6px 12px;border-radius:6px;">ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</button>
+  <button onclick="openLocationModal()" style="position:fixed;top:60px;right:16px;z-index:1100;background:yellow;padding:6px 12px;border-radius:6px;"><p id="selectedLocationText"></p></button>
 
   <div class="scroll-container" id="scrollContainer">
     <div class="section">
@@ -376,7 +376,15 @@ function confirmLocation() {
   }
 }
     
-
+function updateSelectedLocationText() {
+  const el = document.getElementById('selectedLocationText');
+  const state = localStorage.getItem('selectedState') || '';
+  const district = localStorage.getItem('selectedDistrict') || '';
+  const taluk = localStorage.getItem('selectedTaluk') || '';
+  el.innerText = state && district && taluk
+    ? `ನೀವು ಆಯ್ಕೆಮಾಡಿರುವ ಸ್ಥಳ: ${state}, ${district}, ${taluk}`
+    : '';
+}
 
   
   const container = document.getElementById("scrollContainer");

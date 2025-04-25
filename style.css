@@ -167,13 +167,7 @@ h1, h2 {
   font-size: 16px;
 }
 
-.bottom-navbar a.active i {
-  color: #00aced;
-}
 
-.bottom-navbar a.active {
-  color: #00aced;
-}
 
     /* Optional tweak for very small screens */
 @media (max-width: 480px) {

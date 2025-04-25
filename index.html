@@ -181,13 +181,46 @@
   </div>
 <div id="selected-location-display" style="margin-top: 10px; font-weight: bold;"></div>
   
-  <div id="locationModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;z-index:2000;align-items:center;justify-content:center;">
-  <div style="background:#fff;padding:20px;border-radius:8px;width:90%;max-width:400px;">
-    <h3>ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</h3>
-    <div id="modal-state"></div>
-    <div id="modal-district"></div>
-    <div id="modal-taluk"></div>
-    <button onclick="confirmLocation()" style="margin-top:10px;padding:6px 12px;">OK</button>
+  <div id="location-modal" style="display:none;">
+  <div style="padding: 20px; background-color: white; border-radius: 8px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.3);">
+
+    <h3>ಸ್ಥಳವನ್ನು ಆಯ್ಕೆಮಾಡಿ</h3>
+
+    <!-- State -->
+    <label for="state-select">ರಾಜ್ಯ:</label>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <i class="fas fa-flag"></i>
+      <select id="state-select" onchange="selectState(this.value)">
+        <option value="">ರಾಜ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ...</option>
+        <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+      </select>
+    </div>
+
+    <hr style="margin: 10px 0;">
+
+    <!-- District -->
+    <label for="district-select">ಜಿಲ್ಲೆ:</label>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <i class="fas fa-city"></i>
+      <select id="district-select" onchange="selectDistrict(this.value)">
+        <option value="">ಜಿಲ್ಲೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ...</option>
+      </select>
+    </div>
+
+    <hr style="margin: 10px 0;">
+
+    <!-- Taluk -->
+    <label for="taluk-select">ತಾಲ್ಲೂಕು:</label>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <i class="fas fa-location-dot"></i>
+      <select id="taluk-select" onchange="selectTaluk(this.value)">
+        <option value="">ತಾಲ್ಲೂಕನ್ನು ಆಯ್ಕೆಮಾಡಿ...</option>
+      </select>
+    </div>
+
+    <hr style="margin: 10px 0;">
+
+    <button onclick="confirmLocation()">ಸರಿ</button>
   </div>
   </div>
 

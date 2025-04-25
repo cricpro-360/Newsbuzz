@@ -259,155 +259,163 @@
   </div>
 
   <script>
-    const container = document.getElementById("scrollContainer");
-    const navLinks = document.querySelectorAll(".bottom-navbar a");
-    const sections = document.querySelectorAll(".section");
-    let currentPage = 0;
+  const container = document.getElementById("scrollContainer");
+  const navLinks = document.querySelectorAll(".bottom-navbar a");
+  const sections = document.querySelectorAll(".section");
+  let currentPage = 0;
 
-    function updateScrollPosition(index, push = true) {
-      currentPage = index;
-      const scrollTo = index * window.innerWidth;
-      container.scrollTo({ left: scrollTo, behavior: 'smooth' });
-      navLinks.forEach((link, i) => {
-        link.classList.toggle("active", i === index);
-      });
-      if (push) {
-        history.replaceState({ page: index }, "", `#page${index}`);
-      }
-    }
-
-    navLinks.forEach(link => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        updateScrollPosition(parseInt(link.dataset.index));
-      });
+  function updateScrollPosition(index, push = true) {
+    currentPage = index;
+    const scrollTo = index * window.innerWidth;
+    container.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    navLinks.forEach((link, i) => {
+      link.classList.toggle("active", i === index);
     });
-
-    window.onpopstate = () => {
-  updateScrollPosition(0, false);
-};
-
-    // Load posts
-    const API_URL = 'https://newsbuzz-1.onrender.com';
-
-    const locationData = {
-      'ಕರ್ನಾಟಕ': {
-        'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
-        'ಹುಬ್ಬಳ್ಳಿ': ['ಹುಬ್ಬಳ್ಳಿ ಉತ್ತರ', 'ನವಲಗುಂದ']
-      }
-    };
-
-    function updateDistrictFilter() {
-      const state = document.getElementById('state-filter').value;
-      const districtSelect = document.getElementById('district-filter');
-      const talukSelect = document.getElementById('taluk-filter');
-      districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
-      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
-
-      if (locationData[state]) {
-        Object.keys(locationData[state]).forEach(district => {
-          const option = document.createElement('option');
-          option.value = district;
-          option.textContent = district;
-          districtSelect.appendChild(option);
-        });
-      }
+    if (push) {
+      history.replaceState({ page: index }, "", `#page${index}`);
     }
+  }
 
-    function updateTalukFilter() {
-      const state = document.getElementById('state-filter').value;
-      const district = document.getElementById('district-filter').value;
-      const talukSelect = document.getElementById('taluk-filter');
-      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+  navLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      updateScrollPosition(parseInt(link.dataset.index));
+    });
+  });
 
-      if (locationData[state] && locationData[state][district]) {
-        locationData[state][district].forEach(taluk => {
-          const option = document.createElement('option');
-          option.value = taluk;
-          option.textContent = taluk;
-          talukSelect.appendChild(option);
-        });
-      }
+  // Back button handling
+  window.onpopstate = (event) => {
+    // Always go back to page 0
+    updateScrollPosition(0, false);
+    // Push state again to prevent app closing
+    history.pushState({ page: 0 }, "", "#page0");
+  };
+
+  // Load posts
+  const API_URL = 'https://newsbuzz-1.onrender.com';
+
+  const locationData = {
+    'ಕರ್ನಾಟಕ': {
+      'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
+      'ಹುಬ್ಬಳ್ಳಿ': ['ಹುಬ್ಬಳ್ಳಿ ಉತ್ತರ', 'ನವಲಗುಂದ']
     }
+  };
 
-    function loadPosts() {
-      const state = document.getElementById('state-filter').value;
-      const district = document.getElementById('district-filter').value;
-      const taluk = document.getElementById('taluk-filter').value;
+  function updateDistrictFilter() {
+    const state = document.getElementById('state-filter').value;
+    const districtSelect = document.getElementById('district-filter');
+    const talukSelect = document.getElementById('taluk-filter');
+    districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
+    talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
 
-      let url = `${API_URL}/posts?limit=10`;
-      const params = [];
-
-      if (state) params.push(`state=${encodeURIComponent(state)}`);
-      if (district) params.push(`district=${encodeURIComponent(district)}`);
-      if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
-
-      if (params.length > 0) url += `&${params.join('&')}`;
-
-      fetch(url)
-        .then(res => res.json())
-        .then(posts => {
-          renderPosts(posts);
-        })
-        .catch(() => {
-          document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
-        });
-    }
-
-    function renderPosts(posts) {
-      const postDiv = document.getElementById('posts');
-      postDiv.innerHTML = '';
-
-      if (!posts.length) {
-        postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
-        return;
-      }
-
-      posts.forEach(post => {
-        const date = new Date(post.createdAt).toLocaleString();
-        const card = document.createElement("div");
-        card.className = "post";
-        card.onclick = () => {
-          window.location.href = `post.html?id=${post._id}`;
-        };
-        card.innerHTML = `
-          <h3>${post.title}</h3>
-          <p class="preview">${post.content}</p>
-          ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}">` : ''}
-          <small>Posted on ${date}</small>
-        `;
-        postDiv.appendChild(card);
+    if (locationData[state]) {
+      Object.keys(locationData[state]).forEach(district => {
+        const option = document.createElement('option');
+        option.value = district;
+        option.textContent = district;
+        districtSelect.appendChild(option);
       });
     }
+  }
 
-    function handleStateChange() {
-      const state = document.getElementById('state-filter').value;
-      updateDistrictFilter();
-      setTimeout(() => {
-        updateTalukFilter();
-        loadPosts();
-      }, 100);
+  function updateTalukFilter() {
+    const state = document.getElementById('state-filter').value;
+    const district = document.getElementById('district-filter').value;
+    const talukSelect = document.getElementById('taluk-filter');
+    talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+    if (locationData[state] && locationData[state][district]) {
+      locationData[state][district].forEach(taluk => {
+        const option = document.createElement('option');
+        option.value = taluk;
+        option.textContent = taluk;
+        talukSelect.appendChild(option);
+      });
+    }
+  }
+
+  function loadPosts() {
+    const state = document.getElementById('state-filter').value;
+    const district = document.getElementById('district-filter').value;
+    const taluk = document.getElementById('taluk-filter').value;
+
+    let url = `${API_URL}/posts?limit=10`;
+    const params = [];
+
+    if (state) params.push(`state=${encodeURIComponent(state)}`);
+    if (district) params.push(`district=${encodeURIComponent(district)}`);
+    if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
+
+    if (params.length > 0) url += `&${params.join('&')}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(posts => {
+        renderPosts(posts);
+      })
+      .catch(() => {
+        document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
+      });
+  }
+
+  function renderPosts(posts) {
+    const postDiv = document.getElementById('posts');
+    postDiv.innerHTML = '';
+
+    if (!posts.length) {
+      postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
+      return;
     }
 
-    function handleDistrictChange() {
+    posts.forEach(post => {
+      const date = new Date(post.createdAt).toLocaleString();
+      const card = document.createElement("div");
+      card.className = "post";
+      card.onclick = () => {
+        window.location.href = `post.html?id=${post._id}`;
+      };
+      card.innerHTML = `
+        <h3>${post.title}</h3>
+        <p class="preview">${post.content}</p>
+        ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}">` : ''}
+        <small>Posted on ${date}</small>
+      `;
+      postDiv.appendChild(card);
+    });
+  }
+
+  function handleStateChange() {
+    const state = document.getElementById('state-filter').value;
+    updateDistrictFilter();
+    setTimeout(() => {
       updateTalukFilter();
-      setTimeout(() => {
-        loadPosts();
-      }, 100);
-    }
-
-    function handleTalukChange() {
       loadPosts();
-    }
+    }, 100);
+  }
 
-    window.onload = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith("#page")) {
-        const pageIndex = parseInt(hash.replace("#page", ""));
-        if (!isNaN(pageIndex)) updateScrollPosition(pageIndex, false);
-      }
+  function handleDistrictChange() {
+    updateTalukFilter();
+    setTimeout(() => {
       loadPosts();
-    };
-  </script>
+    }, 100);
+  }
+
+  function handleTalukChange() {
+    loadPosts();
+  }
+
+  window.onload = () => {
+    // Push dummy state at the beginning
+    history.pushState({ page: 0 }, "", "#page0");
+
+    const hash = window.location.hash;
+    if (hash.startsWith("#page")) {
+      const pageIndex = parseInt(hash.replace("#page", ""));
+      if (!isNaN(pageIndex)) updateScrollPosition(pageIndex, false);
+    }
+    loadPosts();
+  };
+</script>
+ 
 </body>
 </html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <title>ಸ್ಥಳ ಆಯ್ಕೆ ಮಾಡಿ</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #selectLocationBtn { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex; justify-content: center; align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%; max-width: 400px;
+    }
+
+    .hidden { display: none; }
+
+    #locationList li {
+      list-style: none;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    #locationList li:hover {
+      background: #f0f0f0;
+    }
+
+    #feed {
+      margin-top: 20px;
+    }
+
+    .post {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="selectLocationBtn">ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</button>
+
+  <!-- Modal -->
+  <div id="locationModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಆಯ್ಕೆಮಾಡಿ</h3>
+      <input type="text" id="locationSearch" placeholder="ಸ್ಥಳ ಹುಡುಕಿ..." style="width:100%; padding:8px;">
+      <ul id="locationList">
+        <li data-location="bengaluru">ಬೆಂಗಳೂರು</li>
+        <li data-location="tumakuru">ತುಮಕೂರು</li>
+        <li data-location="mysuru">ಮೈಸೂರು</li>
+        <li data-location="hassan">ಹಾಸನ</li>
+        <li data-location="shivamogga">ಶಿವಮೊಗ್ಗ</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Posts -->
+  <div id="feed"></div>
+
+  <script>
+    const selectBtn = document.getElementById('selectLocationBtn');
+    const modal = document.getElementById('locationModal');
+    const locationList = document.getElementById('locationList');
+    const searchInput = document.getElementById('locationSearch');
+    const feed = document.getElementById('feed');
+
+    // Open modal
+    selectBtn.addEventListener('click', () => {
+      modal.classList.remove('hidden');
+      searchInput.value = '';
+    });
+
+    // Search filter
+    searchInput.addEventListener('input', () => {
+      const filter = searchInput.value.toLowerCase();
+      document.querySelectorAll('#locationList li').forEach(li => {
+        li.style.display = li.textContent.toLowerCase().includes(filter) ? '' : 'none';
+      });
+    });
+
+    // Select location
+    locationList.addEventListener('click', (e) => {
+      if (e.target.tagName === 'LI') {
+        const selectedLocation = e.target.dataset.location;
+        const label = e.target.textContent;
+        localStorage.setItem('userLocation', selectedLocation);
+        selectBtn.textContent = `ಸ್ಥಳ: ${label}`;
+        modal.classList.add('hidden');
+        fetchPostsForLocation(selectedLocation);
+      }
+    });
+
+    // Dummy posts by location
+    const allPosts = {
+      bengaluru: ['ಬೆಂಗಳೂರು ಸುದ್ದಿ 1', 'ಬೆಂಗಳೂರು ಈವೆಂಟ್ 2'],
+      tumakuru: ['ತುಮಕೂರು ಸುದ್ದಿ 1', 'ತುಮಕೂರು ಅಪ್ಡೇಟ್ 2'],
+      mysuru: ['ಮೈಸೂರು ಸುದ್ದಿ 1', 'ಮೈಸೂರು ಕಾರ್ಯಕ್ರಮ 2'],
+      hassan: ['ಹಾಸನ ಸುದ್ದಿ 1', 'ಹಾಸನ ಘಟನೆ 2'],
+      shivamogga: ['ಶಿವಮೊಗ್ಗ ಸುದ್ದಿ 1', 'ಶಿವಮೊಗ್ಗ ಇವೆಂಟ್ 2']
+    };
+
+    function fetchPostsForLocation(location) {
+      const posts = allPosts[location] || [];
+      feed.innerHTML = '';
+      posts.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'post';
+        div.textContent = p;
+        feed.appendChild(div);
+      });
+    }
+
+    // On load, check localStorage
+    window.onload = () => {
+      const saved = localStorage.getItem('userLocation');
+      if (saved) {
+        const label = document.querySelector(`[data-location="${saved}"]`)?.textContent || saved;
+        selectBtn.textContent = `ಸ್ಥಳ: ${label}`;
+        fetchPostsForLocation(saved);
+      }
+    };
+  </script>
+
+</body>
+</html>

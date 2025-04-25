@@ -10,20 +10,6 @@ input, textarea {
   border-radius: 4px;
 }
 
-button {
-  padding: 10px 20px;
-  background-color: #2196f3;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  border-radius: 4px;
-}
-
-button:hover {
-  background-color: #1976d2;
-}
-
 h1, h2 {
   text-align: center;
 }
@@ -53,7 +39,7 @@ h1, h2 {
 .post {
   background: #fff;
   border: 1px solid #ddd;
-  padding: 15px;
+  padding: px;
   margin-bottom: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);

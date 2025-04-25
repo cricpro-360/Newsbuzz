@@ -145,28 +145,23 @@
       text-overflow: ellipsis;
     }
 
+    .post {
+      background: #fff;
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .post:hover {
+      background: #f0f0f0;
+    }
+
     .post img {
       max-width: 100%;
-      width: 100%;
       margin-top: 10px;
-      border-radius: 8px;
-    }
-
-    .post-card {
-      display: block;
-      text-decoration: none;
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      margin-bottom: 16px;
-      transition: transform 0.2s ease;
-      color: inherit;
-    }
-
-    .post-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     @media (max-width: 480px) {
@@ -188,8 +183,7 @@
   </div>
 
   <div class="scroll-container" id="scrollContainer">
-
-    <div class="section" style="background-color: #f8f9fa;">
+    <div class="section">
       <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
       <select id="state-filter" onchange="handleStateChange();">
         <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
@@ -209,7 +203,7 @@
       </div>
     </div>
 
-    <div class="section" style="background-color: #f8f9fa;">
+    <div class="section">
       <h2>ಎಲ್ಲೆಯ ಸುದ್ದಿಗಳು</h2>
       <div class="horizontal-scroll">
         <div class="scroll-item">🔥 ಟ್ರೆಂಡಿಂಗ್</div>
@@ -232,22 +226,28 @@
       </div>
     </div>
 
-    <div class="section" style="background-color: #f8f9fa;">
+    <div class="section">
       <h2>ಸಲ್ಲಿಕೆಯ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ</h2>
       <div class="grid">
-        <a href="mike.html"><div class="item"><img src="icons8-newspaper-48.png" alt="ನ್ಯೂಸ್"><p>ನ್ಯೂಸ್</p></div></a>
-        <div class="item"><img src="icons8-jobs-58.png" alt="ಜಾಬ್ಸ್"><p>ಜಾಬ್ಸ್</p></div>
-        <div class="item"><img src="icons8-percentage-64.png" alt="ಜಾಹೀರಾತುಗಳು"><p>ಜಾಹೀರಾತುಗಳು</p></div>
-        <div class="item"><img src="icons8-market-48.png" alt="ಮಾರ್ಕೆಟ್"><p>ಲೋಕಲ್ ಮಾರ್ಕೆಟ್</p></div>
-        <div class="item"><img src="icons8-real-estate-48.png" alt="ರಿಯಲ್ ಎಸ್ಟೇಟ್"><p>ರಿಯಲ್ ಎಸ್ಟೇಟ್</p></div>
-        <div class="item"><img src="icons8-thumbs-up-64.png" alt="ಪ್ರತಿಕ್ರಿಯೆ"><p>ಪ್ರತಿಕ್ರಿಯೆ</p></div>
-        <div class="item"><img src="icons/survey.png" alt="ಪ್ರಜಾ ವಾಣಿ"><p>ಪ್ರಜಾ ವಾಣಿ</p></div>
+        <a href="mike.html"><div class="item"><img src="icons8-newspaper-48.png"><p>ನ್ಯೂಸ್</p></div></a>
+        <div class="item"><img src="icons8-jobs-58.png"><p>ಜಾಬ್ಸ್</p></div>
+        <div class="item"><img src="icons8-percentage-64.png"><p>ಜಾಹೀರಾತುಗಳು</p></div>
+        <div class="item"><img src="icons8-market-48.png"><p>ಲೋಕಲ್ ಮಾರ್ಕೆಟ್</p></div>
+        <div class="item"><img src="icons8-real-estate-48.png"><p>ರಿಯಲ್ ಎಸ್ಟೇಟ್</p></div>
+        <div class="item"><img src="icons8-thumbs-up-64.png"><p>ಪ್ರತಿಕ್ರಿಯೆ</p></div>
+        <div class="item"><img src="icons/survey.png"><p>ಪ್ರಜಾ ವಾಣಿ</p></div>
       </div>
     </div>
 
-    <div class="section"><h2>Page 4</h2><p>ಇದು ನಾಲ್ಕನೇ ಪುಟ.</p></div>
-    <div class="section"><h2>Page 5</h2><p>ಇದು ಐದನೇ ಪುಟ.</p></div>
+    <div class="section">
+      <h2>Page 4</h2>
+      <p>ಇದು ನಾಲ್ಕನೇ ಪುಟ.</p>
+    </div>
 
+    <div class="section">
+      <h2>Page 5</h2>
+      <p>ಇದು ಐದನೇ ಪುಟ.</p>
+    </div>
   </div>
 
   <div class="bottom-navbar" id="bottomNavbar">
@@ -261,24 +261,35 @@
   <script>
     const container = document.getElementById("scrollContainer");
     const navLinks = document.querySelectorAll(".bottom-navbar a");
+    const sections = document.querySelectorAll(".section");
     let currentPage = 0;
 
-    function updateScrollPosition() {
-      const scrollTo = currentPage * window.innerWidth;
-      container.scrollTo({ left: scrollTo, behavior: 'instant' });
+    function updateScrollPosition(index, push = true) {
+      currentPage = index;
+      const scrollTo = index * window.innerWidth;
+      container.scrollTo({ left: scrollTo, behavior: 'smooth' });
       navLinks.forEach((link, i) => {
-        link.classList.toggle("active", i === currentPage);
+        link.classList.toggle("active", i === index);
       });
+      if (push) {
+        history.pushState({ page: index }, "", `#page${index}`);
+      }
     }
 
     navLinks.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
-        currentPage = parseInt(link.dataset.index);
-        updateScrollPosition();
+        updateScrollPosition(parseInt(link.dataset.index));
       });
     });
 
+    window.onpopstate = (event) => {
+      if (event.state && event.state.page !== undefined) {
+        updateScrollPosition(event.state.page, false);
+      }
+    };
+
+    // Load posts
     const API_URL = 'https://newsbuzz-1.onrender.com';
 
     const locationData = {
@@ -335,21 +346,9 @@
 
       if (params.length > 0) url += `&${params.join('&')}`;
 
-      const cacheKey = `state=${state}&district=${district}&taluk=${taluk}`;
-      const cached = JSON.parse(localStorage.getItem("filteredPostsCache"));
-      const cacheTime = localStorage.getItem("filteredPostsTime");
-      const cacheTTL = 5 * 60 * 1000;
-
-      if (cached && cached.key === cacheKey && cacheTime && (Date.now() - cacheTime < cacheTTL)) {
-        renderPosts(cached.data);
-        return;
-      }
-
       fetch(url)
         .then(res => res.json())
         .then(posts => {
-          localStorage.setItem("filteredPostsCache", JSON.stringify({ key: cacheKey, data: posts }));
-          localStorage.setItem("filteredPostsTime", Date.now());
           renderPosts(posts);
         })
         .catch(() => {
@@ -368,67 +367,48 @@
 
       posts.forEach(post => {
         const date = new Date(post.createdAt).toLocaleString();
-        postDiv.innerHTML += `
-          <a href="post.html?id=${post._id}" target="_blank" class="post-card">
-            <div class="post">
-              <h3>${post.title}</h3>
-              <p class="preview">${post.content}</p>
-              ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}" class="post-image">` : ''}
-              <small>Posted on ${date}</small>
-            </div>
-          </a>`;
+        const card = document.createElement("div");
+        card.className = "post";
+        card.onclick = () => {
+          window.location.href = `post.html?id=${post._id}`;
+        };
+        card.innerHTML = `
+          <h3>${post.title}</h3>
+          <p class="preview">${post.content}</p>
+          ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}">` : ''}
+          <small>Posted on ${date}</small>
+        `;
+        postDiv.appendChild(card);
       });
     }
 
     function handleStateChange() {
       const state = document.getElementById('state-filter').value;
-      localStorage.setItem('filterState', state);
       updateDistrictFilter();
       setTimeout(() => {
-        const savedDistrict = localStorage.getItem('filterDistrict');
-        if (savedDistrict) {
-          document.getElementById('district-filter').value = savedDistrict;
-          updateTalukFilter();
-          setTimeout(() => {
-            const savedTaluk = localStorage.getItem('filterTaluk');
-            if (savedTaluk) {
-              document.getElementById('taluk-filter').value = savedTaluk;
-            }
-            loadPosts();
-          }, 100);
-        } else {
-          loadPosts();
-        }
+        updateTalukFilter();
+        loadPosts();
       }, 100);
     }
 
     function handleDistrictChange() {
-      const district = document.getElementById('district-filter').value;
-      localStorage.setItem('filterDistrict', district);
       updateTalukFilter();
       setTimeout(() => {
-        const savedTaluk = localStorage.getItem('filterTaluk');
-        if (savedTaluk) {
-          document.getElementById('taluk-filter').value = savedTaluk;
-        }
         loadPosts();
       }, 100);
     }
 
     function handleTalukChange() {
-      const taluk = document.getElementById('taluk-filter').value;
-      localStorage.setItem('filterTaluk', taluk);
       loadPosts();
     }
 
     window.onload = () => {
-      const savedState = localStorage.getItem('filterState');
-      if (savedState) {
-        document.getElementById('state-filter').value = savedState;
-        handleStateChange();
-      } else {
-        loadPosts();
+      const hash = window.location.hash;
+      if (hash.startsWith("#page")) {
+        const pageIndex = parseInt(hash.replace("#page", ""));
+        if (!isNaN(pageIndex)) updateScrollPosition(pageIndex, false);
       }
+      loadPosts();
     };
   </script>
 </body>

@@ -5,9 +5,9 @@
   <title>ಸ್ಥಳ ಆಯ್ಕೆ ಮಾದರಿ</title>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Noto Sans Kannada', sans-serif;
       padding: 20px;
-      background: #f4f4f4;
+      background: #f9f9f9;
     }
 
     #selected-location {
@@ -29,18 +29,19 @@
     .modal-content {
       background: #fff;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 12px;
       width: 90%;
       max-width: 400px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
     }
 
     .tag {
       display: inline-flex;
       align-items: center;
-      background: #dcdcdc;
-      padding: 5px 10px;
+      background: #dedede;
+      padding: 6px 12px;
       border-radius: 20px;
-      margin: 5px;
+      margin: 4px;
     }
 
     .tag span {
@@ -50,8 +51,15 @@
       color: red;
     }
 
+    .section-title {
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
     .location-list {
       margin: 10px 0;
+      display: flex;
+      flex-wrap: wrap;
     }
 
     .location-list button {
@@ -85,8 +93,13 @@
   <div class="modal-content">
     <div id="selected-tags"></div>
 
+    <div class="section-title">ರಾಜ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ</div>
     <div class="location-list" id="state-list"></div>
+
+    <div class="section-title">ಜಿಲ್ಲೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ</div>
     <div class="location-list" id="district-list"></div>
+
+    <div class="section-title">ತಾಲೂಕನ್ನು ಆಯ್ಕೆಮಾಡಿ</div>
     <div class="location-list" id="taluk-list"></div>
 
     <button class="ok-btn" id="okBtn" onclick="confirmLocation()">OK</button>
@@ -159,6 +172,7 @@
           renderTags();
           renderStateList();
           renderDistrictList();
+          renderTalukList();
         };
         stateList.appendChild(btn);
       });
@@ -231,7 +245,6 @@
     modal.style.display = 'none';
   }
 
-  // Load from localStorage on page load
   window.onload = () => {
     selectedState = localStorage.getItem('selectedState');
     selectedDistrict = localStorage.getItem('selectedDistrict');

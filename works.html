@@ -272,7 +272,7 @@
         link.classList.toggle("active", i === index);
       });
       if (push) {
-        history.pushState({ page: index }, "", `#page${index}`);
+        history.replaceState({ page: index }, "", `#page${index}`);
       }
     }
 

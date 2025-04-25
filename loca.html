@@ -2,160 +2,152 @@
 <html lang="kn">
 <head>
   <meta charset="UTF-8">
-  <title>ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</title>
+  <title>ಸ್ಥಳ ಆಯ್ಕೆ</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .hidden { display: none; }
-    label, select { display: block; margin-top: 10px; }
-
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex; justify-content: center; align-items: center;
-    }
-
-    .modal-content {
-      background: white;
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      margin: 0;
       padding: 20px;
-      border-radius: 10px;
-      width: 90%; max-width: 400px;
     }
 
     #selectBtn {
       padding: 10px 20px;
       font-size: 16px;
+      background-color: #222;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .modal {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      display: none;
+    }
+
+    .modal.active {
+      display: block;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: black;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin: 5px 5px 0 0;
+      cursor: pointer;
+    }
+
+    .tag.light {
+      background: #f1f1f1;
+      color: #333;
+    }
+
+    .tag .close {
+      margin-left: 8px;
+      font-weight: bold;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin: 15px 0 10px;
+    }
+
+    .suggestion-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      border: 1px solid gold;
+      border-radius: 20px;
+      margin: 5px 5px 0 0;
+      background: white;
+      color: #222;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      float: right;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <button id="selectBtn">ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</button>
+  <button id="selectBtn">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</button>
 
-  <div id="locationModal" class="modal hidden">
-    <div class="modal-content">
-      <h3>ನಿಮ್ಮ ರಾಜ್ಯ, ಜಿಲ್ಲೆ, ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ</h3>
-      
-      <label>ರಾಜ್ಯ:</label>
-      <select id="stateSelect">
-        <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
-      </select>
+  <div class="modal" id="locationModal">
+    <span class="close-btn" onclick="closeModal()">×</span>
+    <h3>ನಿಮ್ಮ ರಾಜ್ಯ ಅಥವಾ ಜಿಲ್ಲೆಯನ್ನು ಬದಲಿಸಲು (X) ಕ್ಲಿಕ್ ಮಾಡಿ</h3>
 
-      <label>ಜಿಲ್ಲೆ:</label>
-      <select id="districtSelect" disabled>
-        <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
-      </select>
+    <div id="selectedTags">
+      <!-- Selected state/district tags will appear here -->
+    </div>
 
-      <label>ತಾಲ್ಲೂಕು:</label>
-      <select id="talukSelect" disabled>
-        <option value="">ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
-      </select>
+    <div class="section-title">🔔 ನನ್ನ ಕ್ಷೇತ್ರ</div>
+    <span class="tag light" onclick="removeTag('ಚಳ್ಳಕೆರೆ')">ಚಳ್ಳಕೆರೆ <span class="close">×</span></span>
 
-      <button id="saveLocation" style="margin-top: 15px;">ಸ್ಥಳ Confirm ಮಾಡಿ</button>
+    <div class="section-title">ಸೂಚಿತ ಸ್ಥಳಗಳು:</div>
+    <div class="suggestions">
+      <span class="suggestion-btn" onclick="addTag('ಕರ್ನಾಟಕ')">ಕರ್ನಾಟಕ</span>
+      <span class="suggestion-btn" onclick="addTag('ಚಿತ್ರದುರ್ಗ')">ಚಿತ್ರದುರ್ಗ</span>
+      <span class="suggestion-btn" onclick="addTag('ಮೋಳಕಾಲ್ಮೂರು')">ಮೋಳಕಾಲ್ಮೂರು</span>
+      <span class="suggestion-btn" onclick="addTag('ಹೊಸದುರ್ಗ')">ಹೊಸದುರ್ಗ</span>
     </div>
   </div>
 
-  <div id="output" style="margin-top: 20px;"></div>
-
   <script>
-    const data = {
-      Karnataka: {
-        Tumakuru: ['Tumakuru', 'Tiptur', 'Kunigal'],
-        Mysuru: ['Mysuru', 'Nanjangud', 'Hunsur'],
-      },
-      Kerala: {
-        Ernakulam: ['Kochi', 'Perumbavoor'],
-        Kannur: ['Kannur', 'Thalassery'],
-      }
-    };
-
-    const stateSelect = document.getElementById('stateSelect');
-    const districtSelect = document.getElementById('districtSelect');
-    const talukSelect = document.getElementById('talukSelect');
     const modal = document.getElementById('locationModal');
-    const output = document.getElementById('output');
+    const selectBtn = document.getElementById('selectBtn');
+    const selectedTags = document.getElementById('selectedTags');
+    let tags = [];
 
-    // Load States
-    Object.keys(data).forEach(state => {
-      const option = document.createElement('option');
-      option.value = state;
-      option.textContent = state;
-      stateSelect.appendChild(option);
+    selectBtn.addEventListener('click', () => {
+      modal.classList.add('active');
     });
 
-    // Handle State change
-    stateSelect.addEventListener('change', () => {
-      const selectedState = stateSelect.value;
-      districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
-      talukSelect.innerHTML = '<option value="">ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
-      talukSelect.disabled = true;
+    function closeModal() {
+      modal.classList.remove('active');
+    }
 
-      if (selectedState) {
-        const districts = Object.keys(data[selectedState]);
-        districts.forEach(dist => {
-          const option = document.createElement('option');
-          option.value = dist;
-          option.textContent = dist;
-          districtSelect.appendChild(option);
-        });
-        districtSelect.disabled = false;
-      } else {
-        districtSelect.disabled = true;
+    function addTag(name) {
+      if (!tags.includes(name)) {
+        tags.push(name);
+        renderTags();
       }
-    });
+    }
 
-    // Handle District change
-    districtSelect.addEventListener('change', () => {
-      const state = stateSelect.value;
-      const dist = districtSelect.value;
-      talukSelect.innerHTML = '<option value="">ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+    function removeTag(name) {
+      tags = tags.filter(tag => tag !== name);
+      renderTags();
+    }
 
-      if (dist) {
-        const taluks = data[state][dist];
-        taluks.forEach(tk => {
-          const option = document.createElement('option');
-          option.value = tk;
-          option.textContent = tk;
-          talukSelect.appendChild(option);
-        });
-        talukSelect.disabled = false;
-      } else {
-        talukSelect.disabled = true;
-      }
-    });
-
-    // Open modal
-    document.getElementById('selectBtn').addEventListener('click', () => {
-      modal.classList.remove('hidden');
-    });
-
-    // Save location
-    document.getElementById('saveLocation').addEventListener('click', () => {
-      const state = stateSelect.value;
-      const dist = districtSelect.value;
-      const taluk = talukSelect.value;
-
-      if (state && dist && taluk) {
-        const locationString = `${state} > ${dist} > ${taluk}`;
-        localStorage.setItem('userLocationFull', locationString);
-        document.getElementById('selectBtn').textContent = `ಸ್ಥಳ: ${taluk}`;
-        output.innerHTML = `<strong>ನೀವು ಆಯ್ಕೆ ಮಾಡಿದ ಸ್ಥಳ:</strong><br>${locationString}`;
-        modal.classList.add('hidden');
-      } else {
-        alert("ದಯವಿಟ್ಟು ರಾಜ್ಯ, ಜಿಲ್ಲೆ ಮತ್ತು ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ.");
-      }
-    });
-
-    // On page load
-    window.onload = () => {
-      const saved = localStorage.getItem('userLocationFull');
-      if (saved) {
-        output.innerHTML = `<strong>ನೀವು ಹಿಂದಿನ ಬಾರಿ ಆಯ್ಕೆ ಮಾಡಿದ ಸ್ಥಳ:</strong><br>${saved}`;
-        document.getElementById('selectBtn').textContent = `ಸ್ಥಳ: ${saved.split(' > ')[2]}`;
-      }
-    };
+    function renderTags() {
+      selectedTags.innerHTML = '';
+      tags.forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.innerHTML = `${tag} <span class="close" onclick="removeTag('${tag}')">×</span>`;
+        selectedTags.appendChild(span);
+      });
+    }
   </script>
 
 </body>

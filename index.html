@@ -180,6 +180,18 @@
     <div class="navbar-menu"><i class="fas fa-ellipsis-v"></i></div>
   </div>
 
+  <div id="locationModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;z-index:2000;align-items:center;justify-content:center;">
+  <div style="background:#fff;padding:20px;border-radius:8px;width:90%;max-width:400px;">
+    <h3>ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</h3>
+    <div id="modal-state"></div>
+    <div id="modal-district"></div>
+    <div id="modal-taluk"></div>
+    <button onclick="confirmLocation()" style="margin-top:10px;padding:6px 12px;">OK</button>
+  </div>
+  </div>
+
+  <button onclick="openLocationModal()" style="position:fixed;top:60px;right:16px;z-index:1100;background:yellow;padding:6px 12px;border-radius:6px;">ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</button>
+
   <div class="scroll-container" id="scrollContainer">
     <div class="section">
       <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
@@ -258,6 +270,104 @@
 
   <<!-- ... HEAD CONTENT UNCHANGED ... -->
 <script>
+
+  const modal = document.getElementById('locationModal');
+const modalState = document.getElementById('modal-state');
+const modalDistrict = document.getElementById('modal-district');
+const modalTaluk = document.getElementById('modal-taluk');
+let selectedState = null;
+let selectedDistrict = null;
+let selectedTaluk = null;
+
+function openLocationModal() {
+  selectedState = localStorage.getItem('selectedState') || null;
+  selectedDistrict = localStorage.getItem('selectedDistrict') || null;
+  selectedTaluk = localStorage.getItem('selectedTaluk') || null;
+  modal.style.display = 'flex';
+  renderModal();
+}
+
+function renderModal() {
+  modalState.innerHTML = selectedState
+    ? `<p>${selectedState} <button onclick='clearState()'>&times;</button></p>`
+    : renderStateOptions();
+
+  modalDistrict.innerHTML = selectedState && !selectedDistrict
+    ? renderDistrictOptions()
+    : selectedDistrict
+      ? `<p>${selectedDistrict} <button onclick='clearDistrict()'>&times;</button></p>`
+      : '';
+
+  modalTaluk.innerHTML = selectedDistrict && !selectedTaluk
+    ? renderTalukOptions()
+    : selectedTaluk
+      ? `<p>${selectedTaluk} <button onclick='clearTaluk()'>&times;</button></p>`
+      : '';
+}
+
+function renderStateOptions() {
+  return Object.keys(locationData).map(state => `<button onclick='selectState("${state}")'>${state}</button>`).join('<br>');
+}
+
+function renderDistrictOptions() {
+  return Object.keys(locationData[selectedState]).map(d => `<button onclick='selectDistrict("${d}")'>${d}</button>`).join('<br>');
+}
+
+function renderTalukOptions() {
+  return locationData[selectedState][selectedDistrict].map(t => `<button onclick='selectTaluk("${t}")'>${t}</button>`).join('<br>');
+}
+
+function selectState(state) {
+  selectedState = state;
+  selectedDistrict = null;
+  selectedTaluk = null;
+  renderModal();
+}
+
+function selectDistrict(district) {
+  selectedDistrict = district;
+  selectedTaluk = null;
+  renderModal();
+}
+
+function selectTaluk(taluk) {
+  selectedTaluk = taluk;
+  renderModal();
+}
+
+function clearState() {
+  selectedState = null;
+  selectedDistrict = null;
+  selectedTaluk = null;
+  renderModal();
+}
+
+function clearDistrict() {
+  selectedDistrict = null;
+  selectedTaluk = null;
+  renderModal();
+}
+
+function clearTaluk() {
+  selectedTaluk = null;
+  renderModal();
+}
+
+function confirmLocation() {
+  if (selectedState && selectedDistrict && selectedTaluk) {
+    localStorage.setItem('selectedState', selectedState);
+    localStorage.setItem('selectedDistrict', selectedDistrict);
+    localStorage.setItem('selectedTaluk', selectedTaluk);
+    modal.style.display = 'none';
+    loadPosts();
+  } else {
+    alert("ದಯವಿಟ್ಟು ರಾಜ್ಯ, ಜಿಲ್ಲೆ ಮತ್ತು ತಾಲ್ಲೂಕನ್ನು ಆಯ್ಕೆಮಾಡಿ");
+  }
+}
+    
+
+
+  
   const container = document.getElementById("scrollContainer");
   const navLinks = document.querySelectorAll(".bottom-navbar a");
   const sections = document.querySelectorAll(".section");

@@ -162,6 +162,67 @@
       margin-top: 10px;
     }
 
+
+
+
+    #locationModal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#locationModal .modal-content {
+  background: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+#locationModal h3 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #333;
+}
+
+#locationModal div[id^="modal-"] {
+  margin-bottom: 15px;
+}
+
+#locationModal button {
+  padding: 8px 14px;
+  margin: 5px 5px 0 0;
+  background: #f1f1f1;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#locationModal button:hover {
+  background: #ddd;
+}
+
+#locationModal button:focus {
+  outline: none;
+}
+
+#locationModal .close-btn {
+  background: red;
+  color: white;
+  padding: 4px 10px;
+  margin-left: 8px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
     @media (max-width: 480px) {
       .bottom-navbar i {
         font-size: 16px;
@@ -181,13 +242,13 @@
   </div>
 <div id="selected-location-display" style="margin-top: 10px; font-weight: bold;"></div>
   
-  <div id="locationModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;z-index:2000;align-items:center;justify-content:center;">
-  <div style="background:#fff;padding:20px;border-radius:8px;width:90%;max-width:400px;">
+  <div id="locationModal">
+  <div class="modal-content">
     <h3>ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</h3>
     <div id="modal-state"></div>
     <div id="modal-district"></div>
     <div id="modal-taluk"></div>
-    <button onclick="confirmLocation()" style="margin-top:10px;padding:6px 12px;">OK</button>
+    <button onclick="confirmLocation()">OK</button>
   </div>
   </div>
 
@@ -290,7 +351,7 @@ function openLocationModal() {
 
 function renderModal() {
   modalState.innerHTML = selectedState
-    ? `<p>${selectedState} <button onclick='clearState()'>&times;</button></p>`
+    ? `<p>${selectedState} <button class="close-btn" onclick='clearState()'>&times;</button></p>`
     : renderStateOptions();
 
   modalDistrict.innerHTML = selectedState && !selectedDistrict

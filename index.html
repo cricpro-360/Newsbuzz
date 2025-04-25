@@ -266,7 +266,7 @@
   function updateScrollPosition(index, push = true) {
     currentPage = index;
     const scrollTo = index * window.innerWidth;
-    container.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    container.scrollTo({ left: scrollTo, behavior: 'instant' });
     navLinks.forEach((link, i) => {
       link.classList.toggle("active", i === index);
     });

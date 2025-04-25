@@ -7,11 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body, html {
       height: 100%;
@@ -32,10 +28,7 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    .top-navbar {
-      top: 0;
-    }
-
+    .top-navbar { top: 0; }
     .bottom-navbar {
       bottom: 0;
       justify-content: space-around;
@@ -165,13 +158,52 @@
     }
 
     @media (max-width: 480px) {
-      .bottom-navbar i {
-        font-size: 16px;
-      }
+      .bottom-navbar i { font-size: 16px; }
+      .bottom-navbar a { font-size: 11px; }
+    }
 
-      .bottom-navbar a {
-        font-size: 11px;
-      }
+    /* Popup modal */
+    #locationModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 320px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .modal-content p {
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .modal-content button {
+      margin-top: 16px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -258,183 +290,168 @@
     <a href="#" data-index="4"><i class="fas fa-user"></i>Profile</a>
   </div>
 
-  <!-- Location Modal -->
-  <div id="locationModal" style="display:none; position: fixed; top: 0; left: 0; 
-    width: 100%; height: 100%; background: rgba(0,0,0,0.5); 
-    display: flex; justify-content: center; align-items: center; z-index: 2000;">
-    <div style="background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 300px; text-align: center;">
-      <h3>ನಿಮ್ಮ ಸ್ಥಳದಿಂದ ಸುದ್ದಿ</h3>
-      <p>ಈ ಕ್ಷೇತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿದರೆ, ನಿಮ್ಮ ಸ್ಥಳದ ತಾಜಾ ಸುದ್ದಿಗಳನ್ನು ಕಾಣಬಹುದು.</p>
-      <button onclick="closeModal()" style="margin-top: 10px; padding: 8px 16px; background: #000; color: #fff; border: none; border-radius: 5px;">ಸರಿ</button>
+  <!-- Popup Modal -->
+  <div id="locationModal">
+    <div class="modal-content">
+      <h3>ನಿಮ್ಮ ಸ್ಥಳೀಯ ಆಯ್ಕೆ</h3>
+      <p><strong>ರಾಜ್ಯ:</strong> <span id="selectedState"></span></p>
+      <p><strong>ಜಿಲ್ಲೆ:</strong> <span id="selectedDistrict"></span></p>
+      <p><strong>ತಾಲೂಕು:</strong> <span id="selectedTaluk"></span></p>
+      <button onclick="closeModal()">ಸರಿ</button>
     </div>
   </div>
 
   <script>
-  const container = document.getElementById("scrollContainer");
-  const navLinks = document.querySelectorAll(".bottom-navbar a");
-  let currentPage = 0;
+    const container = document.getElementById("scrollContainer");
+    const navLinks = document.querySelectorAll(".bottom-navbar a");
+    let currentPage = 0;
+    let modalShown = false;
 
-  function updateScrollPosition(index, push = true) {
-    currentPage = index;
-    const scrollTo = index * window.innerWidth;
-    container.scrollTo({ left: scrollTo, behavior: 'smooth' });
-    navLinks.forEach((link, i) => {
-      link.classList.toggle("active", i === index);
-    });
-    if (push) {
-      history.replaceState({ page: index }, "", `#page${index}`);
+    function updateScrollPosition(index, push = true) {
+      currentPage = index;
+      container.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
+      navLinks.forEach((link, i) => link.classList.toggle("active", i === index));
+      if (push) history.replaceState({ page: index }, "", `#page${index}`);
     }
-  }
 
-  navLinks.forEach(link => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      updateScrollPosition(parseInt(link.dataset.index));
+    navLinks.forEach(link => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        updateScrollPosition(parseInt(link.dataset.index));
+      });
     });
-  });
 
-  window.onpopstate = () => {
-    updateScrollPosition(0, false);
-    history.pushState({ page: 0 }, "", "#page0");
-  };
+    window.onpopstate = () => {
+      updateScrollPosition(0, false);
+      history.pushState({ page: 0 }, "", "#page0");
+    };
 
-  const API_URL = 'https://newsbuzz-1.onrender.com';
+    const API_URL = 'https://newsbuzz-1.onrender.com';
 
-  const locationData = {
-    'ಕರ್ನಾಟಕ': {
-      'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
-      'ಹುಬ್ಬಳ್ಳಿ': ['ಹುಬ್ಬಳ್ಳಿ ಉತ್ತರ', 'ನವಲಗುಂದ']
+    const locationData = {
+      'ಕರ್ನಾಟಕ': {
+        'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
+        'ಹುಬ್ಬಳ್ಳಿ': ['ಹುಬ್ಬಳ್ಳಿ ಉತ್ತರ', 'ನವಲಗುಂದ']
+      }
+    };
+
+    function updateDistrictFilter() {
+      const state = document.getElementById('state-filter').value;
+      const districtSelect = document.getElementById('district-filter');
+      const talukSelect = document.getElementById('taluk-filter');
+      districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+      if (locationData[state]) {
+        Object.keys(locationData[state]).forEach(district => {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
     }
-  };
 
-  function updateDistrictFilter() {
-    const state = document.getElementById('state-filter').value;
-    const districtSelect = document.getElementById('district-filter');
-    const talukSelect = document.getElementById('taluk-filter');
-    districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
-    talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+    function updateTalukFilter() {
+      const state = document.getElementById('state-filter').value;
+      const district = document.getElementById('district-filter').value;
+      const talukSelect = document.getElementById('taluk-filter');
+      talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+      if (locationData[state] && locationData[state][district]) {
+        locationData[state][district].forEach(taluk => {
+          const option = document.createElement('option');
+          option.value = taluk;
+          option.textContent = taluk;
+          talukSelect.appendChild(option);
+        });
+      }
+    }
 
-    if (locationData[state]) {
-      Object.keys(locationData[state]).forEach(district => {
-        const option = document.createElement('option');
-        option.value = district;
-        option.textContent = district;
-        districtSelect.appendChild(option);
+    function loadPosts() {
+      const state = document.getElementById('state-filter').value;
+      const district = document.getElementById('district-filter').value;
+      const taluk = document.getElementById('taluk-filter').value;
+      let url = `${API_URL}/posts?limit=10`;
+      const params = [];
+
+      if (state) params.push(`state=${encodeURIComponent(state)}`);
+      if (district) params.push(`district=${encodeURIComponent(district)}`);
+      if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
+      if (params.length) url += `&${params.join('&')}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(posts => renderPosts(posts))
+        .catch(() => {
+          document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
+        });
+    }
+
+    function renderPosts(posts) {
+      const postDiv = document.getElementById('posts');
+      postDiv.innerHTML = '';
+      if (!posts.length) {
+        postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
+        return;
+      }
+      posts.forEach(post => {
+        const date = new Date(post.createdAt).toLocaleString();
+        const card = document.createElement("div");
+        card.className = "post";
+        card.onclick = () => window.location.href = `post.html?id=${post._id}`;
+        card.innerHTML = `
+          <h3>${post.title}</h3>
+          <p class="preview">${post.content}</p>
+          ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}">` : ''}
+          <small>Posted on ${date}</small>
+        `;
+        postDiv.appendChild(card);
       });
     }
-  }
 
-  function updateTalukFilter() {
-    const state = document.getElementById('state-filter').value;
-    const district = document.getElementById('district-filter').value;
-    const talukSelect = document.getElementById('taluk-filter');
-    talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
-
-    if (locationData[state] && locationData[state][district]) {
-      locationData[state][district].forEach(taluk => {
-        const option = document.createElement('option');
-        option.value = taluk;
-        option.textContent = taluk;
-        talukSelect.appendChild(option);
-      });
-    }
-  }
-
-  function loadPosts() {
-    const state = document.getElementById('state-filter').value;
-    const district = document.getElementById('district-filter').value;
-    const taluk = document.getElementById('taluk-filter').value;
-
-    let url = `${API_URL}/posts?limit=10`;
-    const params = [];
-
-    if (state) params.push(`state=${encodeURIComponent(state)}`);
-    if (district) params.push(`district=${encodeURIComponent(district)}`);
-    if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
-
-    if (params.length > 0) url += `&${params.join('&')}`;
-
-    fetch(url)
-      .then(res => res.json())
-      .then(posts => {
-        renderPosts(posts);
-      })
-      .catch(() => {
-        document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
-      });
-  }
-
-  function renderPosts(posts) {
-    const postDiv = document.getElementById('posts');
-    postDiv.innerHTML = '';
-
-    if (!posts.length) {
-      postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
-      return;
-    }
-
-    posts.forEach(post => {
-      const date = new Date(post.createdAt).toLocaleString();
-      const card = document.createElement("div");
-      card.className = "post";
-      card.onclick = () => {
-        window.location.href = `post.html?id=${post._id}`;
-      };
-      card.innerHTML = `
-        <h3>${post.title}</h3>
-        <p class="preview">${post.content}</p>
-        ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}">` : ''}
-        <small>Posted on ${date}</small>
-      `;
-      postDiv.appendChild(card);
-    });
-  }
-
-  let modalShown = false;
-
-  function handleStateChange() {
-    updateDistrictFilter();
-    setTimeout(() => {
-      updateTalukFilter();
-      loadPosts();
-    }, 100);
-
-    const state = document.getElementById('state-filter').value;
-    if (!modalShown && state) {
+    function handleStateChange() {
+      updateDistrictFilter();
+      setTimeout(() => {
+        updateTalukFilter();
+        loadPosts();
+      }, 100);
       showModal();
-      modalShown = true;
     }
-  }
 
-  function handleDistrictChange() {
-    updateTalukFilter();
-    setTimeout(() => {
+    function handleDistrictChange() {
+      updateTalukFilter();
+      setTimeout(() => loadPosts(), 100);
+      showModal();
+    }
+
+    function handleTalukChange() {
       loadPosts();
-    }, 100);
-  }
-
-  function handleTalukChange() {
-    loadPosts();
-  }
-
-  function showModal() {
-    document.getElementById('locationModal').style.display = 'flex';
-  }
-
-  function closeModal() {
-    document.getElementById('locationModal').style.display = 'none';
-  }
-
-  window.onload = () => {
-    history.pushState({ page: 0 }, "", "#page0");
-
-    const hash = window.location.hash;
-    if (hash.startsWith("#page")) {
-      const pageIndex = parseInt(hash.replace("#page", ""));
-      if (!isNaN(pageIndex)) updateScrollPosition(pageIndex, false);
+      showModal();
     }
-    loadPosts();
-  };
+
+    function showModal() {
+      const state = document.getElementById('state-filter').value;
+      const district = document.getElementById('district-filter').value;
+      const taluk = document.getElementById('taluk-filter').value;
+      document.getElementById('selectedState').textContent = state || 'ಆಯ್ಕೆ ಇಲ್ಲ';
+      document.getElementById('selectedDistrict').textContent = district || 'ಆಯ್ಕೆ ಇಲ್ಲ';
+      document.getElementById('selectedTaluk').textContent = taluk || 'ಆಯ್ಕೆ ಇಲ್ಲ';
+      document.getElementById('locationModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('locationModal').style.display = 'none';
+    }
+
+    window.onload = () => {
+      history.pushState({ page: 0 }, "", "#page0");
+      const hash = window.location.hash;
+      if (hash.startsWith("#page")) {
+        const pageIndex = parseInt(hash.replace("#page", ""));
+        if (!isNaN(pageIndex)) updateScrollPosition(pageIndex, false);
+      }
+      loadPosts();
+    };
   </script>
+
 </body>
 </html>

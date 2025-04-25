@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Local News App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      background-color: #f5f5f5;
+    }
+
+    .top-navbar, .bottom-navbar {
+      position: fixed;
+      width: 100%;
+      background: #ffffff;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .top-navbar {
+      top: 0;
+    }
+
+    .bottom-navbar {
+      bottom: 0;
+      justify-content: space-around;
+      padding: 0;
+      height: 60px;
+    }
+
+    .bottom-navbar a {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 12px;
+      color: #333;
+    }
+
+    .bottom-navbar a.active {
+      background-color: yellow;
+      color: black;
+      font-weight: bold;
+    }
+
+    .bottom-navbar i {
+      font-size: 28px;
+      margin-bottom: 3px;
+    }
+
+    .scroll-container {
+      display: flex;
+      overflow-x: hidden;
+      height: 100vh;
+      scroll-behavior: smooth;
+    }
+
+    .section {
+      flex: 0 0 100%;
+      overflow-y: auto;
+      padding: 80px 16px 70px;
+    }
+
+    .horizontal-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 12px;
+      padding: 10px 0;
+    }
+
+    .scroll-item {
+      white-space: nowrap;
+      padding: 10px 15px;
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-size: 14px;
+    }
+
+    .vertical-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .list-item {
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .item {
+      background: #fff;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .item img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      margin-bottom: 5px;
+    }
+
+    .filters-container select {
+      margin-right: 10px;
+      padding: 6px;
+      font-size: 14px;
+    }
+
+    .preview {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .post {
+      background: #fff;
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    
+
+    .post img {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .bottom-navbar i {
+        font-size: 16px;
+      }
+
+      .bottom-navbar a {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-navbar">
+    <div class="navbar-title">ಲೋಕಲ್ ನ್ಯೂಸ್</div>
+    <div class="navbar-menu"><i class="fas fa-ellipsis-v"></i></div>
+  </div>
+<div id="selected-location-display" style="margin-top: 10px; font-weight: bold;"></div>
+  
+  <div id="locationModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;z-index:2000;align-items:center;justify-content:center;">
+  <div style="background:#fff;padding:20px;border-radius:8px;width:90%;max-width:400px;">
+    <h3>ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</h3>
+    <div id="modal-state"></div>
+    <div id="modal-district"></div>
+    <div id="modal-taluk"></div>
+    <button onclick="confirmLocation()" style="margin-top:10px;padding:6px 12px;">OK</button>
+  </div>
+  </div>
+
+  <button onclick="openLocationModal()" style="position:fixed;top:60px;right:16px;z-index:1100;background:yellow;padding:6px 12px;border-radius:6px;">Location</button>
+
+  <div class="scroll-container" id="scrollContainer">
+    <div class="section">
+      <h2>ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು</h2>
+      <select id="state-filter" onchange="handleStateChange();">
+        <option value="">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</option>
+        <option value="ಕರ್ನಾಟಕ">ಕರ್ನಾಟಕ</option>
+      </select>
+
+      <select id="district-filter" onchange="handleDistrictChange();">
+        <option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>
+      </select>
+
+      <select id="taluk-filter" onchange="handleTalukChange();">
+        <option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>
+      </select>
+
+      <div id="posts" class="post-container">
+        <p class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>ಎಲ್ಲೆಯ ಸುದ್ದಿಗಳು</h2>
+      <div class="horizontal-scroll">
+        <div class="scroll-item">🔥 ಟ್ರೆಂಡಿಂಗ್</div>
+        <div class="scroll-item">🟢 ವಾಟ್ಸಪ್ ಸ್ಟೇಟಸ್</div>
+        <div class="scroll-item">🏛️ ಜೀವನ ಶೈಲಿ</div>
+        <div class="scroll-item">📰 ಮ್ಯಾಗಜಿನ್</div>
+        <div class="scroll-item">🔪 ಕ್ರೈಂ ನ್ಯೂಸ್</div>
+        <div class="scroll-item">🗺️ ಸರ್ಕಾರಿ ಯೋಜನೆ</div>
+      </div>
+      <h2>ನಿಮ್ಮ ಪ್ರದೇಶದಿಂದ</h2>
+      <div class="vertical-list">
+        <div class="list-item">🎥 ಚಿತ್ರಕಥೆ ಸುದ್ದಿ</div>
+        <div class="list-item">📃 ಜಿಲ್ಲಾ ಸುದ್ದಿ</div>
+        <div class="list-item">💼 ಉದ್ಯೋಗ</div>
+        <div class="list-item">👫 ವಧು-ವರರ ವೆದಿಕೆ</div>
+        <div class="list-item">🏠 ರಿಯಲ್ ಎಸ್ಟೇಟ್</div>
+        <div class="list-item">🏷️ ಖರೀದಿ-ಮಾರಾಟ</div>
+        <div class="list-item">🎁 ಶುಭಾಷಯಗಳು</div>
+        <div class="list-item">🏬 ಲೋಕಲ್ ಮಾರುಕಟ್ಟೆ</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>ಸಲ್ಲಿಕೆಯ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ</h2>
+      <div class="grid">
+        <a href="mike.html"><div class="item"><img src="icons8-newspaper-48.png"><p>ನ್ಯೂಸ್</p></div></a>
+        <div class="item"><img src="icons8-jobs-58.png"><p>ಜಾಬ್ಸ್</p></div>
+        <div class="item"><img src="icons8-percentage-64.png"><p>ಜಾಹೀರಾತುಗಳು</p></div>
+        <div class="item"><img src="icons8-market-48.png"><p>ಲೋಕಲ್ ಮಾರ್ಕೆಟ್</p></div>
+        <div class="item"><img src="icons8-real-estate-48.png"><p>ರಿಯಲ್ ಎಸ್ಟೇಟ್</p></div>
+        <div class="item"><img src="icons8-thumbs-up-64.png"><p>ಪ್ರತಿಕ್ರಿಯೆ</p></div>
+        <div class="item"><img src="icons/survey.png"><p>ಪ್ರಜಾ ವಾಣಿ</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Page 4</h2>
+      <p>ಇದು ನಾಲ್ಕನೇ ಪುಟ.</p>
+    </div>
+
+    <div class="section">
+      <h2>Page 5</h2>
+      <p>ಇದು ಐದನೇ ಪುಟ.</p>
+    </div>
+  </div>
+
+  <div class="bottom-navbar" id="bottomNavbar">
+    <a href="#" data-index="0" class="active"><i class="fas fa-home"></i>Home</a>
+    <a href="#" data-index="1"><i class="fas fa-search"></i>Search</a>
+    <a href="#" data-index="2"><i class="fas fa-plus"></i>Create</a>
+    <a href="#" data-index="3"><i class="fas fa-newspaper"></i>Posts</a>
+    <a href="#" data-index="4"><i class="fas fa-user"></i>Profile</a>
+  </div>
+
+  <<!-- ... HEAD CONTENT UNCHANGED ... -->
+<script>
+
+  const modal = document.getElementById('locationModal');
+const modalState = document.getElementById('modal-state');
+const modalDistrict = document.getElementById('modal-district');
+const modalTaluk = document.getElementById('modal-taluk');
+let selectedState = null;
+let selectedDistrict = null;
+let selectedTaluk = null;
+
+function openLocationModal() {
+  selectedState = localStorage.getItem('selectedState') || null;
+  selectedDistrict = localStorage.getItem('selectedDistrict') || null;
+  selectedTaluk = localStorage.getItem('selectedTaluk') || null;
+  modal.style.display = 'flex';
+  renderModal();
+}
+
+function renderModal() {
+  modalState.innerHTML = selectedState
+    ? `<p>${selectedState} <button onclick='clearState()'>&times;</button></p>`
+    : renderStateOptions();
+
+  modalDistrict.innerHTML = selectedState && !selectedDistrict
+    ? renderDistrictOptions()
+    : selectedDistrict
+      ? `<p>${selectedDistrict} <button onclick='clearDistrict()'>&times;</button></p>`
+      : '';
+
+  modalTaluk.innerHTML = selectedDistrict && !selectedTaluk
+    ? renderTalukOptions()
+    : selectedTaluk
+      ? `<p>${selectedTaluk} <button onclick='clearTaluk()'>&times;</button></p>`
+      : '';
+}
+
+function renderStateOptions() {
+  return Object.keys(locationData).map(state => `<button onclick='selectState("${state}")'>${state}</button>`).join('<br>');
+}
+
+function renderDistrictOptions() {
+  return Object.keys(locationData[selectedState]).map(d => `<button onclick='selectDistrict("${d}")'>${d}</button>`).join('<br>');
+}
+
+function renderTalukOptions() {
+  return locationData[selectedState][selectedDistrict].map(t => `<button onclick='selectTaluk("${t}")'>${t}</button>`).join('<br>');
+}
+
+function selectState(state) {
+  selectedState = state;
+  selectedDistrict = null;
+  selectedTaluk = null;
+  renderModal();
+}
+
+function selectDistrict(district) {
+  selectedDistrict = district;
+  selectedTaluk = null;
+  renderModal();
+}
+
+function selectTaluk(taluk) {
+  selectedTaluk = taluk;
+  renderModal();
+}
+
+function clearState() {
+  selectedState = null;
+  selectedDistrict = null;
+  selectedTaluk = null;
+  renderModal();
+}
+
+function clearDistrict() {
+  selectedDistrict = null;
+  selectedTaluk = null;
+  renderModal();
+}
+
+function clearTaluk() {
+  selectedTaluk = null;
+  renderModal();
+}
+
+function confirmLocation() {
+  if (selectedState && selectedDistrict && selectedTaluk) {
+    localStorage.setItem('selectedState', selectedState);
+    localStorage.setItem('selectedDistrict', selectedDistrict);
+    localStorage.setItem('selectedTaluk', selectedTaluk);
+
+    // Update the select dropdowns
+    document.getElementById('state-filter').value = selectedState;
+    updateDistrictFilter();
+    setTimeout(() => {
+      document.getElementById('district-filter').value = selectedDistrict;
+      updateTalukFilter();
+      setTimeout(() => {
+        document.getElementById('taluk-filter').value = selectedTaluk;
+        modal.style.display = 'none';
+        loadPosts();
+      }, 50);
+    }, 50);
+  } else {
+    alert("ದಯವಿಟ್ಟು ರಾಜ್ಯ, ಜಿಲ್ಲೆ ಮತ್ತು ತಾಲ್ಲೂಕನ್ನು ಆಯ್ಕೆಮಾಡಿ");
+  }
+}
+    
+function showSelectedLocation() {
+  const state = localStorage.getItem('selectedState');
+  const district = localStorage.getItem('selectedDistrict');
+  const taluk = localStorage.getItem('selectedTaluk');
+
+  const displayElement = document.getElementById('selected-location-display');
+  if (state && district && taluk && displayElement) {
+    displayElement.innerText = `${taluk}, ${district}, ${state}`;
+  }
+  }
+
+  
+  const container = document.getElementById("scrollContainer");
+  const navLinks = document.querySelectorAll(".bottom-navbar a");
+  const sections = document.querySelectorAll(".section");
+  let currentPage = 0;
+
+  function updateScrollPosition(index, push = true) {
+    currentPage = index;
+    const scrollTo = index * window.innerWidth;
+    container.scrollTo({ left: scrollTo, behavior: 'instant' });
+    navLinks.forEach((link, i) => {
+      link.classList.toggle("active", i === index);
+    });
+    if (push) {
+      history.replaceState({ page: index }, "", `#page${index}`);
+    }
+  }
+
+  navLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      updateScrollPosition(parseInt(link.dataset.index));
+    });
+  });
+
+  // Back button handling
+  window.onpopstate = (event) => {
+    updateScrollPosition(0, false);
+    history.pushState({ page: 0 }, "", "#page0");
+  };
+
+  const API_URL = 'https://newsbuzz-1.onrender.com';
+
+  const locationData = {
+    'ಕರ್ನಾಟಕ': {
+      'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
+      'ಹುಬ್ಬಳ್ಳಿ': ['ಹುಬ್ಬಳ್ಳಿ ಉತ್ತರ', 'ನವಲಗುಂದ']
+    }
+  };
+
+  function updateDistrictFilter() {
+    const state = document.getElementById('state-filter').value;
+    const districtSelect = document.getElementById('district-filter');
+    const talukSelect = document.getElementById('taluk-filter');
+    districtSelect.innerHTML = '<option value="">ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ</option>';
+    talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+    if (locationData[state]) {
+      Object.keys(locationData[state]).forEach(district => {
+        const option = document.createElement('option');
+        option.value = district;
+        option.textContent = district;
+        districtSelect.appendChild(option);
+      });
+    }
+  }
+
+  function updateTalukFilter() {
+    const state = document.getElementById('state-filter').value;
+    const district = document.getElementById('district-filter').value;
+    const talukSelect = document.getElementById('taluk-filter');
+    talukSelect.innerHTML = '<option value="">ತಾಲೂಕು ಆಯ್ಕೆಮಾಡಿ</option>';
+
+    if (locationData[state] && locationData[state][district]) {
+      locationData[state][district].forEach(taluk => {
+        const option = document.createElement('option');
+        option.value = taluk;
+        option.textContent = taluk;
+        talukSelect.appendChild(option);
+      });
+    }
+  }
+
+  function loadPosts() {
+    const state = document.getElementById('state-filter').value;
+    const district = document.getElementById('district-filter').value;
+    const taluk = document.getElementById('taluk-filter').value;
+
+    let url = `${API_URL}/posts?limit=10`;
+    const params = [];
+
+    if (state) params.push(`state=${encodeURIComponent(state)}`);
+    if (district) params.push(`district=${encodeURIComponent(district)}`);
+    if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
+
+    if (params.length > 0) url += `&${params.join('&')}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(posts => {
+        renderPosts(posts);
+      })
+      .catch(() => {
+        document.getElementById('posts').innerHTML = '<p class="error-text">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
+      });
+  }
+
+  function renderPosts(posts) {
+    const postDiv = document.getElementById('posts');
+    postDiv.innerHTML = '';
+
+    if (!posts.length) {
+      postDiv.innerHTML = '<p class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
+      return;
+    }
+
+    posts.forEach(post => {
+      const date = new Date(post.createdAt).toLocaleString();
+      const card = document.createElement("div");
+      card.className = "post";
+      card.onclick = () => {
+        window.location.href = `post.html?id=${post._id}`;
+      };
+      card.innerHTML = `
+        <h3>${post.title}</h3>
+        <p class="preview">${post.content}</p>
+        ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}">` : ''}
+        <small>Posted on ${date}</small>
+      `;
+      postDiv.appendChild(card);
+    });
+  }
+
+  function handleStateChange() {
+    const state = document.getElementById('state-filter').value;
+    localStorage.setItem('selectedState', state);
+    updateDistrictFilter();
+    setTimeout(() => {
+      updateTalukFilter();
+      loadPosts();
+    }, 100);
+  }
+
+  function handleDistrictChange() {
+    const district = document.getElementById('district-filter').value;
+    localStorage.setItem('selectedDistrict', district);
+    updateTalukFilter();
+    setTimeout(() => {
+      loadPosts();
+    }, 100);
+  }
+
+  function handleTalukChange() {
+    const taluk = document.getElementById('taluk-filter').value;
+    localStorage.setItem('selectedTaluk', taluk);
+    loadPosts();
+  }
+
+  window.onload = () => {
+    // Restore saved location
+    const savedState = localStorage.getItem('selectedState');
+    const savedDistrict = localStorage.getItem('selectedDistrict');
+    const savedTaluk = localStorage.getItem('selectedTaluk');
+
+    if (savedState) document.getElementById('state-filter').value = savedState;
+    updateDistrictFilter();
+
+    setTimeout(() => {
+      if (savedDistrict) document.getElementById('district-filter').value = savedDistrict;
+      updateTalukFilter();
+
+      setTimeout(() => {
+        if (savedTaluk) document.getElementById('taluk-filter').value = savedTaluk;
+        loadPosts();
+      }, 100);
+    }, 100);
+
+    history.pushState({ page: 0 }, "", "#page0");
+    const hash = window.location.hash;
+    if (hash.startsWith("#page")) {
+      const pageIndex = parseInt(hash.replace("#page", ""));
+      if (!isNaN(pageIndex)) updateScrollPosition(pageIndex, false);
+    }
+  };
+</script>
+ 
+</body>
+</html>

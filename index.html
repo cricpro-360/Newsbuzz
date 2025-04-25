@@ -179,7 +179,8 @@
     <div class="navbar-title">ಲೋಕಲ್ ನ್ಯೂಸ್</div>
     <div class="navbar-menu"><i class="fas fa-ellipsis-v"></i></div>
   </div>
-<p id="selectedLocationText"></p>
+<div id="selected-location-display" style="margin-top: 10px; font-weight: bold;"></div>
+  
   <div id="locationModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;z-index:2000;align-items:center;justify-content:center;">
   <div style="background:#fff;padding:20px;border-radius:8px;width:90%;max-width:400px;">
     <h3>ಸ್ಥಳ ಆಯ್ಕೆಮಾಡಿ</h3>
@@ -376,15 +377,16 @@ function confirmLocation() {
   }
 }
     
-function updateSelectedLocationText() {
-  const el = document.getElementById('selectedLocationText');
-  const state = localStorage.getItem('selectedState') || '';
-  const district = localStorage.getItem('selectedDistrict') || '';
-  const taluk = localStorage.getItem('selectedTaluk') || '';
-  el.innerText = state && district && taluk
-    ? `ನೀವು ಆಯ್ಕೆಮಾಡಿರುವ ಸ್ಥಳ: ${state}, ${district}, ${taluk}`
-    : '';
-}
+function showSelectedLocation() {
+  const state = localStorage.getItem('selectedState');
+  const district = localStorage.getItem('selectedDistrict');
+  const taluk = localStorage.getItem('selectedTaluk');
+
+  const displayElement = document.getElementById('selected-location-display');
+  if (state && district && taluk && displayElement) {
+    displayElement.innerText = `${taluk}, ${district}, ${state}`;
+  }
+  }
 
   
   const container = document.getElementById("scrollContainer");

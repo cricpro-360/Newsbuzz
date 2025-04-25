@@ -258,7 +258,8 @@
     <a href="#" data-index="4"><i class="fas fa-user"></i>Profile</a>
   </div>
 
-  <script>
+  <<!-- ... HEAD CONTENT UNCHANGED ... -->
+<script>
   const container = document.getElementById("scrollContainer");
   const navLinks = document.querySelectorAll(".bottom-navbar a");
   const sections = document.querySelectorAll(".section");
@@ -285,13 +286,10 @@
 
   // Back button handling
   window.onpopstate = (event) => {
-    // Always go back to page 0
     updateScrollPosition(0, false);
-    // Push state again to prevent app closing
     history.pushState({ page: 0 }, "", "#page0");
   };
 
-  // Load posts
   const API_URL = 'https://newsbuzz-1.onrender.com';
 
   const locationData = {
@@ -386,6 +384,7 @@
 
   function handleStateChange() {
     const state = document.getElementById('state-filter').value;
+    localStorage.setItem('selectedState', state);
     updateDistrictFilter();
     setTimeout(() => {
       updateTalukFilter();
@@ -394,6 +393,8 @@
   }
 
   function handleDistrictChange() {
+    const district = document.getElementById('district-filter').value;
+    localStorage.setItem('selectedDistrict', district);
     updateTalukFilter();
     setTimeout(() => {
       loadPosts();
@@ -401,19 +402,36 @@
   }
 
   function handleTalukChange() {
+    const taluk = document.getElementById('taluk-filter').value;
+    localStorage.setItem('selectedTaluk', taluk);
     loadPosts();
   }
 
   window.onload = () => {
-    // Push dummy state at the beginning
-    history.pushState({ page: 0 }, "", "#page0");
+    // Restore saved location
+    const savedState = localStorage.getItem('selectedState');
+    const savedDistrict = localStorage.getItem('selectedDistrict');
+    const savedTaluk = localStorage.getItem('selectedTaluk');
 
+    if (savedState) document.getElementById('state-filter').value = savedState;
+    updateDistrictFilter();
+
+    setTimeout(() => {
+      if (savedDistrict) document.getElementById('district-filter').value = savedDistrict;
+      updateTalukFilter();
+
+      setTimeout(() => {
+        if (savedTaluk) document.getElementById('taluk-filter').value = savedTaluk;
+        loadPosts();
+      }, 100);
+    }, 100);
+
+    history.pushState({ page: 0 }, "", "#page0");
     const hash = window.location.hash;
     if (hash.startsWith("#page")) {
       const pageIndex = parseInt(hash.replace("#page", ""));
       if (!isNaN(pageIndex)) updateScrollPosition(pageIndex, false);
     }
-    loadPosts();
   };
 </script>
  

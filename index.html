@@ -358,8 +358,19 @@ function confirmLocation() {
     localStorage.setItem('selectedState', selectedState);
     localStorage.setItem('selectedDistrict', selectedDistrict);
     localStorage.setItem('selectedTaluk', selectedTaluk);
-    modal.style.display = 'none';
-    loadPosts();
+
+    // Update the select dropdowns
+    document.getElementById('state-filter').value = selectedState;
+    updateDistrictFilter();
+    setTimeout(() => {
+      document.getElementById('district-filter').value = selectedDistrict;
+      updateTalukFilter();
+      setTimeout(() => {
+        document.getElementById('taluk-filter').value = selectedTaluk;
+        modal.style.display = 'none';
+        loadPosts();
+      }, 50);
+    }, 50);
   } else {
     alert("ದಯವಿಟ್ಟು ರಾಜ್ಯ, ಜಿಲ್ಲೆ ಮತ್ತು ತಾಲ್ಲೂಕನ್ನು ಆಯ್ಕೆಮಾಡಿ");
   }

@@ -2,292 +2,245 @@
 <html lang="kn">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ಸ್ಥಳೀಯ ಪೋಸ್ಟ್‌ಗಳು</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <title>ಸ್ಥಳ ಆಯ್ಕೆ ಮಾದರಿ</title>
   <style>
     body {
-      margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: #f5f5f5;
-    }
-
-    .top-navbar {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      z-index: 1000;
-    }
-
-    .navbar-title {
-      font-weight: 600;
-    }
-
-    .content {
-      padding: 80px 16px 20px;
-    }
-
-    .post {
-      background: #fff;
-      margin-bottom: 16px;
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .post img {
-      max-width: 100%;
-      margin-top: 10px;
-    }
-
-    .preview {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .location-info {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 12px;
-    }
-
-    .back-button {
-      cursor: pointer;
-      font-size: 18px;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="top-navbar">
-    <div class="back-button" onclick="window.history.back()">←</div>
-    <div class="navbar-title">ಸ್ಥಳೀಯ ಪೋಸ್ಟ್‌ಗಳು</div>
-    <div style="width: 24px;"></div>
-  </div>
-
-  <div class="content">
-    <div id="location-info" class="location-info"></div>
-    <div id="posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</div>
-  </div>
-
-  <script>
-    const API_URL = 'https://newsbuzz-1.onrender.com';
-
-    const params = new URLSearchParams(window.location.search);
-    const state = params.get('state');
-    const district = params.get('district');
-    const taluk = params.get('taluk');
-
-    document.getElementById('location-info').innerHTML = `
-      <p><strong>ರಾಜ್ಯ:</strong> ${state || 'N/A'} | <strong>ಜಿಲ್ಲೆ:</strong> ${district || 'N/A'} | <strong>ತಾಲೂಕು:</strong> ${taluk || 'N/A'}</p>
-    `;
-
-    function loadLocationPosts() {
-      let url = `${API_URL}/posts?limit=50`;
-      const filters = [];
-
-      if (state) filters.push(`state=${encodeURIComponent(state)}`);
-      if (district) filters.push(`district=${encodeURIComponent(district)}`);
-      if (taluk) filters.push(`taluk=${encodeURIComponent(taluk)}`);
-
-      if (filters.length) {
-        url += `&${filters.join('&')}`;
-      }
-
-      fetch(url)
-        .then(res => res.json())
-        .then(posts => renderPosts(posts))
-        .catch(() => {
-          document.getElementById('posts').innerHTML = '<p>ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</p>';
-        });
-    }
-
-    function renderPosts(posts) {
-      const postDiv = document.getElementById('posts');
-      postDiv.innerHTML = '';
-
-      if (!posts.length) {
-        postDiv.innerHTML = '<p>ಯಾವುದೇ ಪೋಸ್ಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>';
-        return;
-      }
-
-      posts.forEach(post => {
-        const date = new Date(post.createdAt).toLocaleString();
-        const card = document.createElement("div");
-        card.className = "post";
-        card.innerHTML = `
-          <h3>${post.title}</h3>
-          <p class="preview">${post.content}</p>
-          ${post.imageUrl ? `<img src="${post.imageUrl.replace('/upload/', '/upload/w_400/')}">` : ''}
-          <small>Posted on ${date}</small>
-        `;
-        postDiv.appendChild(card);
-      });
-    }
-
-    loadLocationPosts();
-  </script>
-</body>
-</html> html>
-<html lang="kn">
-<head>
-  <meta charset="UTF-8">
-  <title>ಸ್ಥಳ ಆಯ್ಕೆ</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f9f9f9;
-      margin: 0;
       padding: 20px;
+      background: #f4f4f4;
     }
 
-    #selectBtn {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #222;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    #selected-location {
+      font-weight: bold;
+      margin-bottom: 20px;
     }
 
     .modal {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 20px 20px 0 0;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-      padding: 20px;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       display: none;
+      z-index: 999;
     }
 
-    .modal.active {
-      display: block;
-    }
-
-    .modal h3 {
-      margin-top: 0;
-      font-size: 16px;
-      margin-bottom: 15px;
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
     }
 
     .tag {
-      display: inline-block;
-      background: black;
-      color: white;
-      padding: 6px 12px;
+      display: inline-flex;
+      align-items: center;
+      background: #dcdcdc;
+      padding: 5px 10px;
       border-radius: 20px;
-      font-size: 14px;
-      margin: 5px 5px 0 0;
-      cursor: pointer;
+      margin: 5px;
     }
 
-    .tag.light {
-      background: #f1f1f1;
-      color: #333;
-    }
-
-    .tag .close {
+    .tag span {
       margin-left: 8px;
+      cursor: pointer;
       font-weight: bold;
+      color: red;
     }
 
-    .section-title {
-      font-weight: bold;
-      margin: 15px 0 10px;
+    .location-list {
+      margin: 10px 0;
     }
 
-    .suggestion-btn {
-      display: inline-block;
-      padding: 8px 16px;
-      border: 1px solid gold;
-      border-radius: 20px;
-      margin: 5px 5px 0 0;
-      background: white;
-      color: #222;
-      font-size: 14px;
+    .location-list button {
+      margin: 4px;
+      padding: 6px 12px;
+      border: none;
+      background: #eee;
+      border-radius: 5px;
       cursor: pointer;
     }
 
-    .close-btn {
-      float: right;
-      font-size: 18px;
-      font-weight: bold;
+    .ok-btn {
+      margin-top: 15px;
+      background: green;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
       cursor: pointer;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <button id="selectBtn">ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ</button>
+<div id="selected-location">ಸ್ಥಳ: </div>
+<button onclick="openModal()">ಸ್ಥಳವನ್ನು ಆಯ್ಕೆಮಾಡಿ</button>
 
-  <div class="modal" id="locationModal">
-    <span class="close-btn" onclick="closeModal()">×</span>
-    <h3>ನಿಮ್ಮ ರಾಜ್ಯ ಅಥವಾ ಜಿಲ್ಲೆಯನ್ನು ಬದಲಿಸಲು (X) ಕ್ಲಿಕ್ ಮಾಡಿ</h3>
+<div class="modal" id="locationModal">
+  <div class="modal-content">
+    <div id="selected-tags"></div>
 
-    <div id="selectedTags">
-      <!-- Selected state/district tags will appear here -->
-    </div>
+    <div class="location-list" id="state-list"></div>
+    <div class="location-list" id="district-list"></div>
+    <div class="location-list" id="taluk-list"></div>
 
-    <div class="section-title">🔔 ನನ್ನ ಕ್ಷೇತ್ರ</div>
-    <span class="tag light" onclick="removeTag('ಚಳ್ಳಕೆರೆ')">ಚಳ್ಳಕೆರೆ <span class="close">×</span></span>
-
-    <div class="section-title">ಸೂಚಿತ ಸ್ಥಳಗಳು:</div>
-    <div class="suggestions">
-      <span class="suggestion-btn" onclick="addTag('ಕರ್ನಾಟಕ')">ಕರ್ನಾಟಕ</span>
-      <span class="suggestion-btn" onclick="addTag('ಚಿತ್ರದುರ್ಗ')">ಚಿತ್ರದುರ್ಗ</span>
-      <span class="suggestion-btn" onclick="addTag('ಮೋಳಕಾಲ್ಮೂರು')">ಮೋಳಕಾಲ್ಮೂರು</span>
-      <span class="suggestion-btn" onclick="addTag('ಹೊಸದುರ್ಗ')">ಹೊಸದುರ್ಗ</span>
-    </div>
+    <button class="ok-btn" id="okBtn" onclick="confirmLocation()">OK</button>
   </div>
+</div>
 
-  <script>
-    const modal = document.getElementById('locationModal');
-    const selectBtn = document.getElementById('selectBtn');
-    const selectedTags = document.getElementById('selectedTags');
-    let tags = [];
+<script>
+  const locationData = {
+    'ಕರ್ನಾಟಕ': {
+      'ಮೈಸೂರು': ['ಮೈಸೂರು ನಗರ', 'ನಂಜನಗೂಡು'],
+      'ಬೆಂಗಳೂರು': ['ಯೆಲಹಂಕ', 'ಕಾಲಾಸಿಪಾಳ್ಯ']
+    }
+  };
 
-    selectBtn.addEventListener('click', () => {
-      modal.classList.add('active');
-    });
+  let selectedState = null;
+  let selectedDistrict = null;
+  let selectedTaluk = null;
 
-    function closeModal() {
-      modal.classList.remove('active');
+  const modal = document.getElementById('locationModal');
+  const stateList = document.getElementById('state-list');
+  const districtList = document.getElementById('district-list');
+  const talukList = document.getElementById('taluk-list');
+  const selectedTags = document.getElementById('selected-tags');
+  const okBtn = document.getElementById('okBtn');
+  const selectedDisplay = document.getElementById('selected-location');
+
+  function openModal() {
+    modal.style.display = 'flex';
+    renderStateList();
+    renderTags();
+  }
+
+  function renderTags() {
+    selectedTags.innerHTML = '';
+
+    if (selectedState) {
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.innerHTML = `${selectedState} <span onclick="clearState()">×</span>`;
+      selectedTags.appendChild(tag);
     }
 
-    function addTag(name) {
-      if (!tags.includes(name)) {
-        tags.push(name);
-        renderTags();
-      }
+    if (selectedDistrict) {
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.innerHTML = `${selectedDistrict} <span onclick="clearDistrict()">×</span>`;
+      selectedTags.appendChild(tag);
     }
 
-    function removeTag(name) {
-      tags = tags.filter(tag => tag !== name);
-      renderTags();
+    if (selectedTaluk) {
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.innerHTML = `${selectedTaluk} <span onclick="clearTaluk()">×</span>`;
+      selectedTags.appendChild(tag);
     }
 
-    function renderTags() {
-      selectedTags.innerHTML = '';
-      tags.forEach(tag => {
-        const span = document.createElement('span');
-        span.className = 'tag';
-        span.innerHTML = `${tag} <span class="close" onclick="removeTag('${tag}')">×</span>`;
-        selectedTags.appendChild(span);
+    okBtn.style.display = selectedTaluk ? 'block' : 'none';
+  }
+
+  function renderStateList() {
+    stateList.innerHTML = '';
+    if (!selectedState) {
+      Object.keys(locationData).forEach(state => {
+        const btn = document.createElement('button');
+        btn.textContent = state;
+        btn.onclick = () => {
+          selectedState = state;
+          selectedDistrict = null;
+          selectedTaluk = null;
+          renderTags();
+          renderStateList();
+          renderDistrictList();
+        };
+        stateList.appendChild(btn);
       });
     }
-  </script>
+  }
+
+  function renderDistrictList() {
+    districtList.innerHTML = '';
+    if (selectedState && !selectedDistrict) {
+      Object.keys(locationData[selectedState]).forEach(district => {
+        const btn = document.createElement('button');
+        btn.textContent = district;
+        btn.onclick = () => {
+          selectedDistrict = district;
+          selectedTaluk = null;
+          renderTags();
+          renderDistrictList();
+          renderTalukList();
+        };
+        districtList.appendChild(btn);
+      });
+    }
+  }
+
+  function renderTalukList() {
+    talukList.innerHTML = '';
+    if (selectedState && selectedDistrict && !selectedTaluk) {
+      locationData[selectedState][selectedDistrict].forEach(taluk => {
+        const btn = document.createElement('button');
+        btn.textContent = taluk;
+        btn.onclick = () => {
+          selectedTaluk = taluk;
+          renderTags();
+          renderTalukList();
+        };
+        talukList.appendChild(btn);
+      });
+    }
+  }
+
+  function clearState() {
+    selectedState = null;
+    selectedDistrict = null;
+    selectedTaluk = null;
+    renderTags();
+    renderStateList();
+    districtList.innerHTML = '';
+    talukList.innerHTML = '';
+  }
+
+  function clearDistrict() {
+    selectedDistrict = null;
+    selectedTaluk = null;
+    renderTags();
+    renderDistrictList();
+    talukList.innerHTML = '';
+  }
+
+  function clearTaluk() {
+    selectedTaluk = null;
+    renderTags();
+    renderTalukList();
+  }
+
+  function confirmLocation() {
+    localStorage.setItem('selectedState', selectedState);
+    localStorage.setItem('selectedDistrict', selectedDistrict);
+    localStorage.setItem('selectedTaluk', selectedTaluk);
+    selectedDisplay.textContent = `ಸ್ಥಳ: ${selectedTaluk}, ${selectedDistrict}, ${selectedState}`;
+    modal.style.display = 'none';
+  }
+
+  // Load from localStorage on page load
+  window.onload = () => {
+    selectedState = localStorage.getItem('selectedState');
+    selectedDistrict = localStorage.getItem('selectedDistrict');
+    selectedTaluk = localStorage.getItem('selectedTaluk');
+    if (selectedState && selectedDistrict && selectedTaluk) {
+      selectedDisplay.textContent = `ಸ್ಥಳ: ${selectedTaluk}, ${selectedDistrict}, ${selectedState}`;
+    }
+  };
+</script>
 
 </body>
 </html>

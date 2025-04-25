@@ -283,11 +283,9 @@
       });
     });
 
-    window.onpopstate = (event) => {
-      if (event.state && event.state.page !== undefined) {
-        updateScrollPosition(event.state.page, false);
-      }
-    };
+    window.onpopstate = () => {
+  updateScrollPosition(0, false);
+};
 
     // Load posts
     const API_URL = 'https://newsbuzz-1.onrender.com';

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login with Google - News App</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<h1>Login to My News App</h1>
+
+<!-- Google Sign In button -->
+<div id="g_id_onload"
+     data-client_id="237020903331-5ippdgvgqcdqqkd2qsfe370r3psipk45.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="false">
+</div>
+
+<div class="g_id_signin"
+     data-type="standard"
+     data-size="large"
+     data-theme="outline"
+     data-text="sign_in_with"
+     data-shape="rectangular">
+</div>
+
+<script>
+function handleCredentialResponse(response) {
+  console.log("ID Token: ", response.credential);
+  
+  // Decode token to see user info (Optional)
+  const token = response.credential;
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  console.log("User info:", payload);
+
+  // You can save user info to localStorage if needed
+  localStorage.setItem('user', JSON.stringify({
+    name: payload.name,
+    email: payload.email,
+    picture: payload.picture
+  }));
+
+  alert("Hello, " + payload.name);
+}
+</script>
+
+</body>
+</html>

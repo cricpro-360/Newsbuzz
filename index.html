@@ -191,7 +191,9 @@
   </div>
   </div>
 
-  <button onclick="openLocationModal()" style="position:fixed;top:60px;right:16px;z-index:1100;background:yellow;padding:6px 12px;border-radius:6px;">Location</button>
+ <button id="location-button" onclick="openLocationModal()" style="position:fixed;top:60px;right:16px;z-index:1100;background:yellow;padding:6px 12px;border-radius:6px;">
+  ಸ್ಥಳ
+ </button>
 
   <div class="scroll-container" id="scrollContainer">
     <div class="section">
@@ -360,7 +362,6 @@ function confirmLocation() {
     localStorage.setItem('selectedDistrict', selectedDistrict);
     localStorage.setItem('selectedTaluk', selectedTaluk);
 
-    // Update the select dropdowns
     document.getElementById('state-filter').value = selectedState;
     updateDistrictFilter();
     setTimeout(() => {
@@ -369,13 +370,27 @@ function confirmLocation() {
       setTimeout(() => {
         document.getElementById('taluk-filter').value = selectedTaluk;
         modal.style.display = 'none';
+        updateLocationButton();  // <-- call this to update button
         loadPosts();
       }, 50);
     }, 50);
   } else {
     alert("ದಯವಿಟ್ಟು ರಾಜ್ಯ, ಜಿಲ್ಲೆ ಮತ್ತು ತಾಲ್ಲೂಕನ್ನು ಆಯ್ಕೆಮಾಡಿ");
   }
-}
+  }
+
+  function updateLocationButton() {
+  const state = localStorage.getItem('selectedState');
+  const button = document.getElementById('location-button');
+  if (state && button) {
+    button.innerText = state;
+  } else {
+    button.innerText = "ಸ್ಥಳ";
+  }
+  }
+
+
+  
     
 function showSelectedLocation() {
   const state = localStorage.getItem('selectedState');

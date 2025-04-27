@@ -100,7 +100,50 @@ router.get('/view/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Failed to update views' });
   }
-});                                            
+});  
+
+ // MongoDB User Schema
+const UserSchema = new mongoose.Schema({
+  googleId: String,
+  name: String,
+  email: String,
+  picture: String,
+  given_name: String,
+  family_name: String,
+  locale: String
+});
+
+const User = mongoose.model('User', UserSchema);
+
+// API: Save user
+app.post('/saveUser', async (req, res) => {
+  const { id, name, email, picture, given_name, family_name, locale } = req.body;
+
+  // Save only if user not already exists
+  const existUser = await User.findOne({ googleId: id });
+  if (!existUser) {
+    const newUser = new User({
+      googleId: id,
+      name,
+      email,
+      picture,
+      given_name,
+      family_name,
+      locale
+    });
+    await newUser.save();
+  }
+
+  res.send({ success: true });
+});
+
+// API: Get all users
+app.get('/allUsers', async (req, res) => {
+  const users = await User.find();
+  res.send(users);
+});
+                                            
+
                                              
 
 res.json(modifiedPosts);

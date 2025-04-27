@@ -40,6 +40,15 @@ function logout() {
   window.location.href = "google-login.html";
 }
 
+  fetch('https://newsbuzz-1.onrender.com/allUsers')
+  .then(res => res.json())
+  .then(users => {
+    users.forEach(user => {
+      // Show all users on page
+      console.log(user.name, user.email);
+    });
+  });
+
 // Load profile when page opens
 window.onload = loadProfile;
 </script>

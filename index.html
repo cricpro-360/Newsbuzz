@@ -389,6 +389,21 @@ function confirmLocation() {
   }
   }
 
+  document.addEventListener('DOMContentLoaded', function() {
+  const selectedState = localStorage.getItem('selectedState');
+  const selectedDistrict = localStorage.getItem('selectedDistrict');
+  const selectedTaluk = localStorage.getItem('selectedTaluk');
+
+  updateLocationButton();  // to update button text
+
+  if (selectedState && selectedDistrict && selectedTaluk) {
+    modal.style.display = 'none';   // Hide modal
+    loadPosts();                    // Load posts immediately
+  } else {
+    modal.style.display = 'block';   // Show modal to select location
+  }
+});
+
 
   
     

@@ -42,6 +42,11 @@ function handleCredentialResponse(response) {
   // Redirect to profile page after login
   window.location.href = "google-login-profile.html";
 }
+  fetch('https://newsbuzz-1.onrender.com/saveUser', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(profileData)
+});
 </script>
 
 </body>

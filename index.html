@@ -541,6 +541,41 @@ function showSelectedLocation() {
     });
   }
 
+
+  async function loadPosts() {
+  const postsContainer = document.getElementById('posts');
+  postsContainer.innerHTML = '<p>ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</p>';
+
+  try {
+    const res = await fetch(`https://newsbuzz-1.onrender.com/posts?limit=10&state=${selectedState}&district=${selectedDistrict}&taluk=${selectedTaluk}`);
+    const posts = await res.json();
+
+    postsContainer.innerHTML = ''; // remove loading text
+
+    for (const post of posts) {
+      renderSinglePost(post);
+      await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay to simulate streaming
+    }
+  } catch (error) {
+    postsContainer.innerHTML = '<p>ಪೋಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.</p>';
+  }
+}
+
+function renderSinglePost(post) {
+  const postsContainer = document.getElementById('posts');
+  const postElement = document.createElement('div');
+  postElement.className = 'post';
+  postElement.innerHTML = `
+    <h3>${post.title}</h3>
+    <p class="preview">${post.description}</p>
+    ${post.image ? `<img src="${post.image}" alt="Post Image">` : ''}
+  `;
+  postsContainer.appendChild(postElement);
+}
+
+
+
+  
   function handleStateChange() {
     const state = document.getElementById('state-filter').value;
     localStorage.setItem('selectedState', state);

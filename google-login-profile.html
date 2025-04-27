@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile Page</title>
+</head>
+<body>
+
+<div id="profile" style="display:none;">
+  <h2>Welcome, <span id="userName"></span></h2>
+  <img id="userPic" width="120" style="border-radius: 50%;" /><br>
+  <p>Email: <span id="userEmail"></span></p>
+  <p>First Name: <span id="firstName"></span></p>
+  <p>Last Name: <span id="lastName"></span></p>
+  <p>Language: <span id="userLocale"></span></p>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+function loadProfile() {
+  const user = JSON.parse(localStorage.getItem('userProfile'));
+  if (!user) {
+    // No user found, redirect to login page
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Show user details
+  document.getElementById('userName').innerText = user.name;
+  document.getElementById('userPic').src = user.picture;
+  document.getElementById('userEmail').innerText = user.email;
+  document.getElementById('firstName').innerText = user.given_name;
+  document.getElementById('lastName').innerText = user.family_name;
+  document.getElementById('userLocale').innerText = user.locale;
+  document.getElementById('profile').style.display = 'block';
+}
+
+function logout() {
+  localStorage.removeItem('userProfile');
+  window.location.href = "login.html";
+}
+
+// Load profile when page opens
+window.onload = loadProfile;
+</script>
+
+</body>
+</html>

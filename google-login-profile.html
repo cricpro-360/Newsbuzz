@@ -3,24 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <title>Profile Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; }
+    #profile img { border-radius: 50%; width: 100px; }
+    .post { border: 1px solid #ccc; padding: 10px; margin-top: 10px; border-radius: 6px; }
+  </style>
 </head>
 <body>
 
 <div id="profile" style="display:none;">
   <h2>Welcome, <span id="userName"></span></h2>
-  <img id="userPic" width="120" style="border-radius: 50%;" /><br>
+  <img id="userPic" /><br>
   <p>Email: <span id="userEmail"></span></p>
   <p>First Name: <span id="firstName"></span></p>
   <p>Last Name: <span id="lastName"></span></p>
   <p>Language: <span id="userLocale"></span></p>
   <button onclick="logout()">Logout</button>
+
+  <hr>
+
+  <h3>Create a Post</h3>
+  <form id="postForm">
+    <input type="text" id="title" placeholder="Post Title" required><br><br>
+    <textarea id="content" placeholder="Post Content" rows="4" required></textarea><br><br>
+    <button type="submit">Save Post</button>
+  </form>
+
+  <h3>Your Posts</h3>
+  <div id="postList"></div>
 </div>
 
 <script>
 function loadProfile() {
   const user = JSON.parse(localStorage.getItem('userProfile'));
   if (!user) {
-    // No user found, redirect to login page
     window.location.href = "login.html";
     return;
   }
@@ -33,6 +49,9 @@ function loadProfile() {
   document.getElementById('lastName').innerText = user.family_name;
   document.getElementById('userLocale').innerText = user.locale;
   document.getElementById('profile').style.display = 'block';
+
+  // Show user posts
+  showPosts(user.id);
 }
 
 function logout() {
@@ -40,16 +59,44 @@ function logout() {
   window.location.href = "google-login.html";
 }
 
-  fetch('https://newsbuzz-1.onrender.com/allUsers')
-  .then(res => res.json())
-  .then(users => {
-    users.forEach(user => {
-      // Show all users on page
-      console.log(user.name, user.email);
-    });
-  });
+function showPosts(userId) {
+  const allPosts = JSON.parse(localStorage.getItem('posts') || '[]');
+  const userPosts = allPosts.filter(p => p.userId === userId);
+  const postList = document.getElementById('postList');
+  postList.innerHTML = "";
 
-// Load profile when page opens
+  if (userPosts.length === 0) {
+    postList.innerHTML = "<p>No posts yet.</p>";
+    return;
+  }
+
+  userPosts.reverse().forEach(post => {
+    const div = document.createElement('div');
+    div.className = 'post';
+    div.innerHTML = `<h4>${post.title}</h4><p>${post.content}</p><small>${new Date(post.createdAt).toLocaleString()}</small>`;
+    postList.appendChild(div);
+  });
+}
+
+document.getElementById("postForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const user = JSON.parse(localStorage.getItem('userProfile'));
+  const post = {
+    title: document.getElementById("title").value,
+    content: document.getElementById("content").value,
+    userId: user.id,
+    createdAt: new Date().toISOString()
+  };
+
+  const allPosts = JSON.parse(localStorage.getItem("posts") || "[]");
+  allPosts.push(post);
+  localStorage.setItem("posts", JSON.stringify(allPosts));
+
+  alert("Post saved!");
+  document.getElementById("postForm").reset();
+  showPosts(user.id);
+});
+
 window.onload = loadProfile;
 </script>
 

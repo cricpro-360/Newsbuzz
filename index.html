@@ -190,8 +190,9 @@
     <button onclick="confirmLocation()" style="margin-top:10px;padding:6px 12px;">OK</button>
   </div>
   </div>
-
-  <button onclick="openLocationModal()" style="position:fixed;top:60px;right:16px;z-index:1100;background:yellow;padding:6px 12px;border-radius:6px;">Location</button>
+<button id="location-button" onclick="openLocationModal()" style="position:fixed;top:60px;right:16px;z-index:1100;background:yellow;padding:6px 12px;border-radius:6px;">
+  ಸ್ಥಳ
+</button>
 
   <div class="scroll-container" id="scrollContainer">
     <div class="section">
@@ -360,7 +361,6 @@ function confirmLocation() {
     localStorage.setItem('selectedDistrict', selectedDistrict);
     localStorage.setItem('selectedTaluk', selectedTaluk);
 
-    // Update the select dropdowns
     document.getElementById('state-filter').value = selectedState;
     updateDistrictFilter();
     setTimeout(() => {
@@ -369,6 +369,7 @@ function confirmLocation() {
       setTimeout(() => {
         document.getElementById('taluk-filter').value = selectedTaluk;
         modal.style.display = 'none';
+        updateLocationButton();  // <-- call this to update button
         loadPosts();
       }, 50);
     }, 50);
@@ -387,6 +388,31 @@ function showSelectedLocation() {
     displayElement.innerText = `${taluk}, ${district}, ${state}`;
   }
   }
+
+  function updateLocationButton() {
+  const state = localStorage.getItem('selectedState');
+  const button = document.getElementById('location-button');
+  if (state && button) {
+    button.innerText = state;
+  } else {
+    button.innerText = "ಸ್ಥಳ";
+  }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+  const selectedState = localStorage.getItem('selectedState');
+  const selectedDistrict = localStorage.getItem('selectedDistrict');
+  const selectedTaluk = localStorage.getItem('selectedTaluk');
+
+  updateLocationButton();  // to update button text
+
+  if (selectedState && selectedDistrict && selectedTaluk) {
+    modal.style.display = 'none';   // Hide modal
+    loadPosts();                    // Load posts immediately
+  } else {
+    modal.style.display = 'block';   // Show modal to select location
+  }
+});
 
   
   const container = document.getElementById("scrollContainer");

@@ -230,58 +230,97 @@
     }
 
     function createPost() {
-      const title = document.getElementById('title').value.trim();
-      const content = document.getElementById('content').value.trim();
-      const state = document.getElementById('state').value.trim();
-      const district = document.getElementById('district').value.trim();
-      const taluk = document.getElementById('taluk').value.trim();
-      const imageFile = document.getElementById('image').files[0];
-      const btn = document.getElementById('submitBtn');
-      btn.classList.add('loading');
+  const title = document.getElementById('title').value.trim();
+  const content = document.getElementById('content').value.trim();
+  const state = document.getElementById('state').value.trim();
+  const district = document.getElementById('district').value.trim();
+  const taluk = document.getElementById('taluk').value.trim();
+  const imageInput = document.getElementById('image');
+  const btn = document.getElementById('submitBtn');
+  btn.classList.add('loading');
 
-      if (!title || !content || !state || !district) {
-        showMessage("ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ.", "error");
-        btn.classList.remove('loading');
-        return;
-      }
+  if (!title || !content || !state || !district) {
+    showMessage("ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ.", "error");
+    btn.classList.remove('loading');
+    return;
+  }
 
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('content', content);
-      formData.append('state', state);
-      formData.append('district', district);
-      if (taluk) formData.append('taluk', taluk);
-      if (imageFile) formData.append('image', imageFile);
+  const profile = JSON.parse(localStorage.getItem('userProfile')) || {};
+  const post = {
+    title,
+    content,
+    state,
+    district,
+    taluk,
+    createdAt: new Date().toISOString(),
+    userId: profile.userId || "",
+    username: profile.username || "",
+    profilePic: profile.profilePic || "",
+    image: ""
+  };
 
-      const profile = JSON.parse(localStorage.getItem('userProfile'));
-      if (profile) {
-        formData.append('username', profile.username);
-        formData.append('profilePic', profile.profilePic);
-        formData.append('userId', profile.userId);
-      }
+  function saveToLocal(base64Img = "") {
+    if (base64Img) post.image = base64Img;
+    const allPosts = JSON.parse(localStorage.getItem("posts") || "[]");
+    allPosts.push(post);
+    localStorage.setItem("posts", JSON.stringify(allPosts));
+  }
 
-      fetch(`${API_URL}/posts`, {
-        method: 'POST',
-        body: formData
-      })
-      .then(res => res.json())
-      .then(() => {
-        showMessage("ಪೋಸ್ಟ್ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!", "success");
-        document.getElementById('title').value = '';
-        document.getElementById('content').value = '';
-        document.getElementById('state').value = '';
-        document.getElementById('district').value = '';
-        document.getElementById('taluk').value = '';
-        document.getElementById('image').value = '';
-        document.getElementById('preview').style.display = 'none';
-        document.getElementById('plus-icon').style.display = 'block';
-        document.getElementById('upload-text').style.display = 'block';
-      })
-      .catch(() => showMessage("ಪೋಸ್ಟ್ ರಚನೆಯಲ್ಲಿ ದೋಷ.", "error"))
-      .finally(() => {
+  function saveToBackend(imageFile) {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('state', state);
+    formData.append('district', district);
+    if (taluk) formData.append('taluk', taluk);
+    if (imageFile) formData.append('image', imageFile);
+    formData.append('userId', profile.userId || "");
+    formData.append('username', profile.username || "");
+    formData.append('profilePic', profile.profilePic || "");
+
+    return fetch("https://newsbuzz-1.onrender.com/posts", {
+      method: 'POST',
+      body: formData
+    });
+  }
+
+  function resetForm() {
+    showMessage("ಪೋಸ್ಟ್ ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ!", "success");
+    document.getElementById('title').value = '';
+    document.getElementById('content').value = '';
+    document.getElementById('state').value = '';
+    document.getElementById('district').value = '';
+    document.getElementById('taluk').value = '';
+    document.getElementById('image').value = '';
+    document.getElementById('preview').style.display = 'none';
+    document.getElementById('plus-icon').style.display = 'block';
+    document.getElementById('upload-text').style.display = 'block';
+    btn.classList.remove('loading');
+  }
+
+  if (imageInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64Img = e.target.result;
+      saveToLocal(base64Img); // save base64 to localStorage
+      saveToBackend(imageInput.files[0]) // upload file to backend
+        .then(() => resetForm())
+        .catch(() => {
+          showMessage("ಬ್ಯಾಕ್‌ಎಂಡ್ ಉಳಿಸುವಲ್ಲಿ ದೋಷ.", "error");
+          btn.classList.remove('loading');
+        });
+    };
+    reader.readAsDataURL(imageInput.files[0]);
+  } else {
+    saveToLocal(); // no image
+    saveToBackend() // backend without image
+      .then(() => resetForm())
+      .catch(() => {
+        showMessage("ಬ್ಯಾಕ್‌ಎಂಡ್ ಉಳಿಸುವಲ್ಲಿ ದೋಷ.", "error");
         btn.classList.remove('loading');
       });
-    }
+  }
+}
   </script>
 </body>
 </html>

@@ -21,8 +21,9 @@ const postModels = require('./models/Post');
 const emailAuthRoutes = require('./emailAuthRoutes');
 app.use('/auth', emailAuthRoutes);
 
-app.use('/posts', postRoutes);
-const postRoutes = require('./postRoutes');
+const postRoutes = require('./postRoutes'); // <-- Define postRoutes first
+App.use('/posts', postRoutes);           // <-- Then, use it
+
 // Create or update a user
 app.post('/user/create-or-update', async (req, res) => { try { const { userId, username, profilePic, bio } = req.body; let user = await User.findById(userId);
 

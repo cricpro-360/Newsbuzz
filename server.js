@@ -150,5 +150,5 @@ res.json(modifiedPosts);
 } catch (err) { res.status(500).json({ message: 'Error fetching posts' }); } });
 
 // Start server 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`);
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 

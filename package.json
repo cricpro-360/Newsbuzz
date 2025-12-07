@@ -1,5 +1,5 @@
 {
-  "name": "newsbuzz-backend",
+  "name": "newsbuzz-backend", //this is name
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {

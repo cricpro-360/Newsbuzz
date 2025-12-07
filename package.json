@@ -2,6 +2,7 @@
   "name": "newsbuzz-backend",
   "version": "1.0.0",
   "main": "server.js",
+  "nodemailer": "^6.9.8",
   "scripts": {
     "start": "node server.js"
   },

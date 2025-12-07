@@ -73,8 +73,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 // --- 4. ರೂಟ್‌ಗಳನ್ನು ಸರಿಯಾದ ಜಾಗದಲ್ಲಿ ಬಳಸುವುದು (Use Routes Correctly) ---
 
-const emailAuthRoutes = require('./emailAuthRoutes');
-app.use('/auth', emailAuthRoutes);
+
 
 // ******* postRoutes ತೆಗೆದು ಹಾಕಲಾಗಿದೆ *******
 // ಏಕೆಂದರೆ ನಿಮ್ಮ ಕೋಡ್‌ನಲ್ಲಿ postRoutes ಅನ್ನು ಡಿಫೈನ್ ಮಾಡಲಾಗಿಲ್ಲ ಮತ್ತು

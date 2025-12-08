@@ -40,10 +40,10 @@ const Post = require('./models/Post'); // <-- ನಿಮ್ಮ ಫೈಲ್ ಸ�
 
 // --- 2. Cloudinary ಕಾನ್ಫಿಗರೇಶನ್ ---
 
-cloudinary.config({ 
-    cloud_name: 'dods2fuur', 
-    api_key: '974131963864589', 
-    api_secret: 'f5HXawyekgvI2QSECiB7jSHwY2A' 
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_KEY,
+  api_secret: process.env.CLOUD_SECRET
 });
 
 const storage = new CloudinaryStorage({ 

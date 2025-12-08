@@ -194,49 +194,304 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(postData),
-                });
+<!doctype html>
+<html lang="kn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ಸ್ಥಳೀಯ ಸುದ್ದಿಗಳು — Create & Show Posts</title>
+  <style>
+    :root{
+      --bg:#f7fafc; --card:#ffffff; --muted:#6b7280; --accent:#0ea5a4;
+    }
+    *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    body{margin:0;background:var(--bg);color:#111;}
+    .container{max-width:1000px;margin:28px auto;padding:18px;}
+    header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:900px){.grid{grid-template-columns:360px 1fr}}
+    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(6,8,15,0.06)}
+    label{display:block;margin-bottom:10px;font-size:13px}
+    input[type="text"], textarea, select{width:100%;padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-size:14px}
+    textarea{resize:vertical;min-height:100px}
+    .small{font-size:13px;color:var(--muted)}
+    .controls{display:flex;gap:8px;margin-top:8px}
+    button{background:var(--accent);color:white;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+    button.secondary{background:transparent;color:#111;border:1px solid #e6e9ee}
+    .posts-list{display:flex;flex-direction:column;gap:12px}
+    .post{display:flex;gap:12px;padding:12px;border-radius:10px;border:1px solid #f0f2f5;background:#fff;align-items:flex-start}
+    .thumb{width:110px;height:82px;border-radius:8px;object-fit:cover;background:#f3f4f6;display:inline-block}
+    .post-main{flex:1}
+    .post-top{display:flex;justify-content:space-between;align-items:start;gap:12px}
+    .meta{font-size:12px;color:var(--muted)}
+    .post-actions{margin-top:8px;display:flex;gap:8px}
+    .btn-muted{background:transparent;border:1px solid #e6e9ee;padding:6px 8px;border-radius:8px;cursor:pointer}
+    .no-posts{text-align:center;color:var(--muted);padding:18px}
+    .preview{display:block;margin-top:8px;max-width:100%;height:auto;border-radius:8px}
+    .loading{padding:8px 12px;background:#fffbe6;border:1px solid #ffecb5;border-radius:8px;color:#7a5b00}
+    .error{padding:8px 12px;background:#fff1f2;border:1px solid #fecaca;border-radius:8px;color:#7f1d1d}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M3 7h18M6 11h12M10 15h4" stroke="#0ea5a4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <h1>ಸ್ಥಳೀಯ ಸುದ್ದಿಗಳು — Create & Show Posts</h1>
+        <div class="small">ಸಾಧಾರಣ HTML + CSS + JS. ನಿಮ್ಮ ಬ್ಯಾಕ್‌ಎಂಡ್ URL ಕೆಳಗೆ ಸೆಟ್ ಮಾಡಿ.</div>
+      </div>
+    </header>
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! Status: ${response.status}. Response: ${errorText}`);
-                }
+    <div class="grid">
+      <!-- Create Post -->
+      <section class="card">
+        <h2 style="margin:0 0 8px 0">ಪೋಸ್ಟ್ ಸೃಷ್ಟಿಸಿ</h2>
+        <form id="postForm">
+          <label>
+            ಶೀರ್ಷಿಕೆ (Title)
+            <input type="text" id="title" name="title" required placeholder="ಉದಾ: ರಸ್ತೆarchy ಬಿಕ್ಕಟ್ಟು"/>
+          </label>
 
-                console.log('Post Created Successfully:', await response.json());
-                
-                // Refresh the list of posts after a successful creation
-                fetchPosts(); 
-                
-                // Clear the form fields after successful submission
-                form.reset();
+          <label>
+            ವಿವರ (Content)
+            <textarea id="content" name="content" required placeholder="ಹೊಂದಾಣಿಕೆ, ಸ್ಥಳ ಮತ್ತು ಮಾಹಿತಿ ಅನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ"></textarea>
+          </label>
 
-            } catch (error) {
-                alert(`Failed to create post: ${error.message}`);
-                console.error('Error creating post:', error);
-            }
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+            <input type="text" id="state" name="state" placeholder="State"/>
+            <input type="text" id="district" name="district" placeholder="District"/>
+            <input type="text" id="taluk" name="taluk" placeholder="Taluk"/>
+          </div>
+
+          <label>
+            ಚಿತ್ರ (ಐಚ್ಛಿಕ)
+            <input type="file" id="image" accept="image/*" />
+            <img id="imgPreview" class="preview" style="display:none" alt="preview"/>
+          </label>
+
+          <div class="controls">
+            <button type="submit" id="submitBtn">ಸೃಷ್ಟಿಸು</button>
+            <button type="button" class="secondary" id="resetBtn">ರದ್ದುಗೊಳಿಸು</button>
+            <div id="formMsg" style="margin-left:auto"></div>
+          </div>
+        </form>
+        <p class="small" style="margin-top:10px">ಗುರುತು: ನಿಮ್ಮ ಬ್ಯಾಕ್‌ಎಂಡ್ GET `/posts` ಮತ್ತು POST `/posts` (multipart) ಬೆಂಬಲಿಸಬೇಕು. DELETE `/posts/:id` ಇದ್ದರೆ ಅಳಿಸಲು ಆಯ್ಕೆ ಇದೆ.</p>
+      </section>
+
+      <!-- Show Posts -->
+      <section class="card">
+        <h2 style="margin:0 0 8px 0">ಪೋಸ್ಟ್‌ಗಳು</h2>
+        <div id="statusArea"></div>
+        <div id="posts" class="posts-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ==== SET THIS to your backend base URL ====
+    // If backend is same origin, set to '' (empty)
+    const API_URL = 'https://newsbuzz-1.onrender.com'; // e.g. 'https://api.yourdomain.com' or ''
+
+    // Endpoints
+    const POSTS_ENDPOINT = API_URL + '/posts';
+
+    // DOM
+    const postForm = document.getElementById('postForm');
+    const titleIn = document.getElementById('title');
+    const contentIn = document.getElementById('content');
+    const stateIn = document.getElementById('state');
+    const districtIn = document.getElementById('district');
+    const talukIn = document.getElementById('taluk');
+    const imageIn = document.getElementById('image');
+    const imgPreview = document.getElementById('imgPreview');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const postsEl = document.getElementById('posts');
+    const statusArea = document.getElementById('statusArea');
+    const formMsg = document.getElementById('formMsg');
+
+    // Helpers
+    function setStatus(type, text) {
+      if (!statusArea) return;
+      statusArea.innerHTML = '<div class="' + (type==='error' ? 'error' : (type==='loading' ? 'loading' : '')) + '">' + text + '</div>';
+      setTimeout(()=>{ if(statusArea) statusArea.innerHTML=''; }, 4000);
+    }
+
+    function formatDate(d){
+      try{
+        const dt = new Date(d);
+        if (isNaN(dt)) return '';
+        return dt.toLocaleString();
+      }catch(e){ return ''; }
+    }
+
+    // Image preview
+    imageIn.addEventListener('change', (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f){ imgPreview.style.display='none'; imgPreview.src=''; return; }
+      const url = URL.createObjectURL(f);
+      imgPreview.src = url;
+      imgPreview.style.display = 'block';
+    });
+
+    // Reset form
+    resetBtn.addEventListener('click', ()=>{
+      postForm.reset();
+      imgPreview.style.display='none';
+      imgPreview.src='';
+      formMsg.textContent = '';
+    });
+
+    // Fetch posts
+    async function fetchPosts(){
+      postsEl.innerHTML = '';
+      setStatus('loading','ಲೋಡ್ ಆಗುತ್ತಿದೆ...');
+      try{
+        const res = await fetch(POSTS_ENDPOINT);
+        if(!res.ok) throw new Error('Failed to fetch posts: ' + res.status);
+        const data = await res.json();
+        // expect array
+        const arr = Array.isArray(data) ? data : [];
+        // reverse to show newest first
+        arr.reverse();
+        if(arr.length === 0){
+          postsEl.innerHTML = '<div class="no-posts">ಯಾವುದೇ ಪೋಸ್ಟ್ ಇಲ್ಲ. ಮೊದಲಿಗನಾಗಿ ಪೋಸ್ಟ್ ಹಾಕಿ!</div>';
+          return;
         }
+        for(const p of arr){
+          const postEl = renderPost(p);
+          postsEl.appendChild(postEl);
+        }
+      }catch(err){
+        postsEl.innerHTML = '<div class="no-posts">ಪೋಸ್ಟ್‌ಗಳನ್ನು ತ್ಯಜಿಸಲಾಗಲಿಲ್ಲ: ' + (err.message||err) + '</div>';
+      }finally{
+        // clear status
+        // setTimeout(()=>statusArea.innerHTML='', 1000);
+      }
+    }
 
-        // --- 4. Event Listener for Form Submission ---
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Stop the default form submission
+    // Render single post element
+    function renderPost(p){
+      const id = p._id || p.id || '';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'post';
 
-            // Get values from the form inputs
-            const title = document.getElementById('title').value;
-            const author = document.getElementById('author').value;
-            const content = document.getElementById('content').value;
+      const img = document.createElement('img');
+      img.className = 'thumb';
+      if(p.imageUrl || p.image) img.src = p.imageUrl || p.image;
+      else img.style.background = '#f3f4f6', img.alt = 'No image';
 
-            const newPostData = {
-                title: title,
-                author: author,
-                content: content
-            };
+      const main = document.createElement('div');
+      main.className = 'post-main';
 
-            // Call the createPost function
-            createPost(newPostData);
-        });
+      const top = document.createElement('div');
+      top.className = 'post-top';
 
-        // --- Initial Load: Fetch posts when the page loads ---
-        document.addEventListener('DOMContentLoaded', fetchPosts);
-    </script>
+      const left = document.createElement('div');
+      const h3 = document.createElement('div');
+      h3.style.fontWeight = 600;
+      h3.textContent = p.title || '(ಶೀರ್ಷಿಕೆ ಇಲ್ಲ)';
+      left.appendChild(h3);
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const placeParts = [p.state, p.district, p.taluk].filter(Boolean);
+      meta.textContent = placeParts.join(' / ');
+      left.appendChild(meta);
+
+      const right = document.createElement('div');
+      right.className = 'meta';
+      right.textContent = formatDate(p.createdAt || p.created || p.created_at || p.date || '');
+      top.appendChild(left);
+      top.appendChild(right);
+
+      const content = document.createElement('div');
+      content.style.marginTop = '8px';
+      content.textContent = p.content || '';
+
+      const actions = document.createElement('div');
+      actions.className = 'post-actions';
+
+      const shareBtn = document.createElement('button');
+      shareBtn.className = 'btn-muted';
+      shareBtn.textContent = 'Share link';
+      shareBtn.onclick = () => {
+        const link = (location.origin + (API_URL ? API_URL.replace(/^https?:\/\//,'') : '') + '/posts/' + id) || (location.href + 'posts/' + id);
+        if(navigator.clipboard) navigator.clipboard.writeText(link);
+        alert('Link copied to clipboard:\n' + link);
+      };
+
+      actions.appendChild(shareBtn);
+
+      // If backend supports DELETE, show delete button
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-muted';
+      delBtn.textContent = 'ಅಳಿಸು';
+      delBtn.onclick = async () => {
+        if(!confirm('ಈ ಪೋಸ್ಟ್ ಅಳಿಸಲು ಖಚಿತವಾ?')) return;
+        try{
+          const res = await fetch(POSTS_ENDPOINT + '/' + id, { method: 'DELETE' });
+          if(!res.ok) throw new Error('Delete failed: ' + res.status);
+          wrapper.remove();
+        }catch(err){
+          alert('ಅಳಿಸINTEGER ದೋಷ: ' + (err.message||err));
+        }
+      };
+      actions.appendChild(delBtn);
+
+      main.appendChild(top);
+      main.appendChild(content);
+      main.appendChild(actions);
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(main);
+      return wrapper;
+    }
+
+    // Submit create post
+    postForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      submitBtn.disabled = true;
+      formMsg.textContent = 'ಸಲ್ಲಿಸಲಾಗುತ್ತಿದೆ...';
+
+      try{
+        const fd = new FormData();
+        fd.append('title', titleIn.value.trim());
+        fd.append('content', contentIn.value.trim());
+        if(stateIn.value) fd.append('state', stateIn.value.trim());
+        if(districtIn.value) fd.append('district', districtIn.value.trim());
+        if(talukIn.value) fd.append('taluk', talukIn.value.trim());
+        if(imageIn.files && imageIn.files[0]) fd.append('image', imageIn.files[0]);
+
+        const res = await fetch(POSTS_ENDPOINT, { method:'POST', body: fd });
+        if(!res.ok){
+          const txt = await res.text().catch(()=>null);
+          throw new Error(txt || ('Status ' + res.status));
+        }
+        const created = await res.json();
+        // prepend created post to UI
+        const el = renderPost(created);
+        postsEl.insertBefore(el, postsEl.firstChild);
+        formMsg.textContent = 'ಯಶಸ್ವಿಯಾಯಿತು!';
+        postForm.reset();
+        imgPreview.style.display='none';
+        imgPreview.src='';
+      }catch(err){
+        formMsg.textContent = 'ದೋಷ: ' + (err.message||err);
+      }finally{
+        submitBtn.disabled = false;
+        setTimeout(()=>formMsg.textContent='', 3000);
+      }
+    });
+
+    // Initial load
+    fetchPosts();
+
+    // NOTE about CORS & backend:
+    // - Ensure your backend allows CORS from the origin serving this page (Access-Control-Allow-Origin).
+    // - If your backend expects a different field name for the image (e.g. 'imageUrl'), adapt the backend or change the field name here.
+    // - If your backend requires authentication, add headers / token handling accordingly.
+  </script>
 </body>
 </html>

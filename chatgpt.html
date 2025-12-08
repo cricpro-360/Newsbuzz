@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsBuzz API Client (Single File)</title>
+    
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container, .posts-section {
+            background-color: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h2 {
+            color: #007bff;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        /* Form Styling */
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        form input[type="text"], 
+        form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        form button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #218838;
+        }
+
+        /* Post Display Styling */
+        .post-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .post-card h3 {
+            margin-top: 0;
+            color: #0056b3;
+        }
+
+        .post-card p {
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+
+        .post-card .author {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+            display: block;
+            border-top: 1px dashed #eee;
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>NewsBuzz Client</h1>
+        <p>Use the form below to create a new post via the API.</p>
+    </header>
+
+    <section class="form-container">
+        <h2>Create New Post</h2>
+        <form id="post-form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="author">Author:</label>
+            <input type="text" id="author" name="author" required>
+
+            <label for="content">Content:</label>
+            <textarea id="content" name="content" rows="4" required></textarea>
+
+            <button type="submit">Submit Post</button>
+        </form>
+    </section>
+
+    <section class="posts-section">
+        <h2>Recent Posts</h2>
+        <div id="posts-container">
+            <p>Loading posts...</p>
+        </div>
+    </section>
+
+    <script>
+        const API_URL = 'https://newsbuzz-1.onrender.com/posts';
+        const form = document.getElementById('post-form');
+        const postsContainer = document.getElementById('posts-container');
+
+        // --- 1. Function to Display Posts in HTML ---
+        function displayPosts(posts) {
+            postsContainer.innerHTML = ''; // Clear previous content
+
+            if (posts.length === 0) {
+                postsContainer.innerHTML = '<p>No posts found. Be the first to create one!</p>';
+                return;
+            }
+
+            // Reverse the array to show the newest posts first
+            posts.slice().reverse().forEach(post => {
+                const postCard = document.createElement('div');
+                postCard.className = 'post-card';
+                
+                // Using common fields: title, content, author
+                postCard.innerHTML = `
+                    <h3>${post.title}</h3>
+                    <p>${post.content}</p>
+                    <span class="author">By: ${post.author || 'Unknown'}</span>
+                `;
+                postsContainer.appendChild(postCard);
+            });
+        }
+
+
+        // --- 2. Function to Fetch All Posts (GET Request) ---
+        async function fetchPosts() {
+            postsContainer.innerHTML = '<p>Loading posts...</p>';
+            try {
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const posts = await response.json();
+                
+                displayPosts(posts); // Call function to render posts
+                console.log('Successfully fetched posts.');
+
+            } catch (error) {
+                postsContainer.innerHTML = `<p style="color: red;">Error fetching posts: ${error.message}</p>`;
+                console.error('Error fetching posts:', error);
+            }
+        }
+
+
+        // --- 3. Function to Create a New Post (POST Request) ---
+        async function createPost(postData) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(postData),
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}. Response: ${errorText}`);
+                }
+
+                console.log('Post Created Successfully:', await response.json());
+                
+                // Refresh the list of posts after a successful creation
+                fetchPosts(); 
+                
+                // Clear the form fields after successful submission
+                form.reset();
+
+            } catch (error) {
+                alert(`Failed to create post: ${error.message}`);
+                console.error('Error creating post:', error);
+            }
+        }
+
+        // --- 4. Event Listener for Form Submission ---
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Stop the default form submission
+
+            // Get values from the form inputs
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const content = document.getElementById('content').value;
+
+            const newPostData = {
+                title: title,
+                author: author,
+                content: content
+            };
+
+            // Call the createPost function
+            createPost(newPostData);
+        });
+
+        // --- Initial Load: Fetch posts when the page loads ---
+        document.addEventListener('DOMContentLoaded', fetchPosts);
+    </script>
+</body>
+</html>
